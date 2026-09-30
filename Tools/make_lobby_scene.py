@@ -218,7 +218,7 @@ MonoBehaviour:
   weaponModelPrefab: {fileID: 919132149155446097, guid: e9be28d5ae53bd6429e56dfe4893a1bf, type: 3}
   weaponMaterial: {fileID: 2100000, guid: 5e33ba6a3ff97ea49a967d2ccda621b2, type: 2}
   outlineMaterial: {fileID: 2100000, guid: 4b8b05f17c45ce84382d0a36d6524186, type: 2}
-  characterModel: {fileID: 100100000, guid: 2cef109dc5c60fb4ca34168a9182a1f8, type: 3}
+  characterModel: {fileID: 919132149155446097, guid: 2cef109dc5c60fb4ca34168a9182a1f8, type: 3}
   characterController: {fileID: 9100000, guid: b99d2f4381d74314f8c0c74f40bb2ff3, type: 2}
   characterMaterial: {fileID: 2100000, guid: 05ea86d4ea105c845bd40cf667e65c6a, type: 2}
   gameScene: MovementTestArena

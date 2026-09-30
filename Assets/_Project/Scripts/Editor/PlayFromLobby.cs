@@ -3,7 +3,10 @@ using UnityEditor.SceneManagement;
 
 namespace Polykov.EditorTools
 {
-    /// <summary>Menu toggle: pressing Play always starts in the Lobby scene, whatever scene is open.</summary>
+    /// <summary>
+    /// Pressing Play always starts in the Lobby scene, whatever scene is open (on by default, like the built game).
+    /// Menu toggle to turn it off and play the open scene directly.
+    /// </summary>
     [InitializeOnLoad]
     public static class PlayFromLobby
     {
@@ -11,11 +14,19 @@ namespace Polykov.EditorTools
         private const string PrefKey = "polykov.playFromLobby";
         private const string LobbyPath = "Assets/_Project/Scenes/Lobby.unity";
 
-        static PlayFromLobby() => EditorApplication.delayCall += Apply;
+        static PlayFromLobby()
+        {
+            EditorApplication.delayCall += Apply;
+            // Re-applied right before entering Play in case the scene asset was (re)imported after the domain reload.
+            EditorApplication.playModeStateChanged += state =>
+            {
+                if (state == PlayModeStateChange.ExitingEditMode) Apply();
+            };
+        }
 
         private static bool Enabled
         {
-            get => EditorPrefs.GetBool(PrefKey, false);
+            get => EditorPrefs.GetBool(PrefKey, true);
             set => EditorPrefs.SetBool(PrefKey, value);
         }
 
