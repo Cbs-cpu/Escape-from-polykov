@@ -53,7 +53,7 @@ namespace Polykov.Combat
             _state = HealthModel.ApplyDamage(_state, part, hit.Damage, tuning, out DamageResult result);
 
             WoundEvent wound = default;
-            if (Core.UserSettings.Dismemberment)
+            if (Polykov.Core.UserSettings.Dismemberment)
             {
                 _wounds = WoundModel.ApplyHit(_wounds, _state, part, hit.Damage, result.Overflow, hit.CalibreMultiplier,
                     seed + ++_hitCounter * 0x9E3779B9u, woundTuning, out wound);

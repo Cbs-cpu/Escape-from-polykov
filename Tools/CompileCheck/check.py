@@ -21,7 +21,6 @@ import sys
 # Errors caused by the old reference assemblies, not by our code (API is settable in Unity 6).
 KNOWN_FALSE_POSITIVES = [
     "'AnimatorControllerParameter.name' cannot be assigned to",
-    "does not contain a definition for 'linearVelocity'",
 ]
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]
@@ -60,6 +59,29 @@ def sources_for(folder, all_folders):
         yield cs
 
 
+def dll_ref(folder, assembly):
+    """Plain DLL reference (not ProjectReference): asmdef references are NOT transitive, MSBuild's would be."""
+    return (f'<Reference Include="{assembly}"><HintPath>../{folder}/bin/Debug/net472/{assembly}.dll</HintPath>'
+            f'<Private>false</Private></Reference>')
+
+
+def build_order(asmdefs):
+    """Dependencies first."""
+    order, seen = [], set()
+
+    def visit(name):
+        if name in seen or name not in asmdefs:
+            return
+        seen.add(name)
+        for ref in asmdefs[name][1].get("references", []):
+            visit(ref)
+        order.append(name)
+
+    for name in sorted(asmdefs):
+        visit(name)
+    return order
+
+
 def project_xml(name, data, folder, all_folders, names):
     is_editor = data.get("includePlatforms") == ["Editor"]
     refs, packages = [], [ENGINE_PKG, FRAMEWORK_PKG]
@@ -71,13 +93,13 @@ def project_xml(name, data, folder, all_folders, names):
         ref = ref.split(":", 1)[-1] if ref.startswith("GUID:") else ref
         kind = EXTERNAL.get(ref)
         if kind == "stub":
-            refs.append(f'<ProjectReference Include="../_InputSystemStub/_InputSystemStub.csproj" />')
+            refs.append(dll_ref("_InputSystemStub", "Unity.InputSystem"))
         elif kind == "nunit":
             if NUNIT_PKG not in packages:
                 packages.append(NUNIT_PKG)
                 packages.append(EDITOR_PKG) if EDITOR_PKG not in packages else None
         elif ref in names:
-            refs.append(f'<ProjectReference Include="../{ref}/{ref}.csproj" />')
+            refs.append(dll_ref(ref, ref))
         else:
             print(f"warning: {name} references unknown assembly '{ref}'", file=sys.stderr)
     if "nunit.framework.dll" in data.get("precompiledReferences", []) and NUNIT_PKG not in packages:
@@ -93,6 +115,8 @@ def project_xml(name, data, folder, all_folders, names):
     <DefineConstants>{";".join(defines)}</DefineConstants>
     <NoWarn>NU1701;CS0414;CS0649;CS0169</NoWarn>
     <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <!-- Unity asmdef references are NOT transitive; MSBuild's are by default. Match Unity. -->
+    <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
   </PropertyGroup>
   <ItemGroup>
     {compiles}
@@ -126,13 +150,19 @@ def main():
     folders = [f for f, _ in asmdefs.values()]
     lines = ["Microsoft Visual Studio Solution File, Format Version 12.00"]
     projects = []
-    for name, (folder, data) in sorted(asmdefs.items()):
+    for name in build_order(asmdefs):
+        folder, data = asmdefs[name]
         d = GEN / name
         d.mkdir()
         (d / f"{name}.csproj").write_text(project_xml(name, data, folder, folders, asmdefs))
         projects.append(d / f"{name}.csproj")
 
     failed = []
+    stub_build = subprocess.run(["dotnet", "build", str(stub / "_InputSystemStub.csproj"), "-nologo", "-v:q"],
+                                capture_output=True, text=True)
+    if stub_build.returncode != 0:
+        print(stub_build.stdout[-2000:])
+        return 1
     for proj in projects:
         r = subprocess.run(["dotnet", "build", str(proj), "-nologo", "-v:q", "-clp:NoSummary"],
                            capture_output=True, text=True)

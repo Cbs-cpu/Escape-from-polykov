@@ -2,6 +2,7 @@
     "name": "Polykov.Combat",
     "rootNamespace": "Polykov.Combat",
     "references": [
+        "Polykov.Core",
         "Polykov.Combat.Simulation",
         "Polykov.Weapons",
         "Polykov.Weapons.Simulation",
