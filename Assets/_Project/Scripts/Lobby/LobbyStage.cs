@@ -75,6 +75,51 @@ namespace Polykov.Lobby
             }
         }
 
+        /// <summary>True while the display shows a 3D weapon (the family the host has a model for).</summary>
+        public bool ShowingModel { get; private set; } = true;
+
+        /// <summary>Whether the host has a 3D model for this weapon family (only the definition's own family for now).</summary>
+        public bool HasModelFor(WeaponFamily family)
+            => family != null && (family.Id == _definition.FamilyId || _modular.ContainsKey(family.Id));
+
+        private readonly Dictionary<string, ModularWeaponView> _modular = new Dictionary<string, ModularWeaponView>();
+        private ModularWeaponView _activeModular;
+
+        /// <summary>Adds a display for a weapon whose model carries every part in place (e.g. the AK-74N).</summary>
+        public void AddModularWeapon(string familyId, GameObject prefab, Material material)
+        {
+            if (string.IsNullOrEmpty(familyId) || prefab == null || _modular.ContainsKey(familyId)) return;
+            var holder = new GameObject("WeaponDisplay_" + familyId).transform;
+            holder.SetPositionAndRotation(WeaponOrigin, Quaternion.Euler(-4f, 0f, 0f));
+            ModularWeaponView view = ModularWeaponView.Create(prefab, holder, 0, material);
+            holder.gameObject.SetActive(false);
+            _modular[familyId] = view;
+        }
+
+        /// <summary>World point of a modding slot on whichever weapon is on display.</summary>
+        public Vector3 AnchorFor(AttachmentSlot slot)
+            => _activeModular != null ? _activeModular.AnchorFor(slot) : _weapon != null ? _weapon.AnchorFor(slot) : WeaponOrigin;
+
+        /// <summary>Shows the weapon of <paramref name="family"/> with <paramref name="build"/>; families without a model hide the display.</summary>
+        public void Mount(WeaponFamily family, WeaponBuild build)
+        {
+            ShowingModel = HasModelFor(family);
+            _activeModular = null;
+            foreach (KeyValuePair<string, ModularWeaponView> kv in _modular)
+            {
+                bool on = family != null && kv.Key == family.Id;
+                kv.Value.transform.parent.gameObject.SetActive(on);
+                if (on) _activeModular = kv.Value;
+            }
+            if (_weaponRoot != null) _weaponRoot.gameObject.SetActive(ShowingModel && _activeModular == null);
+            if (_activeModular != null)
+            {
+                _activeModular.Apply(build, family.Catalog);
+                Frame(_activeModular.transform);
+            }
+            else if (ShowingModel) Mount(build);
+        }
+
         /// <summary>Mounts a build on the display weapon (models of the parts follow the same rules as in the match).</summary>
         public void Mount(WeaponBuild build)
         {
@@ -88,16 +133,21 @@ namespace Polykov.Lobby
             }
             _weapon.MountAttachments(ordered, 0, _outline);
             // The armorer camera eases to the new pivot/size, so re-framing on each change is smooth.
-            Bounds bounds = Measure();
+            Frame(_weapon.transform);
+        }
+
+        private void Frame(Transform model)
+        {
+            Bounds bounds = Measure(model);
             WeaponPivot = bounds.center;
             WeaponSize = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
         }
 
-        private Bounds Measure()
+        private static Bounds Measure(Transform model)
         {
             Bounds bounds = default;
             bool first = true;
-            foreach (Renderer r in _weapon.GetComponentsInChildren<Renderer>())
+            foreach (Renderer r in model.GetComponentsInChildren<Renderer>())
             {
                 if (first) { bounds = r.bounds; first = false; }
                 else bounds.Encapsulate(r.bounds);
@@ -206,6 +256,7 @@ namespace Polykov.Lobby
         {
             if (Character != null) Object.Destroy(Character.gameObject);
             if (_weaponRoot != null) Object.Destroy(_weaponRoot.gameObject);
+            foreach (ModularWeaponView v in _modular.Values) if (v != null) Object.Destroy(v.transform.parent.gameObject);
             if (_floor != null) Object.Destroy(_floor.gameObject);
             if (_backdrop != null) Object.Destroy(_backdrop.gameObject);
         }

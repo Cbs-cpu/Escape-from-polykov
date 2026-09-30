@@ -80,5 +80,27 @@ namespace Polykov.Weapons
             RecoilVariance = 0.3f,
             AimRecoilMultiplier = 0.75f,
         };
+
+        /// <summary>AK-74N (5.45x39): full auto at 650 rpm, 30-round magazine, one in the chamber.</summary>
+        public static WeaponStats AK74N => new WeaponStats
+        {
+            FireMode = FireMode.Auto,
+            RoundsPerMinute = 650f,
+            MagazineCapacity = 30,
+            ChambersRound = true,
+            TacticalReloadTime = 2.4f,
+            EmptyReloadTime = 3.1f,
+            MagazineInsertPoint = 0.6f,
+            AimTime = 0.3f,
+            ReadyTime = 0.35f,
+            InspectTime = 4.2f,
+            ChamberCheckTime = 1.8f,
+            HipSpread = 2.4f,
+            AimSpread = 0.2f,
+            VerticalRecoil = 1.5f,
+            HorizontalRecoil = 0.7f,
+            RecoilVariance = 0.25f,
+            AimRecoilMultiplier = 0.7f,
+        };
     }
 }

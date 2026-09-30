@@ -1,0 +1,16 @@
+{
+    "name": "Polykov.Raid",
+    "rootNamespace": "Polykov.Raid",
+    "references": [
+        "Polykov.Raid.Simulation"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

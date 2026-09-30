@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/Scenes/MovementTestArena.unity
     guid: 9c7e96a3a3297224d8c9714c62272240
+  - enabled: 1
+    path: Assets/_Project/Scenes/Zone_A.unity
+    guid: 50ba8180aa6566c4d8e3a541219b8d28
   m_configObjects:
     com.unity.dt.app-ui: {fileID: 11400000, guid: 1b1c20d82303e4b5781c3ef50ac1449f, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}

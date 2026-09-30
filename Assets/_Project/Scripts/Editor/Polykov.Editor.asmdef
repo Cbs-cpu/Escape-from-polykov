@@ -3,7 +3,11 @@
     "rootNamespace": "Polykov.EditorTools",
     "references": [
         "Polykov.Combat",
-        "Polykov.Weapons"
+        "Polykov.Weapons",
+        "Polykov.Raid",
+        "Unity.RenderPipelines.Universal.Runtime",
+        "Unity.RenderPipelines.Core.Runtime",
+        "Unity.AI.Navigation"
     ],
     "includePlatforms": [
         "Editor"

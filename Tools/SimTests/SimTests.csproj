@@ -24,6 +24,7 @@
     <Compile Include="../../Assets/_Project/Scripts/Combat/Simulation/**/*.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Netcode/**/*.cs" Exclude="../../Assets/_Project/Scripts/Netcode/Unity/**" />
     <Compile Include="../../Assets/_Project/Scripts/Inventory/Simulation/**/*.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/Raid/Simulation/**/*.cs" />
     <Compile Include="../../Assets/_Project/Tests/EditMode/**/*.cs" />
   </ItemGroup>
 

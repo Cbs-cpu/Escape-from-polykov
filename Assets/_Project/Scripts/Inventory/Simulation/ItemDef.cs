@@ -35,6 +35,8 @@ namespace Polykov.Inventory
         public string WeaponId;
         /// <summary>Weapons are two-handed long guns (Primary/Secondary) or handguns (Holster).</summary>
         public bool LongGun;
+        /// <summary>Magazines: rounds the magazine holds (0 = not a magazine).</summary>
+        public int Capacity;
         /// <summary>Free-form "key: value" lines shown when inspecting (calibre, damage, heal...).</summary>
         public string[] Properties = System.Array.Empty<string>();
 
@@ -128,13 +130,74 @@ namespace Polykov.Inventory
             {
                 Id = "magazine_7", AttachmentId = "magazine_7", Name = "Cargador M1911 de 7 cartuchos .45 ACP", ShortName = "Carg. 7",
                 Category = ItemCategory.Magazine, WeightKg = 0.08f, Price = 2100, Description = "Cargador monohilera de acero.",
-                Properties = new[] { "Capacidad: 7" },
+                Properties = new[] { "Capacidad: 7" }, Capacity = 7,
             });
+
+            // ---- AK-74N: the weapon, its modular parts (item id == armorer part id) and its ammunition.
+            db.Add(new ItemDef
+            {
+                Id = "ak74n", Name = "Fusil de asalto AK-74N 5,45x39", ShortName = "AK-74N", Category = ItemCategory.Weapon, LongGun = true,
+                Width = 5, Height = 2, WeightKg = 3.3f, Price = 45000, WeaponId = "ak74n",
+                Description = "Fusil de asalto robusto y modular: cambia guardamanos, tapa, culata y cañón a tu gusto.",
+                Properties = new[] { "Calibre: 5,45x39", "Cadencia: 650 disp./min (automática)", "Cargador: 30 cartuchos" },
+            });
+            void AkPart(string id, string name, string shortName, int w, int h, float kg, int price, string desc)
+                => Part(id, id, name, shortName, w, h, kg, price, desc);
+            // Muzzle
+            AkPart("ak_muzzle_brake", "Freno de boca AK 5,45", "Freno", 1, 1, 0.05f, 2200, "Freno de boca de fábrica.");
+            AkPart("ak_flash_hider", "Apagallamas AK", "Apagallamas", 1, 1, 0.08f, 5400, "Reduce mucho el fogonazo.");
+            AkPart("ak_compensator", "Compensador AK", "Compens.", 1, 1, 0.15f, 7800, "Doma el retroceso a costa de más ruido y fogonazo.");
+            AkPart("ak_thread_protector", "Protector de rosca AK", "Protector", 1, 1, 0.01f, 900, "Tapa la rosca del cañón sin dispositivo de boca.");
+            AkPart("ak_suppressor", "Silenciador 5,45 AK", "Silenc. AK", 2, 1, 0.5f, 42000, "Reduce el ruido y el fogonazo. Pesado y largo.");
+            // Barrel
+            AkPart("ak_barrel_standard", "Cañón AK-74N estándar 415 mm", "Cañón", 3, 1, 0.9f, 9000, "Cañón de fábrica.");
+            AkPart("ak_barrel_long", "Cañón AK largo 520 mm", "Cañón L", 4, 1, 1.3f, 21000, "Más largo y estable, pero pesado y torpe.");
+            AkPart("ak_barrel_threaded", "Cañón AK corto roscado 314 mm", "Cañón C", 3, 1, 0.65f, 17500, "Cañón corto y manejable, más ruidoso.");
+            AkPart("ak_barrel_competition", "Cañón AK de competición", "Cañón Comp.", 3, 1, 1.2f, 26500, "Cañón pesado de precisión.");
+            AkPart("ak_barrel_night", "Cañón AK nocturno", "Cañón Noct.", 3, 1, 0.92f, 15500, "Cañón con acabado antirreflejos para operaciones nocturnas.");
+            // Handguard
+            AkPart("ak_hg_polymer", "Guardamanos polimérico AK", "G. polim.", 2, 1, 0.25f, 3200, "Guardamanos de fábrica.");
+            AkPart("ak_hg_wood", "Guardamanos de madera AK", "G. madera", 2, 1, 0.3f, 3600, "Guardamanos clásico de madera.");
+            AkPart("ak_hg_tactical", "Guardamanos táctico M-LOK AK", "G. M-LOK", 2, 1, 0.45f, 16500, "Guardamanos ergonómico con ranuras M-LOK.");
+            AkPart("ak_hg_optic", "Guardamanos con riel de óptica AK", "G. riel", 2, 1, 0.35f, 9800, "Guardamanos con base para óptica.");
+            // Dust cover
+            AkPart("ak_cover_standard", "Tapa de cajón AK estándar", "Tapa", 2, 1, 0.2f, 2400, "Tapa de fábrica.");
+            AkPart("ak_cover_serrated", "Tapa estriada AK", "Tapa estr.", 2, 1, 0.22f, 3100, "Tapa con estrías de refuerzo.");
+            AkPart("ak_cover_light", "Tapa ligera AK", "Tapa lig.", 2, 1, 0.1f, 4700, "Tapa de aleación ligera.");
+            AkPart("ak_cover_rail", "Tapa con riel Picatinny AK", "Tapa riel", 2, 1, 0.32f, 8600, "Tapa con riel Picatinny para ópticas.");
+            AkPart("ak_cover_modern", "Tapa moderna AK", "Tapa mod.", 2, 1, 0.25f, 11800, "Tapa moderna de una pieza.");
+            // Grips
+            AkPart("ak_grip_polymer", "Empuñadura polimérica AK", "Empuñ.", 1, 1, 0.06f, 1200, "Empuñadura de fábrica.");
+            AkPart("ak_grip_wood", "Empuñadura de madera AK", "Empuñ. mad.", 1, 1, 0.09f, 1500, "Empuñadura de madera clásica.");
+            AkPart("ak_grip_textured", "Empuñadura texturizada AK", "Empuñ. tex.", 1, 1, 0.07f, 2600, "Agarre de goma texturizada.");
+            AkPart("ak_grip_ergo", "Empuñadura ergonómica AK", "Empuñ. erg.", 1, 1, 0.08f, 5200, "Empuñadura anatómica con reposadedos.");
+            // Stock
+            AkPart("ak_stock_polymer", "Culata polimérica AK", "Culata", 3, 1, 0.55f, 3800, "Culata de fábrica.");
+            AkPart("ak_stock_wood", "Culata de madera AK", "Culata mad.", 3, 1, 0.75f, 4400, "Culata clásica de madera.");
+            AkPart("ak_stock_wire", "Culata plegable de alambre AK", "Culata alamb.", 2, 1, 0.25f, 6900, "Culata plegable ligera de alambre.");
+            AkPart("ak_stock_tele", "Culata telescópica AK", "Culata tele.", 3, 1, 0.7f, 14800, "Culata telescópica ajustable.");
+            // Magazines
+            void AkMag(string id, string name, string shortName, float kg, int price, int capacity, string desc)
+                => db.Add(new ItemDef
+                {
+                    Id = id, AttachmentId = id, Name = name, ShortName = shortName, Category = ItemCategory.Magazine, Width = 1, Height = 2,
+                    WeightKg = kg, Price = price, Description = desc, Capacity = capacity,
+                    Properties = new[] { "Capacidad: " + capacity },
+                });
+            AkMag("ak_mag_30", "Cargador AK 30 cartuchos 5,45", "Carg. 30", 0.25f, 2600, 30, "Cargador curvo de fábrica.");
+            AkMag("ak_mag_45", "Cargador AK 45 cartuchos 5,45", "Carg. 45", 0.5f, 7200, 45, "Cargador ampliado: más munición, más peso.");
+            AkMag("ak_mag_clear", "Cargador AK transparente 30 cartuchos", "Carg. transp.", 0.2f, 5800, 30, "Cargador de polímero transparente.");
+            AkMag("ak_mag_steel", "Cargador AK de acero 30 cartuchos", "Carg. acero", 0.35f, 4300, 30, "Cargador de acero estampado, muy resistente.");
 
             Add("ammo_45_fmj", ".45 ACP FMJ", "FMJ", ItemCategory.Ammo, 1, 1, 0.015f, 180, 50,
                 "Bala blindada estándar.", "Daño: 62", "Penetración: 19", "Velocidad: 253 m/s");
             Add("ammo_45_hp", ".45 ACP Hydra-Shok", "HS", ItemCategory.Ammo, 1, 1, 0.015f, 350, 50,
                 "Punta hueca expansiva: mucho daño, poca penetración.", "Daño: 80", "Penetración: 9", "Velocidad: 244 m/s");
+
+            Add("ammo_545_ps", "5,45x39 PS", "PS", ItemCategory.Ammo, 1, 1, 0.011f, 210, 60,
+                "Bala blindada con núcleo de acero estándar.", "Daño: 51", "Penetración: 28", "Velocidad: 890 m/s");
+            Add("ammo_545_bp", "5,45x39 BP", "BP", ItemCategory.Ammo, 1, 1, 0.011f, 480, 60,
+                "Perforante con núcleo de acero endurecido.", "Daño: 46", "Penetración: 37", "Velocidad: 890 m/s");
 
             Add("bandage", "Venda", "Venda", ItemCategory.Medical, 1, 1, 0.05f, 1600, 1, "Detiene hemorragias leves.", "Usos: 1", "Cura: hemorragia leve");
             Add("ai2", "Botiquín AI-2", "AI-2", ItemCategory.Medical, 1, 1, 0.1f, 3200, 1, "Botiquín individual: recupera algo de salud.", "Puntos de salud: 100");

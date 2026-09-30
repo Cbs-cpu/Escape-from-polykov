@@ -20,6 +20,7 @@ namespace Polykov.Input
         private InputAction _sprint;
         private InputAction _walk;
         private InputAction _pause;
+        private InputAction _inventory;
         private InputAction _jump;
         private InputAction _lean;
         private InputAction _crouch;
@@ -46,6 +47,8 @@ namespace Polykov.Input
         /// <summary>-1 = lean left (Q), +1 = lean right (E).</summary>
         public float Lean => Blocked ? 0f : Mathf.Clamp(_lean.ReadValue<float>(), -1f, 1f);
         public bool PausePressedThisFrame => _pause.WasPressedThisFrame();
+        /// <summary>Tab: open/close the raid inventory (not affected by <see cref="Blocked"/>).</summary>
+        public bool InventoryPressedThisFrame => _inventory != null && _inventory.WasPressedThisFrame();
 
         /// <summary>
         /// Crouch intent. Hold mode: key held. Toggle mode (UserSettings.ToggleCrouch): press toggles,
@@ -100,6 +103,7 @@ namespace Polykov.Input
             _sprint = _map.FindAction("Sprint", true);
             _walk = _map.FindAction("Walk", true);
             _pause = _map.FindAction("Pause", true);
+            _inventory = _map.FindAction("Inventory");
             _jump = _map.FindAction("Jump", true);
             _lean = _map.FindAction("Lean", true);
             _crouch = _map.FindAction("Crouch", true);

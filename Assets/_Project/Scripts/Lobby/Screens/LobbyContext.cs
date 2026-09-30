@@ -26,15 +26,21 @@ namespace Polykov.Lobby
     {
         public Profile Profile;
         public ItemDatabase Db;
-        public AttachmentCatalog Catalog;
-        public WeaponStats BaseStats;
-        public WeaponBuild FactoryBuild;
+        /// <summary>Weapon family by id (<c>ItemDef.WeaponId</c>); hosts may override it to serve families built from their own assets.</summary>
+        public Func<string, WeaponFamily> Family = WeaponFamilies.ById;
         public IItemIcons Icons = new PictogramIcons();
         /// <summary>Screen point of a modding slot on the 3D weapon (armorer lines); null if not visible.</summary>
         public Func<AttachmentSlot, UiVec?> SlotAnchor = _ => null;
         /// <summary>Screen rect the 3D weapon occupies in the armorer (for the orbit area / clicks). </summary>
         public string Clock = "12:00";
         public string Version = "v0.1 · Fase 1";
+
+        /// <summary>The family of a weapon item (the M1911 one if the weapon's family is unknown, so screens never see null).</summary>
+        public WeaponFamily FamilyOf(Item weapon)
+        {
+            WeaponFamily f = weapon != null && weapon.Def.WeaponId != null ? Family(weapon.Def.WeaponId) : null;
+            return f ?? Family(WeaponFamilies.M1911Id) ?? WeaponFamilies.M1911();
+        }
     }
 
     /// <summary>What the screens asked the host to do this frame (the host clears it after acting).</summary>

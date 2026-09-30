@@ -10,6 +10,7 @@ namespace Polykov.Weapons
         public float LengthM;
 
         public static WeaponBaseline M1911 => new WeaponBaseline { Ergonomics = 60f, WeightKg = 1.1f, LengthM = 0.216f };
+        public static WeaponBaseline AK74N => new WeaponBaseline { Ergonomics = 40f, WeightKg = 3.3f, LengthM = 0.943f };
     }
 
     /// <summary>WeaponStats with the build's modifiers applied, plus the derived handling and audiovisual numbers.</summary>

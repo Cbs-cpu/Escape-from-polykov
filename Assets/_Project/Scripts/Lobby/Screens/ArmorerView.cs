@@ -27,9 +27,20 @@ namespace Polykov.Lobby
         public UiRect OrbitArea { get; private set; }
         public Action Back;
 
-        private static readonly AttachmentSlot[] Slots = { AttachmentSlot.Muzzle, AttachmentSlot.Barrel, AttachmentSlot.Grips, AttachmentSlot.Magazine };
-        // Offset (px) from each slot's anchor to its callout box: muzzle above-right, barrel above, grips below-left, magazine below-right.
-        private static readonly UiVec[] BoxOffsets = { new UiVec(130f, -190f), new UiVec(-170f, -200f), new UiVec(-270f, 230f), new UiVec(230f, 130f) };
+        // Offset (px) from each slot's anchor to its callout box: muzzle above-right, barrel above, grips below-left, magazine below-right...
+        private static UiVec BoxOffset(AttachmentSlot slot)
+        {
+            switch (slot)
+            {
+                case AttachmentSlot.Muzzle: return new UiVec(130f, -190f);
+                case AttachmentSlot.Barrel: return new UiVec(-170f, -200f);
+                case AttachmentSlot.Grips: return new UiVec(-270f, 230f);
+                case AttachmentSlot.Magazine: return new UiVec(230f, 130f);
+                case AttachmentSlot.Handguard: return new UiVec(60f, -240f);
+                case AttachmentSlot.DustCover: return new UiVec(-110f, -130f);
+                default: return new UiVec(-250f, -150f);
+            }
+        }
 
         public ArmorerView(LobbyContext ctx, LobbyRequests req)
         {
@@ -43,11 +54,13 @@ namespace Polykov.Lobby
             _slotChosen = true;
         }
 
-        private WeaponBuild Build => WeaponParts.BuildOf(Weapon, _ctx.FactoryBuild);
+        private WeaponFamily Family => _ctx.FamilyOf(Weapon);
+        private WeaponBuild Build => WeaponParts.BuildOf(Weapon, Family.FactoryBuild);
 
         public void Frame(Ui ui, UiRect area)
         {
             if (Weapon == null || Weapon.Location == null) { Back?.Invoke(); return; }
+            if (_slotChosen && !Family.HasSlot(_slot)) _slotChosen = false;
             const float leftW = 380f, rightW = 420f;
             OrbitArea = new UiRect(area.X + leftW + 20f, area.Y + 40f, area.W - leftW - rightW - 40f, area.H - 110f);
 
@@ -60,7 +73,7 @@ namespace Polykov.Lobby
 
             float by = area.YMax - 52f;
             if (ui.Button(new UiRect(area.X, by, 230f, 48f), "< PERSONAJE", ButtonStyle.Normal, null, UiTheme.SizeBody)) Back?.Invoke();
-            if (ui.Button(new UiRect(area.X + 242f, by, 230f, 48f), "DE FÁBRICA", ButtonStyle.Normal, null, UiTheme.SizeBody)) SetBuild(ui, _ctx.FactoryBuild);
+            if (ui.Button(new UiRect(area.X + 242f, by, 230f, 48f), "DE FÁBRICA", ButtonStyle.Normal, null, UiTheme.SizeBody)) SetBuild(ui, Family.FactoryBuild);
             ui.Label(new UiRect(OrbitArea.X, by, OrbitArea.W, 48f), "Arrastra para girar  ·  Rueda para acercar  ·  Esc para volver",
                 UiTheme.SizeSmall, UiFont.Regular, UiAlign.Center, UiTheme.TextDim);
             if (_message != null && ui.Time < _messageUntil)
@@ -93,7 +106,7 @@ namespace Polykov.Lobby
         {
             UiRect inner = ui.Panel(r, "CARACTERÍSTICAS");
             float y = inner.Y + 14f;
-            foreach (StatRow row in ArmorerModel.Stats(_ctx.BaseStats, _ctx.FactoryBuild, Build, _ctx.Catalog))
+            foreach (StatRow row in ArmorerModel.Stats(Family, Build))
             {
                 UiColor c = row.Verdict == StatVerdict.Better ? UiTheme.Good : row.Verdict == StatVerdict.Worse ? UiTheme.Bad : UiTheme.Text;
                 var line = new UiRect(inner.X + 16f, y, inner.W - 32f, 20f);
@@ -101,7 +114,7 @@ namespace Polykov.Lobby
                 string value = FormatStat(row.Kind, row.Current);
                 if (row.Verdict != StatVerdict.Same) value = "(" + (row.Delta > 0 ? "+" : "") + FormatStat(row.Kind, row.Delta) + ")  " + value;
                 ui.Label(line, value, UiTheme.SizeBody, UiFont.Bold, UiAlign.Right, c);
-                float max = StatMax[row.Kind];
+                float max = Math.Max(StatMax[row.Kind], Math.Max(row.Factory, row.Current) * 1.25f);
                 var bar = new UiRect(inner.X + 16f, y + 24f, inner.W - 32f, 6f);
                 ui.Fill(bar, UiColor.Hex(0x222527));
                 float f = Math.Min(1f, row.Factory / max), k = Math.Min(1f, row.Current / max);
@@ -143,13 +156,24 @@ namespace Polykov.Lobby
         private void DrawCallouts(Ui ui)
         {
             WeaponBuild build = Build;
-            for (int i = 0; i < Slots.Length; i++)
+            WeaponFamily family = Family;
+            for (int i = 0; i < family.Slots.Length; i++)
             {
-                AttachmentSlot slot = Slots[i];
+                AttachmentSlot slot = family.Slots[i];
                 UiVec? anchorOpt = _ctx.SlotAnchor(slot);
-                UiVec anchor = anchorOpt ?? new UiVec(OrbitArea.Center.X + (i % 2 == 0 ? 120f : -120f), OrbitArea.Center.Y + (i < 2 ? -40f : 60f));
                 bool selected = _slotChosen && slot == _slot;
-                UiVec c = anchor + BoxOffsets[i];
+                UiVec anchor, c;
+                if (anchorOpt.HasValue)
+                {
+                    anchor = anchorOpt.Value;
+                    c = anchor + BoxOffset(slot);
+                }
+                else
+                {
+                    // No anchor on the 3D model (or no model): stack the callouts in two columns at the top of the area.
+                    anchor = default;
+                    c = new UiVec(OrbitArea.Center.X + (i % 2 == 0 ? -130f : 130f), OrbitArea.Y + 70f + (i / 2) * 70f);
+                }
                 c.X = Math.Max(OrbitArea.X + 130f, Math.Min(OrbitArea.XMax - 130f, c.X));
                 c.Y = Math.Max(OrbitArea.Y + 40f, Math.Min(OrbitArea.YMax - 40f, c.Y));
                 var box = UiRect.Around(c, 240f, 60f);
@@ -160,7 +184,7 @@ namespace Polykov.Lobby
                 }
                 string part = build.Get(slot);
                 ItemDef def = _ctx.Db.ForAttachment(part);
-                if (ui.Button(box, SlotName(slot), selected ? ButtonStyle.Selected : ButtonStyle.Normal,
+                if (ui.Button(box, SlotName(slot, family), selected ? ButtonStyle.Selected : ButtonStyle.Normal,
                         string.IsNullOrEmpty(part) ? "vacío" : def != null ? def.Name : part, UiTheme.SizeBody))
                 {
                     _slot = slot;
@@ -169,13 +193,17 @@ namespace Polykov.Lobby
             }
         }
 
-        public static string SlotName(AttachmentSlot slot)
+        /// <summary>Spanish name of a modding slot; grips are "cachas" on the pistol and "empuñadura" on the rifle.</summary>
+        public static string SlotName(AttachmentSlot slot, WeaponFamily family = null)
         {
             switch (slot)
             {
                 case AttachmentSlot.Muzzle: return "BOCA";
                 case AttachmentSlot.Barrel: return "CAÑÓN";
-                case AttachmentSlot.Grips: return "CACHAS";
+                case AttachmentSlot.Handguard: return "GUARDAMANOS";
+                case AttachmentSlot.DustCover: return "TAPA";
+                case AttachmentSlot.Grips: return family != null && family.Id == WeaponFamilies.AK74NId ? "EMPUÑADURA" : "CACHAS";
+                case AttachmentSlot.Stock: return "CULATA";
                 default: return "CARGADOR";
             }
         }
@@ -184,7 +212,7 @@ namespace Polykov.Lobby
 
         private void DrawParts(Ui ui, UiRect r)
         {
-            UiRect inner = ui.Panel(r, _slotChosen ? "PIEZAS · " + SlotName(_slot) : "PIEZAS");
+            UiRect inner = ui.Panel(r, _slotChosen ? "PIEZAS · " + SlotName(_slot, Family) : "PIEZAS");
             if (!_slotChosen)
             {
                 ui.Paragraph(new UiRect(inner.X + 16f, inner.Y + 16f, inner.W - 32f, 80f),
@@ -193,7 +221,7 @@ namespace Polykov.Lobby
             }
             WeaponBuild build = Build;
             float y = inner.Y + 12f;
-            foreach (SlotOption option in ArmorerModel.Options(build, _ctx.Catalog, _slot))
+            foreach (SlotOption option in ArmorerModel.Options(build, Family.Catalog, _slot))
             {
                 ItemDef def = _ctx.Db.ForAttachment(option.Id);
                 string name = string.IsNullOrEmpty(option.Id) ? "Ninguno" : def != null ? def.Name : option.Id;
@@ -204,7 +232,7 @@ namespace Polykov.Lobby
                 else if (option.State == OptionState.Blocked) { sub = option.Reason; style = ButtonStyle.Locked; }
                 else
                 {
-                    next = ArmorerModel.Select(build, _ctx.Catalog, _slot, option.Id);
+                    next = ArmorerModel.Select(build, Family.Catalog, _slot, option.Id);
                     List<string> missing = WeaponParts.Missing(_ctx.Profile, build, next);
                     if (missing.Count > 0) { sub = "Falta en el alijo: " + string.Join(", ", missing); style = ButtonStyle.Locked; }
                     else sub = Notes(option);

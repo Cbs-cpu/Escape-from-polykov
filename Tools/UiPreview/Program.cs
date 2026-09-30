@@ -35,7 +35,7 @@ namespace Polykov.Tools.UiPreview
             var catalog = AttachmentCatalog.M1911();
             var ctx = new LobbyContext
             {
-                Db = db, Catalog = catalog, BaseStats = WeaponStats.M1911, FactoryBuild = WeaponBuild.M1911Default,
+                Db = db,
                 Profile = StarterKit.Create(db, WeaponBuild.M1911Default, catalog), Clock = "21:47",
                 Icons = new PreviewIcons(iconDir),
             };
@@ -125,7 +125,7 @@ namespace Polykov.Tools.UiPreview
             Run("07_armero_silenciador", "bg_armorer_suppressor.png", (ctx, s, ui) =>
             {
                 Item gun = ctx.Profile.Equipped(EquipSlot.Holster);
-                WeaponBuild next = ArmorerModel.Select(WeaponBuild.M1911Default, ctx.Catalog, AttachmentSlot.Muzzle, "suppressor_45");
+                WeaponBuild next = ArmorerModel.Select(WeaponBuild.M1911Default, AttachmentCatalog.M1911(), AttachmentSlot.Muzzle, "suppressor_45");
                 WeaponParts.Apply(ctx.Profile, gun, WeaponBuild.M1911Default, next, out _);
                 s.OpenArmorer(gun);
                 s.Armorer.SelectSlot(AttachmentSlot.Barrel);
@@ -135,7 +135,7 @@ namespace Polykov.Tools.UiPreview
             Run("08_personaje_silenciador", "bg_character.png", (ctx, s, ui) =>
             {
                 Item gun = ctx.Profile.Equipped(EquipSlot.Holster);
-                WeaponBuild next = ArmorerModel.Select(WeaponBuild.M1911Default, ctx.Catalog, AttachmentSlot.Muzzle, "suppressor_45");
+                WeaponBuild next = ArmorerModel.Select(WeaponBuild.M1911Default, AttachmentCatalog.M1911(), AttachmentSlot.Muzzle, "suppressor_45");
                 WeaponParts.Apply(ctx.Profile, gun, WeaponBuild.M1911Default, next, out _);
                 s.Tab = LobbyTab.Character;
                 s.Inventory.ShowWindow(ctx.Profile.Equipped(EquipSlot.Backpack), false, new UiVec(820, 330));

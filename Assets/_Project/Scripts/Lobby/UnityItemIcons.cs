@@ -23,8 +23,14 @@ namespace Polykov.Lobby
         private Camera _camera;
         private Light _light;
 
-        public UnityItemIcons(WeaponDefinition weapon, GameObject weaponPrefab, Material weaponMaterial, Material outline)
+        private readonly GameObject _akPrefab;
+        private readonly Material _akMaterial;
+
+        public UnityItemIcons(WeaponDefinition weapon, GameObject weaponPrefab, Material weaponMaterial, Material outline,
+            GameObject akPrefab = null, Material akMaterial = null)
         {
+            _akPrefab = akPrefab;
+            _akMaterial = akMaterial;
             _weapon = weapon;
             _weaponPrefab = weaponPrefab;
             _weaponMaterial = weaponMaterial;
@@ -36,7 +42,7 @@ namespace Polykov.Lobby
             ItemDef def = item.Def;
             string key = def.Id + "|" + (def.Category == ItemCategory.Weapon ? item.Build : "") + (rotated ? "|r" : "");
             if (_cache.TryGetValue(key, out UiImage img)) return img;
-            img = Render(item, rotated) ?? ItemPictograms.Get(def, rotated);
+            img = Render(item, rotated) ?? BakedItemIcons.Baked(def, rotated) ?? ItemPictograms.Get(def, rotated);
             _cache[key] = img;
             return img;
         }
@@ -64,8 +70,18 @@ namespace Polykov.Lobby
         /// <summary>The model to photograph, in weapon space (+z = muzzle, +y = up), or null if the item has none.</summary>
         private GameObject BuildSubject(Item item)
         {
-            if (item.Def.Category == ItemCategory.Weapon && _weaponPrefab != null)
+            if (item.Def.Category == ItemCategory.Weapon && item.Def.WeaponId == "ak74n" && _akPrefab != null)
             {
+                var holder = new GameObject("IconSubject");
+                ModularWeaponView view = ModularWeaponView.Create(_akPrefab, holder.transform, IconLayer, _akMaterial);
+                WeaponFamily family = WeaponFamilies.ById("ak74n");
+                view.Apply(WeaponBuild.ParseOr(item.Build, family.FactoryBuild), family.Catalog);
+                return holder;
+            }
+            if (item.Def.Category == ItemCategory.Weapon)
+            {
+                // Only the weapon family the host has a model for gets a rendered icon; the others use pictograms.
+                if (_weaponPrefab == null || (item.Def.WeaponId != null && item.Def.WeaponId != _weapon.FamilyId)) return null;
                 var holder = new GameObject("IconSubject");
                 WeaponModel model = WeaponModel.CreateFromModel(_weaponPrefab, holder.transform, IconLayer, default, _weaponMaterial, _outline);
                 if (model == null) { Object.DestroyImmediate(holder); return null; }

@@ -34,6 +34,10 @@ namespace Polykov.Weapons
         [SerializeField] private Material gripDarkMaterial;
         [SerializeField] private Material brassMaterial;
         [SerializeField] private uint seed = 1;
+        [Tooltip("Other weapons the player can spawn with; the lobby's RaidLoadout picks one by family id (e.g. WD_AK74N).")]
+        [SerializeField] private WeaponDefinition[] loadoutDefinitions = System.Array.Empty<WeaponDefinition>();
+
+        private ModularWeaponView _modular;
 
         private WeaponState _state;
         private WeaponModel _model;
@@ -94,6 +98,17 @@ namespace Polykov.Weapons
 
         private void Awake()
         {
+            // The lobby decides what is in hands: switch to the loadout's weapon before anything reads the definition.
+            bool fromLoadout = false;
+            if (!string.IsNullOrEmpty(RaidLoadout.FamilyId))
+                foreach (WeaponDefinition alt in loadoutDefinitions)
+                    if (alt != null && alt.FamilyId == RaidLoadout.FamilyId) { definition = alt; fromLoadout = true; break; }
+            if (!fromLoadout && RaidLoadout.FamilyId == definition.FamilyId) fromLoadout = true;
+            if (definition.ModelPrefab != null)
+            {
+                modelPrefab = definition.ModelPrefab;
+                if (definition.ModelMaterial != null) modelMaterial = definition.ModelMaterial;
+            }
             _state = WeaponState.Loaded(definition.Stats, definition.StartingReserve, seed);
             var materials = new WeaponMaterials
             {
@@ -107,8 +122,16 @@ namespace Polykov.Weapons
             if (_model == null) _model = M1911Builder.Build(transform, steelMaterial, gripMaterial, gameObject.layer);
             ImpactEffects.Material = steelMaterial;
 
+            if (definition.ModularModel && _model.transform.childCount > 0)
+            {
+                _modular = _model.transform.GetChild(0).gameObject.AddComponent<ModularWeaponView>();
+                _modular.Initialize();
+            }
+
             _catalog = definition.BuildCatalog();
-            WeaponBuild saved = WeaponBuild.ParseOr(PlayerPrefs.GetString(BuildPrefsKey, null), definition.DefaultBuild);
+            WeaponBuild saved = fromLoadout
+                ? RaidLoadout.Build
+                : WeaponBuild.ParseOr(PlayerPrefs.GetString(BuildPrefsKey, null), definition.DefaultBuild);
             ApplyBuild(saved, false);
         }
 
@@ -121,13 +144,23 @@ namespace Polykov.Weapons
             if (_model == null || _catalog == null || definition == null) return;
             if (!LoadoutRules.Validate(build, _catalog).IsValid) build = definition.DefaultBuild;
             _build = build;
-            _effective = LoadoutRules.EffectiveStats(definition.Stats, build, _catalog);
+            WeaponBaseline baseline = definition.Baseline;
+            _effective = LoadoutRules.EffectiveStats(definition.Stats, build, _catalog, baseline);
             _stats = _effective.Stats;
             float ergonomics = Mathf.Max(_effective.Ergonomics, 10f);
-            _stats.AimTime = definition.Stats.AimTime * WeaponBaseline.M1911.Ergonomics / ergonomics;
+            _stats.AimTime = definition.Stats.AimTime * baseline.Ergonomics / ergonomics;
             float baseRecoil = definition.Stats.VerticalRecoil;
             RecoilMultiplier = baseRecoil > 0f ? _stats.VerticalRecoil / baseRecoil : 1f;
-            _lengthExtra = Mathf.Max(0f, _effective.LengthM - WeaponBaseline.M1911.LengthM);
+            _lengthExtra = Mathf.Max(0f, _effective.LengthM - baseline.LengthM);
+
+            if (_modular != null)
+            {
+                _modular.Apply(build, _catalog);
+                _muzzle = _modular.EffectiveMuzzle;
+                _model.SetMagazine(_modular.Mounted(AttachmentSlot.Magazine));
+                Persist(build, persist);
+                return;
+            }
 
             var ordered = new List<AttachmentDefinition>();
             foreach (AttachmentSlot slot in new[] { AttachmentSlot.Barrel, AttachmentSlot.Muzzle, AttachmentSlot.Grips, AttachmentSlot.Magazine })
@@ -138,6 +171,11 @@ namespace Polykov.Weapons
                     if (a != null && a.Id == id) { ordered.Add(a); break; }
             }
             _muzzle = _model.MountAttachments(ordered, gameObject.layer, outlineMaterial);
+            Persist(build, persist);
+        }
+
+        private void Persist(WeaponBuild build, bool persist)
+        {
             if (persist)
             {
                 PlayerPrefs.SetString(BuildPrefsKey, build.Serialize());
@@ -157,9 +195,10 @@ namespace Polykov.Weapons
 
         public void ToggleSuppressor()
         {
-            ApplyBuild(_build.Has("suppressor_45")
+            string suppressor = definition.FamilyId == "ak74n" ? "ak_suppressor" : "suppressor_45";
+            ApplyBuild(_build.Has(suppressor)
                 ? LoadoutRules.Remove(_build, AttachmentSlot.Muzzle, _catalog)
-                : LoadoutRules.Equip(_build, "suppressor_45", _catalog));
+                : LoadoutRules.Equip(_build, suppressor, _catalog));
         }
 
         private void OnEnable() => motor.Ticked += OnTick;

@@ -16,6 +16,25 @@ namespace Polykov.Player
 
         public bool Paused { get; private set; }
 
+        /// <summary>
+        /// A non-pausing overlay (raid inventory) owns the cursor: it is freed and gameplay input blocked, but the
+        /// game is not "paused" and Esc/click-to-resume are ignored here (the overlay handles them).
+        /// </summary>
+        public bool OverlayOpen
+        {
+            get => _overlay;
+            set
+            {
+                if (_overlay == value) return;
+                _overlay = value;
+                if (!value) _overlayClosedFrame = Time.frameCount;
+                Apply(_overlay || Paused);
+            }
+        }
+
+        private bool _overlay;
+        private int _overlayClosedFrame = -1;
+
         public event System.Action<bool> PausedChanged;
 
         private void OnEnable() => SetPaused(false);
@@ -23,9 +42,11 @@ namespace Polykov.Player
 
         private void Update()
         {
+            if (_overlay) return;
             if (input.PausePressedThisFrame)
             {
-                SetPaused(!Paused);
+                // The Esc that just closed an overlay must not also pause.
+                if (_overlayClosedFrame != Time.frameCount) SetPaused(!Paused);
             }
             else if (Paused && ClickToResume && UnityEngine.InputSystem.Mouse.current != null
                      && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
@@ -43,7 +64,7 @@ namespace Polykov.Player
         {
             bool changed = paused != Paused;
             Paused = paused;
-            Apply(paused);
+            Apply(paused || _overlay);
             if (changed) PausedChanged?.Invoke(paused);
         }
 

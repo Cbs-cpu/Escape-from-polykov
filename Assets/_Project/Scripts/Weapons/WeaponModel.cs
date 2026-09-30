@@ -158,7 +158,30 @@ namespace Polykov.Weapons
             (SlideName, "M1911_Slide"), (MagazineName, "M1911_Magazine"), (HammerName, "M1911_Hammer"),
             (TriggerName, "M1911_Trigger"), (SafetyName, "M1911_Safety"), (MuzzleName, "Socket_Muzzle"),
             (SightName, "Socket_RearSight"), (GripCenterName, "Socket_RightHand"),
+            // AK-74N (ArtSource/Tools/process_tripo_ak74n.py): the bolt carrier's charging handle plays the slide.
+            (SlideName, "AK74N_ChargingHandle"), (TriggerName, "AK74N_Trigger"), (SafetyName, "AK74N_Safety"),
         };
+
+        /// <summary>Swaps the magazine part (modular models show a different magazine per build).</summary>
+        public void SetMagazine(Transform magazine)
+        {
+            if (magazine == null || magazine == Magazine) return;
+            if (MagazineGrab != null && MagazineGrab.parent == Magazine) MagazineGrab.SetParent(magazine, true);
+            Magazine = magazine;
+            _magazineRest = Magazine.localPosition;
+            _magazineDown = ToParentSpace(Magazine, Quaternion.Euler(GripRake, 0f, 0f) * Vector3.down);
+            if (MagazineGrab == null)
+            {
+                // Rifle magazines: the support hand takes the magazine's lower half.
+                Renderer body = Magazine.GetComponent<Renderer>();
+                Vector3 basePoint = body != null
+                    ? new Vector3(body.bounds.center.x, Mathf.Lerp(body.bounds.min.y, body.bounds.center.y, 0.4f), body.bounds.center.z)
+                    : Magazine.position;
+                MagazineGrab = new GameObject(MagazineGrabName).transform;
+                MagazineGrab.position = basePoint + transform.TransformVector(new Vector3(-0.03f, 0f, 0f));
+                MagazineGrab.SetParent(Magazine, true);
+            }
+        }
 
         private Transform Find(string childName) => FindIn(transform, childName);
 
@@ -312,7 +335,7 @@ namespace Polykov.Weapons
                     if (grips != null) return CenterOf(grips);
                     return (GripCenter != null ? GripCenter : transform).position;
                 }
-                default:
+                case AttachmentSlot.Magazine:
                 {
                     // The base plate: the magazine's centre hides inside the grip, next to the grips anchor.
                     if (Magazine == null) return transform.position;
@@ -321,6 +344,9 @@ namespace Polykov.Weapons
                     Bounds b = renderer.bounds;
                     return new Vector3(b.center.x, b.min.y + 0.008f, b.center.z);
                 }
+                default:
+                    // Slots this model does not have (rifle furniture): no anchor of their own.
+                    return transform.position;
             }
         }
 

@@ -5,6 +5,12 @@
         "Polykov.Core",
         "Polykov.Movement",
         "Polykov.Player",
+        "Polykov.Input",
+        "Polykov.Weapons",
+        "Polykov.Weapons.Simulation",
+        "Polykov.Inventory.Simulation",
+        "Polykov.Lobby",
+        "Polykov.Lobby.Screens",
         "Unity.InputSystem",
         "Polykov.UI.Framework",
         "Polykov.UI.Framework.Unity"

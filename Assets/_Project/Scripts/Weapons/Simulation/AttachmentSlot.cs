@@ -7,5 +7,8 @@ namespace Polykov.Weapons
         Barrel = 1,
         Grips = 2,
         Magazine = 3,
+        Handguard = 4,
+        Stock = 5,
+        DustCover = 6,
     }
 }

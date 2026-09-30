@@ -4,18 +4,23 @@ namespace Polykov.Weapons
 {
     /// <summary>
     /// Which attachment (by id) sits in each slot. Empty/null = nothing. Value semantics: every change returns a new build.
-    /// Compact string form (PlayerPrefs / network): the four ids joined by '|' in <see cref="AttachmentSlot"/> order.
+    /// Compact string form (PlayerPrefs / network): the seven ids joined by '|' in <see cref="AttachmentSlot"/> order.
+    /// The legacy four-id form (Muzzle|Barrel|Grips|Magazine) still parses; the missing slots are empty.
     /// </summary>
     [Serializable]
     public struct WeaponBuild : IEquatable<WeaponBuild>
     {
-        public const int SlotCount = 4;
+        public const int SlotCount = 7;
+        private const int LegacySlotCount = 4;
         private const char Separator = '|';
 
         public string Muzzle;
         public string Barrel;
         public string Grips;
         public string Magazine;
+        public string Handguard;
+        public string Stock;
+        public string DustCover;
 
         /// <summary>Factory M1911: standard barrel, wood grips, 7-round magazine, no muzzle device.</summary>
         public static WeaponBuild M1911Default => new WeaponBuild
@@ -23,6 +28,18 @@ namespace Polykov.Weapons
             Barrel = "barrel_standard",
             Grips = "grips_wood",
             Magazine = "magazine_7",
+        };
+
+        /// <summary>Factory AK-74N: muzzle brake, standard barrel, polymer furniture, standard dust cover, 30-round magazine.</summary>
+        public static WeaponBuild AK74NDefault => new WeaponBuild
+        {
+            Muzzle = "ak_muzzle_brake",
+            Barrel = "ak_barrel_standard",
+            Handguard = "ak_hg_polymer",
+            DustCover = "ak_cover_standard",
+            Grips = "ak_grip_polymer",
+            Stock = "ak_stock_polymer",
+            Magazine = "ak_mag_30",
         };
 
         public string Get(AttachmentSlot slot)
@@ -34,6 +51,9 @@ namespace Polykov.Weapons
                 case AttachmentSlot.Barrel: id = Barrel; break;
                 case AttachmentSlot.Grips: id = Grips; break;
                 case AttachmentSlot.Magazine: id = Magazine; break;
+                case AttachmentSlot.Handguard: id = Handguard; break;
+                case AttachmentSlot.Stock: id = Stock; break;
+                case AttachmentSlot.DustCover: id = DustCover; break;
                 default: id = null; break;
             }
             return string.IsNullOrEmpty(id) ? null : id;
@@ -50,6 +70,9 @@ namespace Polykov.Weapons
                 case AttachmentSlot.Barrel: b.Barrel = id; break;
                 case AttachmentSlot.Grips: b.Grips = id; break;
                 case AttachmentSlot.Magazine: b.Magazine = id; break;
+                case AttachmentSlot.Handguard: b.Handguard = id; break;
+                case AttachmentSlot.Stock: b.Stock = id; break;
+                case AttachmentSlot.DustCover: b.DustCover = id; break;
             }
             return b;
         }
@@ -75,8 +98,8 @@ namespace Polykov.Weapons
             build = default;
             if (string.IsNullOrEmpty(text)) return false;
             var parts = text.Split(Separator);
-            if (parts.Length != SlotCount) return false;
-            for (int i = 0; i < SlotCount; i++) build = build.With((AttachmentSlot)i, parts[i].Trim());
+            if (parts.Length != SlotCount && parts.Length != LegacySlotCount) return false;
+            for (int i = 0; i < parts.Length; i++) build = build.With((AttachmentSlot)i, parts[i].Trim());
             return true;
         }
 
@@ -85,10 +108,11 @@ namespace Polykov.Weapons
             => TryParse(text, out var b) ? b : fallback;
 
         public bool Equals(WeaponBuild o)
-            => Get(AttachmentSlot.Muzzle) == o.Get(AttachmentSlot.Muzzle)
-            && Get(AttachmentSlot.Barrel) == o.Get(AttachmentSlot.Barrel)
-            && Get(AttachmentSlot.Grips) == o.Get(AttachmentSlot.Grips)
-            && Get(AttachmentSlot.Magazine) == o.Get(AttachmentSlot.Magazine);
+        {
+            for (int i = 0; i < SlotCount; i++)
+                if (Get((AttachmentSlot)i) != o.Get((AttachmentSlot)i)) return false;
+            return true;
+        }
 
         public override bool Equals(object obj) => obj is WeaponBuild o && Equals(o);
         public override int GetHashCode() => Serialize().GetHashCode();

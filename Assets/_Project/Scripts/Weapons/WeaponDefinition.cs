@@ -14,7 +14,16 @@ namespace Polykov.Weapons
         public WeaponStats Stats = WeaponStats.M1911;
         [Min(0)] public int StartingReserve = 28;
 
+        [Header("Model")]
+        [Tooltip("Model for this weapon (overrides the PlayerWeapon's own). Modular models carry every part variant in place.")]
+        public GameObject ModelPrefab;
+        public Material ModelMaterial;
+        [Tooltip("The model contains all part variants as children (AK74N.fbx); parts are shown per build, no attachment assets.")]
+        public bool ModularModel;
+
         [Header("Modding")]
+        [Tooltip("Weapon family id (WeaponFamilies): picks the handling baseline and the slot set.")]
+        public string FamilyId = WeaponFamilies.M1911Id;
         [Tooltip("Attachments available for this weapon.")]
         public AttachmentDefinition[] Attachments = System.Array.Empty<AttachmentDefinition>();
         [Tooltip("Factory configuration.")]
@@ -114,6 +123,23 @@ namespace Polykov.Weapons
         [Range(0f, 30f)] public float AdsFovReduction = 10f;
         [Range(0.2f, 1f)] public float AdsSensitivity = 0.8f;
 
+        /// <summary>Handling baseline of the weapon's family (M1911 if the id is unknown).</summary>
+        public WeaponBaseline Baseline
+        {
+            get
+            {
+                WeaponFamily family = WeaponFamilies.ById(FamilyId);
+                return family != null ? family.Baseline : WeaponBaseline.M1911;
+            }
+        }
+
+        /// <summary>This definition as a family: the asset's own stats, factory build and attachments on top of the family's slots.</summary>
+        public WeaponFamily ToFamily()
+        {
+            WeaponFamily basis = WeaponFamilies.ById(FamilyId) ?? WeaponFamilies.M1911();
+            return new WeaponFamily(basis.Id, basis.DisplayName, BuildCatalog(), DefaultBuild, basis.Baseline, Stats, basis.Slots);
+        }
+
         /// <summary>Pure-rules catalog built from <see cref="Attachments"/> (null entries skipped).</summary>
         public AttachmentCatalog BuildCatalog()
         {
@@ -121,6 +147,8 @@ namespace Polykov.Weapons
             if (Attachments != null)
                 foreach (var a in Attachments)
                     if (a != null) catalog.Add(a.Rules);
+            // Families modelled with a modular mesh have no attachment assets: use the family's pure catalogue.
+            if (catalog.All.Count == 0 && WeaponFamilies.ById(FamilyId) is WeaponFamily family) return family.Catalog;
             return catalog;
         }
 

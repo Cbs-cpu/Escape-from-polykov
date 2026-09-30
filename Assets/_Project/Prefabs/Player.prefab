@@ -291,6 +291,7 @@ GameObject:
   - component: {fileID: 8218634897002200831}
   - component: {fileID: 2805363465361043963}
   - component: {fileID: 4946354579058309595}
+  - component: {fileID: 4919611192687170700}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -464,6 +465,8 @@ MonoBehaviour:
   gripDarkMaterial: {fileID: 2100000, guid: f383dd6b8ca149ddb327e8d5604d0ca7, type: 2}
   brassMaterial: {fileID: 2100000, guid: c16a8dcef9214ff889919bc8a70b7e8d, type: 2}
   seed: 1
+  loadoutDefinitions:
+  - {fileID: 11400000, guid: ea31d334edbaabd478f62b0db634117a, type: 2}
 --- !u!114 &2857793633178794872
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -628,6 +631,21 @@ MonoBehaviour:
   droppedMagazinePrefab: {fileID: 3392027894695469421, guid: 1d54731799ada7842ae6300f8177f1a7, type: 3}
   casingPoolSize: 24
   magazinePoolSize: 4
+--- !u!114 &4919611192687170700
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c2d4f6a1b7e4093a5d8e0f1c3b96a27, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.UI::Polykov.UI.RaidInventory
+  input: {fileID: 4144601793569417081}
+  cursor: {fileID: 3173978429965695727}
+  definition: {fileID: 11400000, guid: 982d6e938cdf451ba5c842df53189bed, type: 2}
 --- !u!1001 &9187782566456404070
 PrefabInstance:
   m_ObjectHideFlags: 0

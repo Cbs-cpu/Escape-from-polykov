@@ -91,10 +91,16 @@ namespace Polykov.Weapons
         public static IReadOnlyList<string> Consequences(WeaponBuild build, AttachmentCatalog catalog, AttachmentSlot slot, string id)
             => Removed(build, Select(build, catalog, slot, id), slot);
 
+        public static StatRow[] Stats(WeaponFamily family, WeaponBuild current)
+            => Stats(family.BaseStats, family.Baseline, family.FactoryBuild, current, family.Catalog);
+
         public static StatRow[] Stats(WeaponStats baseStats, WeaponBuild factory, WeaponBuild current, AttachmentCatalog catalog)
+            => Stats(baseStats, WeaponBaseline.M1911, factory, current, catalog);
+
+        public static StatRow[] Stats(WeaponStats baseStats, WeaponBaseline baseline, WeaponBuild factory, WeaponBuild current, AttachmentCatalog catalog)
         {
-            EffectiveWeaponStats f = LoadoutRules.EffectiveStats(baseStats, factory, catalog);
-            EffectiveWeaponStats c = LoadoutRules.EffectiveStats(baseStats, current, catalog);
+            EffectiveWeaponStats f = LoadoutRules.EffectiveStats(baseStats, factory, catalog, baseline);
+            EffectiveWeaponStats c = LoadoutRules.EffectiveStats(baseStats, current, catalog, baseline);
             return new[]
             {
                 Row(StatKind.Ergonomics, f.Ergonomics, c.Ergonomics, higherIsBetter: true),

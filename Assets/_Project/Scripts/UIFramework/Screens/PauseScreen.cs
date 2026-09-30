@@ -22,7 +22,7 @@ namespace Polykov.UI.Framework
         {
             ("WASD", "Moverse"), ("Shift", "Esprintar"), ("Alt", "Andar"), ("Espacio", "Saltar"), ("C", "Agacharse"),
             ("Q / E", "Inclinarse"), ("Clic izq.", "Disparar"), ("Clic der.", "Apuntar"), ("R", "Recargar"), ("B", "Seguro"),
-            ("L", "Inspeccionar el arma"), ("T", "Comprobar recámara"), ("Esc", "Pausa"),
+            ("L", "Inspeccionar el arma"), ("T", "Comprobar recámara"), ("Tab", "Inventario"), ("Esc", "Pausa"),
             ("F1", "Depuración"), ("F2", "Perfil de movimiento"), ("F3", "Dianas"), ("F4", "Munición"),
             ("F6", "Simular red (F7 empujar, F8 marcador)"), ("F9", "Silenciador"), ("F10", "Desmembrar (pruebas)"),
         };

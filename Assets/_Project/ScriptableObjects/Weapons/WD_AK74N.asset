@@ -1,0 +1,101 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b03a7be079aa46fc9bd521e0f4909590, type: 3}
+  m_Name: WD_AK74N
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponDefinition
+  DisplayName: AK-74N
+  Stats:
+    FireMode: 1
+    RoundsPerMinute: 650
+    MagazineCapacity: 30
+    ChambersRound: 1
+    TacticalReloadTime: 2.4
+    EmptyReloadTime: 3.1
+    MagazineInsertPoint: 0.6
+    AimTime: 0.3
+    ReadyTime: 0.35
+    InspectTime: 4.2
+    ChamberCheckTime: 1.8
+    HipSpread: 2.4
+    AimSpread: 0.2
+    VerticalRecoil: 1.5
+    HorizontalRecoil: 0.7
+    RecoilVariance: 0.25
+    AimRecoilMultiplier: 0.7
+  StartingReserve: 90
+  ModelPrefab: {fileID: 919132149155446097, guid: 1684dc56a5eef57459ef24bf917f3552, type: 3}
+  ModelMaterial: {fileID: 2100000, guid: 2933404302020e049b1f8365714bcca4, type: 2}
+  ModularModel: 1
+  FamilyId: ak74n
+  Attachments: []
+  DefaultBuild:
+    Muzzle: ak_muzzle_brake
+    Barrel: ak_barrel_standard
+    Grips: ak_grip_polymer
+    Magazine: ak_mag_30
+    Handguard: ak_hg_polymer
+    Stock: ak_stock_polymer
+    DustCover: ak_cover_standard
+  Range: 400
+  CalibreMultiplier: 0.85
+  ImpactForce: 3.2
+  Damage: 50
+  HipPosition: {x: 0.135, y: -0.125, z: 0.5}
+  HipEuler: {x: 1, y: -1.5, z: 0}
+  AdsSightDistance: 0.34
+  LoweredPosition: {x: 0.11, y: -0.21, z: 0.42}
+  LoweredEuler: {x: 28, y: -35, z: -10}
+  ObstructedPosition: {x: 0.08, y: -0.17, z: 0.25}
+  ObstructedEuler: {x: -50, y: -12, z: 0}
+  ReloadPosition: {x: 0.07, y: -0.16, z: 0.45}
+  ReloadEuler: {x: -8, y: -22, z: 32}
+  InspectLeftPosition: {x: 0.02, y: -0.1, z: 0.5}
+  InspectLeftEuler: {x: -8, y: -55, z: 18}
+  InspectRightPosition: {x: 0.05, y: -0.12, z: 0.48}
+  InspectRightEuler: {x: -5, y: 40, z: -30}
+  ChamberCheckPosition: {x: 0.04, y: -0.11, z: 0.46}
+  ChamberCheckEuler: {x: -6, y: -20, z: 45}
+  SlideGrabPosition: {x: -0.035, y: -0.035, z: 0.07}
+  SlideGrabForward: {x: 0.35, y: 0.85, z: 0.2}
+  SlideGrabUp: {x: 0, y: -0.1, z: 1}
+  ChamberCheckSlide: 0.35
+  RightHandPosition: {x: 0.03, y: -0.118, z: -0.37}
+  RightHandForward: {x: -0.1, y: 0.1, z: 1}
+  RightHandUp: {x: 0, y: 0.93, z: 0.36}
+  LeftHandPosition: {x: -0.035, y: -0.085, z: -0.03}
+  LeftHandForward: {x: 0.6, y: 0.45, z: 0.65}
+  LeftHandUp: {x: 0, y: 0.25, z: 1}
+  MagazineGrabForward: {x: 0.5, y: 0.67, z: 0.53}
+  MagazineGrabUp: {x: 0, y: -0.02, z: 1}
+  RightThumbForward: {x: 0, y: -0.05, z: 1}
+  LeftThumbForward: {x: 0, y: -0.15, z: 1}
+  SwayAmount: 0.6
+  MaxSway: 7
+  SwaySharpness: 10
+  SwayStiffness: 150
+  SwayDamping: 0.45
+  InertiaAmount: 0.0009
+  MaxInertia: 0.035
+  BreathAmplitude: 0.0016
+  BreathRate: 0.27
+  BobAmount: 0.012
+  AdsSwayMultiplier: 0.25
+  Length: 0.85
+  KickBack: 0.55
+  KickRotation: 160
+  KickSpring: 320
+  KickDamping: 0.7
+  CameraRecoilReturn: 0.8
+  CameraKickTime: 0.05
+  CameraReturnSpeed: 7
+  AdsFovReduction: 12
+  AdsSensitivity: 0.8

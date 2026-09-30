@@ -20,6 +20,9 @@ namespace Polykov.Lobby
         [SerializeField] private GameObject weaponModelPrefab;
         [SerializeField] private Material weaponMaterial;
         [SerializeField] private Material outlineMaterial;
+        [Tooltip("AK-74N model with every modding variant in place (Art/Weapons/AK74N/AK74N.fbx).")]
+        [SerializeField] private GameObject akModelPrefab;
+        [SerializeField] private Material akMaterial;
         [SerializeField] private GameObject characterModel;
         [SerializeField] private RuntimeAnimatorController characterController;
         [SerializeField] private Material characterMaterial;
@@ -62,10 +65,13 @@ namespace Polykov.Lobby
 
             _stage = new LobbyStage(definition, weaponModelPrefab, weaponMaterial, outlineMaterial, characterModel,
                 characterController, characterMaterial);
+            _stage.AddModularWeapon("ak74n", akModelPrefab, akMaterial);
             _stage.BuildFloor(characterMaterial, stageCamera != null ? stageCamera.backgroundColor : Color.black);
             _stage.BuildBackdrop(characterMaterial);
             BuildLights();
 
+            // The pistol family comes from the asset (its stats, attachments and factory build); the rest use the code defaults.
+            WeaponFamilies.Register(definition.ToFamily());
             var db = ItemDatabase.Default();
             Profile profile = ProfileStore.Load(db);
             if (profile == null)
@@ -76,11 +82,12 @@ namespace Polykov.Lobby
                 ProfileStore.Save(profile);
             }
 
-            _icons = new UnityItemIcons(definition, weaponModelPrefab, weaponMaterial, outlineMaterial);
+            if (StarterKit.GrantMissing(profile)) ProfileStore.Save(profile);
+
+            _icons = new UnityItemIcons(definition, weaponModelPrefab, weaponMaterial, outlineMaterial, akModelPrefab, akMaterial);
             _ctx = new LobbyContext
             {
-                Profile = profile, Db = db, Catalog = _stage.Catalog, BaseStats = definition.Stats, FactoryBuild = definition.DefaultBuild,
-                Icons = _icons, SlotAnchor = SlotAnchor,
+                Profile = profile, Db = db, Icons = _icons, SlotAnchor = SlotAnchor,
             };
             _screens = new LobbyScreens(_ctx);
 
@@ -160,13 +167,14 @@ namespace Polykov.Lobby
         {
             _displayed = weapon;
             _displayedBuild = weapon?.Build;
-            _stage.Mount(weapon != null ? WeaponParts.BuildOf(weapon, definition.DefaultBuild) : definition.DefaultBuild);
+            WeaponFamily family = _ctx.FamilyOf(weapon);
+            _stage.Mount(family, weapon != null ? WeaponParts.BuildOf(weapon, family.FactoryBuild) : family.FactoryBuild);
         }
 
         private UiVec? SlotAnchor(AttachmentSlot slot)
         {
-            if (stageCamera == null || _stage.Weapon == null || _screens == null || _screens.View != LobbyView.Armorer) return null;
-            Vector3 screen = stageCamera.WorldToScreenPoint(_stage.Weapon.AnchorFor(slot));
+            if (stageCamera == null || _stage.Weapon == null || !_stage.ShowingModel || _screens == null || _screens.View != LobbyView.Armorer) return null;
+            Vector3 screen = stageCamera.WorldToScreenPoint(_stage.AnchorFor(slot));
             if (screen.z <= 0f) return null;
             return _surface.FromScreen(screen);
         }
@@ -212,6 +220,14 @@ namespace Polykov.Lobby
 
         private void EnterGame()
         {
+            // What goes into the raid: the equipped primary (Tarkov: long gun in hands), else the holster pistol.
+            Item inHands = _ctx.Profile.Equipped(EquipSlot.Primary) ?? _ctx.Profile.Equipped(EquipSlot.Holster);
+            if (inHands != null)
+            {
+                WeaponFamily family = _ctx.FamilyOf(inHands);
+                RaidLoadout.Set(family.Id, WeaponParts.BuildOf(inHands, family.FactoryBuild));
+            }
+            else RaidLoadout.Clear();
             if (_loading) return;
             if (!Application.CanStreamedLevelBeLoaded(gameScene))
             {

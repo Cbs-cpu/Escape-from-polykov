@@ -279,6 +279,43 @@ namespace Polykov.Lobby
                     p.Poly(MetalDark, 0.66f, 0.46f, 0.96f, 0.46f, 0.9f, 0.62f, 0.7f, 0.62f);
                     return;
             }
+            // Rifle, its parts and 5.45 ammunition: simple silhouettes until they get rendered icons.
+            if (def.Id == "ak74n")
+            {
+                p.Poly(Wood, 0.08f, 0.52f, 1.3f, 0.5f, 1.3f, 1.0f, 0.2f, 1.18f);
+                p.Rect(MetalDark, 1.3f, 0.46f, 1.9f, 0.5f);
+                p.Rect(Metal, 1.34f, 0.5f, 1.8f, 0.1f);
+                p.Rect(Wood, 3.2f, 0.52f, 1.05f, 0.4f);
+                p.Rect(MetalDark, 4.25f, 0.6f, 0.65f, 0.14f);
+                p.Rect(MetalLight, 4.25f, 0.58f, 0.65f, 0.05f);
+                p.Poly(MetalDark, 2.1f, 0.96f, 2.55f, 0.96f, 2.75f, 1.75f, 2.45f, 1.8f);
+                p.Poly(Wood, 1.5f, 0.96f, 1.85f, 0.96f, 1.8f, 1.5f, 1.6f, 1.5f);
+                return;
+            }
+            if (def.Category == ItemCategory.Ammo)
+            {
+                Bullets(p, Metal);
+                return;
+            }
+            if (def.Category == ItemCategory.Magazine)
+            {
+                p.Poly(MetalDark, 0.34f, 0.1f, 0.66f, 0.1f, 0.74f, 1.9f, 0.42f, 1.9f);
+                p.Poly(Metal, 0.38f, 0.1f, 0.6f, 0.1f, 0.66f, 1.84f, 0.44f, 1.84f);
+                p.Rect(Black, 0.4f, 1.86f, 0.38f, 0.08f);
+                return;
+            }
+            if (def.Category == ItemCategory.WeaponPart)
+            {
+                bool wood = def.Id.Contains("wood");
+                UiColor body = wood ? Wood : MetalDark, light = wood ? WoodLight : Metal;
+                if (p.W >= p.H)
+                {
+                    p.Oct(body, 0.12f, p.H * 0.5f - 0.16f, p.W - 0.24f, 0.32f, 0.06f);
+                    p.Rect(light, 0.16f, p.H * 0.5f - 0.13f, p.W - 0.32f, 0.08f);
+                }
+                else p.Oct(body, p.W * 0.5f - 0.16f, 0.12f, 0.32f, p.H - 0.24f, 0.06f);
+                return;
+            }
             // Generic crate by category.
             p.Oct(MetalDark, 0.15f, 0.2f, p.W - 0.3f, p.H - 0.4f, 0.08f);
             p.Oct(Metal, 0.15f, 0.2f, p.W - 0.3f, (p.H - 0.4f) * 0.8f, 0.08f);

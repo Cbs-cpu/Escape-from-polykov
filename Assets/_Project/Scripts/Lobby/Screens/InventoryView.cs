@@ -19,7 +19,7 @@ namespace Polykov.Lobby
         private readonly LobbyContext _ctx;
         private readonly LobbyRequests _req;
 
-        private enum ZoneKind : byte { Grid, Slot }
+        private enum ZoneKind : byte { Grid, Slot, Card }
 
         private struct Zone
         {
@@ -28,6 +28,9 @@ namespace Polykov.Lobby
             public EquipSlot Slot;
             public UiRect Rect;
             public UiRect Clip;
+            /// <summary>Card zones: the weapon whose slot card this is, and the slot.</summary>
+            public Item Weapon;
+            public AttachmentSlot CardSlot;
         }
 
         private sealed class Window
@@ -52,6 +55,18 @@ namespace Polykov.Lobby
         private bool _dragRot;
         private UiVec _grab;
 
+        // Weapon modding by drag: a part taken out of a slot card is a stand-in item (never in the profile).
+        private readonly Dictionary<ItemDef, Item> _proxies = new Dictionary<ItemDef, Item>();
+        private Item _detachWeapon;
+        private AttachmentSlot _detachSlot;
+        // Cached "can this dragged part be mounted on that weapon" (recomputed only when the pair or the build changes).
+        private Item _mountWeapon, _mountPart;
+        private string _mountBuild;
+        private bool _mountOk;
+        private string _mountReason;
+        private AttachmentSlot _mountSlot;
+        private readonly Dictionary<int, string> _capacityText = new Dictionary<int, string>();
+
         // Context menu
         private Item _menuItem;
         private UiVec _menuPos;
@@ -64,6 +79,8 @@ namespace Polykov.Lobby
 
         /// <summary>Raised by "Modificar" on a weapon.</summary>
         public Action<Item> OpenArmorer;
+        /// <summary>In a raid the stash is out of reach: its panel is drawn disabled and takes no items.</summary>
+        public bool RaidMode;
         /// <summary>Screen rect where the 3D character is shown (the host frames its camera on it).</summary>
         public UiRect CharacterArea { get; private set; }
 
@@ -94,7 +111,8 @@ namespace Polykov.Lobby
 
             DrawGear(ui, gear);
             DrawContainers(ui, cont);
-            DrawStash(ui, stash);
+            if (RaidMode) DrawStashLocked(ui, stash);
+            else DrawStash(ui, stash);
             HandlePressAndDrag(ui);
 
             foreach (Window w in _windows)
@@ -118,7 +136,7 @@ namespace Polykov.Lobby
             if (ui.Input.KeyPressed(UiKey.Escape) && (_menuItem != null || _windows.Count > 0 || _drag != null))
             {
                 ui.Input.ConsumeKey(UiKey.Escape);
-                if (_drag != null) _drag = null;
+                if (_drag != null) EndDrag();
                 else if (_menuItem != null) _menuItem = null;
                 else _windows.RemoveAt(_windows.Count - 1);
             }
@@ -262,6 +280,12 @@ namespace Polykov.Lobby
 
         // ================================================================== stash panel
 
+        private void DrawStashLocked(Ui ui, UiRect r)
+        {
+            UiRect inner = ui.Panel(r, "ALIJO", "no disponible");
+            ui.Label(inner, "ALIJO NO DISPONIBLE EN INCURSIÓN", UiTheme.SizeLabel, UiFont.Bold, UiAlign.Center, UiTheme.TextDim);
+        }
+
         private void DrawStash(Ui ui, UiRect r)
         {
             int used = P.Stash.UsedRows();
@@ -369,11 +393,17 @@ namespace Polykov.Lobby
             if (hover) ui.Tooltip(item.Def.Name);
         }
 
-        private static string InfoText(Item item)
+        private string InfoText(Item item)
         {
             if (item.Def.Stackable) return item.Def.Category == ItemCategory.Money ? Format.Thousands(item.Count) : item.Count.ToString();
-            if (item.Def.Category == ItemCategory.Magazine) return "7/7";
+            if (item.Def.Category == ItemCategory.Magazine && item.Def.Capacity > 0) return CapacityText(item.Def.Capacity);
             return null;
+        }
+
+        private string CapacityText(int capacity)
+        {
+            if (!_capacityText.TryGetValue(capacity, out string text)) _capacityText[capacity] = text = capacity + "/" + capacity;
+            return text;
         }
 
         // ================================================================== interaction
@@ -405,6 +435,7 @@ namespace Polykov.Lobby
                 return;
             }
             _pressed = item;
+            _detachWeapon = null;
             _pressPos = ui.Input.Mouse;
             bool inGrid = item.Location != null && !item.Location.IsSlot;
             _pressGrab = inGrid ? ui.Input.Mouse - new UiVec(r.X, r.Y) : new UiVec(C * 0.5f, C * 0.5f);
@@ -414,7 +445,7 @@ namespace Polykov.Lobby
         {
             if (_pressed != null && _drag == null)
             {
-                if (!ui.Input.Down(0)) _pressed = null;
+                if (!ui.Input.Down(0)) { _pressed = null; _detachWeapon = null; }
                 else if ((ui.Input.Mouse - _pressPos).Length > 5f)
                 {
                     _drag = _pressed;
@@ -438,6 +469,11 @@ namespace Polykov.Lobby
                 Zone z = _zones[i];
                 if (!z.Rect.Contains(mouse) || !z.Clip.Contains(mouse)) continue;
                 zone = z;
+                if (z.Kind == ZoneKind.Card)
+                {
+                    target = default;
+                    return true;
+                }
                 if (z.Kind == ZoneKind.Slot)
                 {
                     target = MoveTarget.ToSlot(z.Slot);
@@ -474,10 +510,30 @@ namespace Polykov.Lobby
                 foreach (UiRect w in _windowRects) if (w.Contains(new UiVec(zone.Rect.X + 1f, zone.Rect.Y + 1f))) zoneInWindow = true;
                 has = zoneInWindow;
             }
-            MoveResult check = has ? P.Check(_drag, target) : MoveResult.NotAllowed;
-            bool ok = check == MoveResult.Ok || check == MoveResult.Merged || check == MoveResult.Swapped;
+            bool detaching = _detachWeapon != null;
+            // Mounting: a part dragged over a weapon (in a grid or an equipment slot) or over one of that weapon's slot cards.
+            Item mountWeapon = null;
+            bool mountOk = false;
+            string mountReason = null;
+            if (has && !detaching)
+            {
+                mountWeapon = zone.Kind == ZoneKind.Card ? zone.Weapon : WeaponUnder(zone, mouse);
+                if (mountWeapon != null)
+                    mountOk = CheckMount(mountWeapon, zone.Kind == ZoneKind.Card ? zone.CardSlot : (AttachmentSlot?)null, out mountReason);
+            }
 
-            if (has)
+            MoveResult check = has && zone.Kind != ZoneKind.Card ? P.Check(_drag, target) : MoveResult.NotAllowed;
+            bool ok = check == MoveResult.Ok || check == MoveResult.Merged || check == MoveResult.Swapped;
+            if (detaching) ok = ok && zone.Kind == ZoneKind.Grid;
+
+            if (mountWeapon != null)
+            {
+                UiRect hit = zone.Kind == ZoneKind.Card || !_itemRects.TryGetValue(mountWeapon, out UiRect wr) ? zone.Rect : wr;
+                ui.Fill(hit, (mountOk ? UiTheme.Good : UiTheme.Bad).WithAlpha(0.35f));
+                ui.Frame(hit, mountOk ? UiTheme.Good : UiTheme.Bad, 2f);
+                if (!mountOk && mountReason != null) ui.Tooltip(mountReason);
+            }
+            else if (has && zone.Kind != ZoneKind.Card)
             {
                 UiColor tint = ok ? UiTheme.Good.WithAlpha(0.35f) : UiTheme.Bad.WithAlpha(0.35f);
                 if (zone.Kind == ZoneKind.Slot)
@@ -495,6 +551,11 @@ namespace Polykov.Lobby
                     ui.Draw.PopClip();
                 }
             }
+            else if (has && detaching)
+            {
+                ui.Fill(zone.Rect, UiTheme.Bad.WithAlpha(0.35f));
+                ui.Frame(zone.Rect, UiTheme.Bad, 2f);
+            }
 
             // The item under the cursor.
             float iw = GridContainer.FootprintW(_drag.Def, _dragRot) * C, ih = GridContainer.FootprintH(_drag.Def, _dragRot) * C;
@@ -503,8 +564,36 @@ namespace Polykov.Lobby
 
             if (!ui.Input.Released(0)) return;
             Item dragged = _drag;
-            _drag = null;
+            Item detachFrom = _detachWeapon;
+            AttachmentSlot detachSlot = _detachSlot;
+            EndDrag();
             if (!has) return;
+
+            string reason;
+            if (detachFrom != null)
+            {
+                if (zone.Kind != ZoneKind.Grid) { Say(ui, "Suéltala en una cuadrícula del inventario"); return; }
+                if (!ok) { Say(ui, "No cabe"); return; }
+                if (WeaponParts.TryDetach(P, detachFrom, detachSlot, _ctx.FamilyOf(detachFrom), target, out reason))
+                {
+                    _req.SaveProfile = true;
+                    _req.BuildChanged = detachFrom;
+                }
+                else Say(ui, reason);
+                return;
+            }
+            if (mountWeapon != null)
+            {
+                if (!mountOk) { Say(ui, mountReason); return; }
+                if (WeaponParts.TryMountItem(P, mountWeapon, dragged, _ctx.FamilyOf(mountWeapon), out reason))
+                {
+                    _req.SaveProfile = true;
+                    _req.BuildChanged = mountWeapon;
+                }
+                else Say(ui, reason);
+                return;
+            }
+            if (zone.Kind == ZoneKind.Card) { Say(ui, "Eso no va en una ranura del arma"); return; }
             MoveResult result = P.Move(dragged, target);
             if (result == MoveResult.Ok || result == MoveResult.Merged || result == MoveResult.Swapped)
             {
@@ -514,6 +603,46 @@ namespace Polykov.Lobby
             Say(ui, result == MoveResult.WrongSlot ? "No va en esa ranura"
                 : result == MoveResult.IntoItself ? "No puedes meter un contenedor dentro de sí mismo"
                 : result == MoveResult.NotAllowed ? "No se puede guardar ahí" : "No cabe");
+        }
+
+        private void EndDrag()
+        {
+            _drag = null;
+            _detachWeapon = null;
+            _mountWeapon = null;
+            _mountPart = null;
+        }
+
+        /// <summary>The weapon under the mouse when the dragged item is a weapon part (grid cell or equipment slot), else null.</summary>
+        private Item WeaponUnder(Zone zone, UiVec mouse)
+        {
+            if (_drag.Def.AttachmentId == null) return null;
+            Item under = null;
+            if (zone.Kind == ZoneKind.Slot) under = P.Equipped(zone.Slot);
+            else if (zone.Kind == ZoneKind.Grid)
+                under = zone.Grid.ItemAt((int)Math.Floor((mouse.X - zone.Rect.X) / C), (int)Math.Floor((mouse.Y - zone.Rect.Y) / C));
+            return under != null && under.Def.Category == ItemCategory.Weapon && under.Def.WeaponId != null ? under : null;
+        }
+
+        /// <summary>Pure check (cached per weapon / part / build) that the dragged part can be mounted, optionally onto a given card slot.</summary>
+        private bool CheckMount(Item weapon, AttachmentSlot? cardSlot, out string reason)
+        {
+            if (weapon != _mountWeapon || _drag != _mountPart || weapon.Build != _mountBuild)
+            {
+                _mountWeapon = weapon;
+                _mountPart = _drag;
+                _mountBuild = weapon.Build;
+                WeaponFamily family = _ctx.FamilyOf(weapon);
+                _mountOk = WeaponParts.CanMount(P, weapon, _drag, family, out _mountReason);
+                if (family.Catalog.TryGet(_drag.Def.AttachmentId, out AttachmentRules rules)) _mountSlot = rules.Slot;
+            }
+            reason = _mountReason;
+            if (_mountOk && cardSlot.HasValue && cardSlot.Value != _mountSlot)
+            {
+                reason = "No va en esa ranura.";
+                return false;
+            }
+            return _mountOk;
         }
 
         private void DrawGhost(Ui ui, UiRect r)
@@ -614,7 +743,7 @@ namespace Polykov.Lobby
             if (win.Inspect)
             {
                 w = 460f;
-                h = 330f + item.Def.Properties.Length * 22f + (item.Def.Category == ItemCategory.Weapon ? 6 * 22f + 60f : 0f);
+                h = 330f + item.Def.Properties.Length * 22f + (item.Def.Category == ItemCategory.Weapon ? 6 * 22f + 60f + CardsHeight(_ctx.FamilyOf(item)) : 0f);
             }
             else
             {
@@ -692,16 +821,86 @@ namespace Polykov.Lobby
             }
             if (item.Def.Category != ItemCategory.Weapon) return;
 
-            WeaponBuild build = WeaponParts.BuildOf(item, _ctx.FactoryBuild);
-            foreach (StatRow row in ArmorerModel.Stats(_ctx.BaseStats, _ctx.FactoryBuild, build, _ctx.Catalog))
+            WeaponFamily family = _ctx.FamilyOf(item);
+            WeaponBuild build = WeaponParts.BuildOf(item, family.FactoryBuild);
+            foreach (StatRow row in ArmorerModel.Stats(family, build))
             {
                 ui.Label(new UiRect(r.X, y, r.W, 20f), ArmorerView.StatName(row.Kind), UiTheme.SizeBody, UiFont.Regular, UiAlign.Left, UiTheme.TextDim);
                 ui.Label(new UiRect(r.X, y, r.W, 20f), ArmorerView.FormatStat(row.Kind, row.Current), UiTheme.SizeBody, UiFont.Bold, UiAlign.Right,
                     row.Verdict == StatVerdict.Better ? UiTheme.Good : row.Verdict == StatVerdict.Worse ? UiTheme.Bad : UiTheme.Text);
                 y += 22f;
             }
+            DrawSlotCards(ui, item, family, build, r.X, y + 8f, r.W);
             if (ui.Button(new UiRect(r.X, r.YMax - 40f, r.W, 40f), "MODIFICAR", ButtonStyle.Normal, null, UiTheme.SizeBody))
                 OpenArmorer?.Invoke(item);
+        }
+
+        // ------------------------------------------------------------------ weapon slot cards (Tarkov "modding" cards)
+
+        private const int CardCols = 3;
+        private const float CardH = 76f, CardGap = 8f, CardsTitleH = 28f;
+
+        private static float CardsHeight(WeaponFamily family)
+        {
+            int rows = (family.Slots.Length + CardCols - 1) / CardCols;
+            return CardsTitleH + rows * (CardH + CardGap) + 8f;
+        }
+
+        /// <summary>
+        /// One card per slot of the weapon showing the mounted part. Drop a compatible part on a card to mount it; drag the
+        /// part of an optional slot (muzzle device) out of its card to a grid to take it off.
+        /// </summary>
+        private void DrawSlotCards(Ui ui, Item weapon, WeaponFamily family, WeaponBuild build, float x, float y, float w)
+        {
+            ui.SectionTitle(new UiRect(x, y, w, 22f), "PIEZAS MONTADAS");
+            y += CardsTitleH;
+            float cw = (w - (CardCols - 1) * CardGap) / CardCols;
+            for (int i = 0; i < family.Slots.Length; i++)
+            {
+                var rect = new UiRect(x + (i % CardCols) * (cw + CardGap), y + (i / CardCols) * (CardH + CardGap), cw, CardH);
+                DrawCard(ui, weapon, family, family.Slots[i], build.Get(family.Slots[i]), rect);
+            }
+        }
+
+        private void DrawCard(Ui ui, Item weapon, WeaponFamily family, AttachmentSlot slot, string partId, UiRect r)
+        {
+            ItemDef def = partId == null ? null : _ctx.Db.ForAttachment(partId);
+            _zones.Add(new Zone { Kind = ZoneKind.Card, Weapon = weapon, CardSlot = slot, Rect = r, Clip = r });
+            ui.Fill(r, UiColor.Hex(0x0E0F10, 0.92f));
+            if (def == null) ui.Stripes(r, UiTheme.Stripe);
+            bool hover = def != null && _drag == null && ui.Hover(r);
+            ui.Frame(r, hover ? UiTheme.Highlight : UiTheme.Border);
+            ui.Label(new UiRect(r.X + 6f, r.Y + 3f, r.W - 12f, 16f), ArmorerView.SlotName(slot, family), 12, UiFont.Bold, UiAlign.Left,
+                def != null ? UiTheme.TextDim : UiColor.Hex(0x66665F));
+            if (def == null) return;
+
+            Item proxy = Proxy(def);
+            UiImage icon = _ctx.Icons.Get(proxy, false);
+            if (icon != null)
+            {
+                var box = new UiRect(r.X + 6f, r.Y + 20f, r.W - 12f, r.H - 38f);
+                float s = Math.Min(box.W / icon.Width, box.H / icon.Height);
+                ui.Draw.Image(UiRect.Around(box.Center, icon.Width * s, icon.Height * s), icon, new UiColor(1f, 1f, 1f, _drag == proxy ? 0.3f : 1f));
+            }
+            ui.Label(new UiRect(r.X + 6f, r.YMax - 18f, r.W - 12f, 15f), def.ShortName, 12, UiFont.Regular, UiAlign.Right, UiTheme.TextBright);
+            if (hover) ui.Tooltip(ArmorerModel.IsOptional(slot) ? def.Name : def.Name + " (imprescindible)");
+            if (hover && ArmorerModel.IsOptional(slot) && ui.Input.Pressed(0))
+            {
+                ui.Input.Consume(0);
+                _menuItem = null;
+                _pressed = proxy;
+                _detachWeapon = weapon;
+                _detachSlot = slot;
+                _pressPos = ui.Input.Mouse;
+                _pressGrab = new UiVec(C * 0.5f, C * 0.5f);
+            }
+        }
+
+        /// <summary>Stand-in item of a part type (for icons and for dragging a mounted part); never added to the profile.</summary>
+        private Item Proxy(ItemDef def)
+        {
+            if (!_proxies.TryGetValue(def, out Item item)) _proxies[def] = item = new Item(-1, def);
+            return item;
         }
 
         public static string CategoryName(ItemCategory c)
