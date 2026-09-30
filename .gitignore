@@ -32,3 +32,9 @@ sysinfo.txt
 crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 .DS_Store
+
+# Offline tooling (Tools/): keep project files, ignore build output
+!/Tools/**/*.csproj
+/Tools/**/bin/
+/Tools/**/obj/
+/Tools/CompileCheck/.gen/

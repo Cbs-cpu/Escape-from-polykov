@@ -3,34 +3,55 @@ using UnityEngine;
 
 namespace Polykov.Player
 {
-    /// <summary>Locks the cursor while playing; Pause releases it and blocks gameplay input. Click to recapture.</summary>
+    /// <summary>
+    /// Owns the paused/playing state of the local player: locks the cursor while playing, releases it and
+    /// blocks gameplay input while paused. Pause toggles; clicking the game view resumes unless a menu is open.
+    /// </summary>
     public sealed class PlayerCursor : MonoBehaviour
     {
         [SerializeField] private PlayerInputReader input;
 
-        private void OnEnable() => SetLocked(true);
-        private void OnDisable() => SetLocked(false);
+        /// <summary>When false, a click does not resume (a menu handles its own resume button).</summary>
+        public bool ClickToResume { get; set; } = true;
+
+        public bool Paused { get; private set; }
+
+        public event System.Action<bool> PausedChanged;
+
+        private void OnEnable() => SetPaused(false);
+        private void OnDisable() => Apply(false);
 
         private void Update()
         {
             if (input.PausePressedThisFrame)
             {
-                SetLocked(false);
+                SetPaused(!Paused);
             }
-            else if (!IsLocked && UnityEngine.InputSystem.Mouse.current != null
+            else if (Paused && ClickToResume && UnityEngine.InputSystem.Mouse.current != null
                      && UnityEngine.InputSystem.Mouse.current.leftButton.wasPressedThisFrame)
             {
-                SetLocked(true);
+                SetPaused(false);
+            }
+            else if (!Paused && Cursor.lockState != CursorLockMode.Locked && Application.isFocused)
+            {
+                // The editor can steal the lock (Escape in the Game view, alt-tab): treat it as a pause.
+                SetPaused(true);
             }
         }
 
-        private bool IsLocked => Cursor.lockState == CursorLockMode.Locked;
-
-        private void SetLocked(bool locked)
+        public void SetPaused(bool paused)
         {
-            Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
-            Cursor.visible = !locked;
-            if (input != null) input.Blocked = !locked;
+            bool changed = paused != Paused;
+            Paused = paused;
+            Apply(paused);
+            if (changed) PausedChanged?.Invoke(paused);
+        }
+
+        private void Apply(bool paused)
+        {
+            Cursor.lockState = paused ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = paused;
+            if (input != null) input.Blocked = paused;
         }
     }
 }

@@ -29,12 +29,19 @@ namespace Polykov.Player
         [Tooltip("Max drop the character snaps down to stay glued to stairs and slope crests.")]
         [SerializeField, Range(0f, 0.6f)] private float groundSnapDistance = 0.4f;
 
+        [Header("Crouch")]
+        [Tooltip("Capsule height when fully crouched (standing height comes from the CharacterController).")]
+        [SerializeField, Range(0.9f, 1.6f)] private float crouchHeight = 1.3f;
+
         private CharacterController _controller;
         private MovementState _state;
         private GroundInfo _ground;
         private float _accumulator;
         private Vector3 _previousPosition;
         private Vector3 _currentPosition;
+        private MovementTuning _tuningOverride;
+        private bool _hasTuningOverride;
+        private float _standingHeight;
 
         /// <summary>Raised on the tick the character jumps (presentation hooks: animation, audio later).</summary>
         public event System.Action Jumped;
@@ -43,8 +50,31 @@ namespace Polykov.Player
 
         public MovementState State => _state;
         public GroundInfo Ground => _ground;
-        public MovementTuning Tuning => settings.Tuning;
+        /// <summary>Active tuning: the settings asset, unless a runtime override (preset) is set.</summary>
+        public MovementTuning Tuning => _hasTuningOverride ? _tuningOverride : settings.Tuning;
+        public bool HasTuningOverride => _hasTuningOverride;
+        /// <summary>Name of the active tuning, for debug UI.</summary>
+        public string TuningLabel { get; private set; } = "Asset";
+
+        /// <summary>Runs the motor with this tuning instead of the asset (does not modify the asset).</summary>
+        public void SetTuningOverride(in MovementTuning tuning, string label)
+        {
+            _tuningOverride = tuning;
+            _hasTuningOverride = true;
+            TuningLabel = label;
+        }
+
+        public void ClearTuningOverride()
+        {
+            _hasTuningOverride = false;
+            TuningLabel = "Asset";
+        }
         public uint Tick { get; private set; }
+        public float StandingHeight => _standingHeight;
+        /// <summary>No room to stand up this tick (debug/UI).</summary>
+        public bool CeilingBlocked { get; private set; }
+        /// <summary>Current capsule height (shrinks while crouching).</summary>
+        public float CurrentHeight => _controller.height;
         public float TickInterval => 1f / tickRate;
         /// <summary>Smooth position for presentation (camera, visuals), between the last two ticks.</summary>
         public Vector3 InterpolatedPosition { get; private set; }
@@ -53,6 +83,7 @@ namespace Polykov.Player
         {
             _controller = GetComponent<CharacterController>();
             _controller.slopeLimit = settings.Tuning.MaxWalkableSlope;
+            _standingHeight = _controller.height;
             _previousPosition = _currentPosition = InterpolatedPosition = transform.position;
             _ground = ProbeGround();
         }
@@ -78,8 +109,11 @@ namespace Polykov.Player
             bool wasGrounded = _ground.Grounded;
 
             var tickInput = new MovementInput(input.Move, look.Yaw, input.SprintHeld, input.WalkHeld,
-                input.ConsumeJump(), input.Lean);
-            _state = MovementMotor.Step(_state, tickInput, _ground, settings.Tuning, dt);
+                input.ConsumeJump(), input.Lean, input.Crouch);
+            CeilingBlocked = IsCeilingBlocked();
+            _ground = _ground.WithCeiling(CeilingBlocked);
+            _state = MovementMotor.Step(_state, tickInput, _ground, Tuning, dt);
+            SetCapsuleHeight(Mathf.Lerp(_standingHeight, crouchHeight, _state.Crouch));
             if (_state.JustJumped) Jumped?.Invoke();
             if (_state.JustLanded) Landed?.Invoke(_state.LandingImpact);
 
@@ -104,6 +138,26 @@ namespace Polykov.Player
 
             _currentPosition = transform.position;
             Tick++;
+        }
+
+        /// <summary>Resizes the capsule keeping the feet in place.</summary>
+        private void SetCapsuleHeight(float height)
+        {
+            if (Mathf.Abs(_controller.height - height) < 1e-4f) return;
+            _controller.height = height;
+            _controller.center = new Vector3(_controller.center.x, height * 0.5f, _controller.center.z);
+        }
+
+        /// <summary>True when a crouched capsule has no room to grow back to standing height.</summary>
+        private bool IsCeilingBlocked()
+        {
+            float missing = _standingHeight - _controller.height;
+            if (missing < 1e-3f) return false;
+            float radius = _controller.radius * 0.95f;
+            Vector3 topSphere = transform.position + _controller.center
+                                + Vector3.up * (_controller.height * 0.5f - _controller.radius);
+            return Physics.SphereCast(topSphere, radius, Vector3.up, out _, missing + _controller.skinWidth,
+                groundMask, QueryTriggerInteraction.Ignore);
         }
 
         private void TrySnapToGround()

@@ -28,6 +28,11 @@ namespace Polykov.Movement
         /// <summary>Downward speed (m/s, positive) at the moment of the last landing.</summary>
         public float LandingImpact;
 
+        /// <summary>Crouch amount, 0 = standing, 1 = fully crouched. Drives capsule height, camera and body.</summary>
+        public float Crouch;
+        /// <summary>Crouch intent after rules (ceiling keeps you down even if the key is released).</summary>
+        public bool Crouching;
+
         public float PlanarSpeed => PlanarVelocity.magnitude;
     }
 }

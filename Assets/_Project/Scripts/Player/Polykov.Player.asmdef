@@ -2,6 +2,7 @@
     "name": "Polykov.Player",
     "rootNamespace": "Polykov.Player",
     "references": [
+        "Polykov.Core",
         "Polykov.Movement",
         "Polykov.Input",
         "Unity.InputSystem"
