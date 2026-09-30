@@ -3,6 +3,14 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Resistencia (stamina)
+- Esprintar gasta resistencia (8 s de sprint desde lleno) y cada salto gasta ~1.1 s. Barra fina abajo en el centro
+  (solo aparece si no está llena; roja si estás agotado). Overlay F1: `Stamina: 75%`.
+- Al agotarte **no puedes esprintar ni saltar** hasta recuperar el 35 %. Recupera tras 1.1 s sin gastar (más rápido parado).
+- Con poca resistencia el arma se balancea más.
+- Perfiles F2: *Tactical* tiene menos resistencia (6 s) y saltos más caros; *Arcade* la tiene infinita.
+- Todos los valores en `MovementSettings.asset` → *Stamina*. `MaxStamina = 0` la desactiva.
+
 ## Sonido procedural + inercia del arma
 - Sonidos **sintetizados en código** (provisionales, sin archivos): disparo, clic en vacío, sacar/meter cargador, soltar
   corredera (recarga en vacío), pasos (cadencia según distancia recorrida: nunca desincronizados con la velocidad; agachado

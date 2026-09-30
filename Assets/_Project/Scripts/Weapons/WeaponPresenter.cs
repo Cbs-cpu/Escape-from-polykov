@@ -120,7 +120,9 @@ namespace Polykov.Weapons
             _reload = Damp(_reload, state.IsReloading ? 1f : 0f, 9f, dt);
 
             float aim = Mathf.SmoothStep(0f, 1f, _aim);
-            float steadiness = Mathf.Lerp(1f, def.AdsSwayMultiplier, aim);
+            // Tired hands shake more: sway and bob grow as stamina runs out.
+            float fatigue = 1f - motor.State.StaminaFraction(motor.Tuning);
+            float steadiness = Mathf.Lerp(1f, def.AdsSwayMultiplier, aim) * (1f + fatigue * 0.8f);
 
             // Base pose: hip <-> sights.
             Vector3 position = Vector3.Lerp(def.HipPosition, AdsPosition(def, out Quaternion adsRotation), aim);

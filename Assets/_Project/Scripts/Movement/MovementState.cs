@@ -33,6 +33,17 @@ namespace Polykov.Movement
         /// <summary>Crouch intent after rules (ceiling keeps you down even if the key is released).</summary>
         public bool Crouching;
 
+        /// <summary>Stamina spent (0 = full). Stored as "used" so a default state starts rested.</summary>
+        public float StaminaUsed;
+        /// <summary>Seconds left before stamina starts recovering.</summary>
+        public float StaminaRegenDelay;
+        /// <summary>Ran out of stamina: no sprint until it recovers past the threshold.</summary>
+        public bool Exhausted;
+
+        /// <summary>Remaining stamina 0..1 for UI and presentation (1 when stamina is disabled).</summary>
+        public float StaminaFraction(in MovementTuning tuning)
+            => tuning.MaxStamina > 0f ? 1f - StaminaUsed / tuning.MaxStamina : 1f;
+
         public float PlanarSpeed => PlanarVelocity.magnitude;
     }
 }

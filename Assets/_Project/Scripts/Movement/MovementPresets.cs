@@ -28,6 +28,8 @@ namespace Polykov.Movement
                     t.LandingMomentum = 0.65f;
                     t.LeanTime = 0.24f;
                     t.LeanMoveMultiplier = 0.6f;
+                    t.MaxStamina = 6f;
+                    t.JumpStaminaCost = 1.4f;
                     break;
                 case 2: // Fast and responsive.
                     t.RunSpeed = 4.1f;
@@ -42,6 +44,7 @@ namespace Polykov.Movement
                     t.LandingMomentum = 0.95f;
                     t.LeanTime = 0.12f;
                     t.LeanMoveMultiplier = 0.8f;
+                    t.MaxStamina = 0f; // unlimited
                     break;
             }
             return t;
