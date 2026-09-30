@@ -17,11 +17,10 @@ Marca cada punto con `[x]` al terminarlo.
 - [ ] **Arma — ajuste visual de manos** (necesita ver el editor): en Play Mode ajustar `WD_M1911` (Hands) y `HandIK` hasta que
       ambas manos agarren bien la M1911 en cadera y apuntando; copiar los valores al asset (Play Mode los pierde en componentes,
       no en el asset) y hacer commit. Revisar también en tercera persona desde la Scene view.
-- [ ] **Arma — modelo M1911 en Blender** (hoja de referencia): script `ArtSource/Tools/build_m1911.py` que genere el modelo
-      low-poly modular (slide, frame, barrel, grips, magazine, hammer, trigger, safety, slide stop) con los **mismos nombres**
-      que `WeaponModel` (`Slide`, `Magazine`, `Hammer`, `Trigger`, `Muzzle`, `SightLine`, `GripCenter`, `MagazineGrab`),
-      +Z hacia la boca, origen sobre el guardamonte. Exportar FBX a `Assets/_Project/Art/Weapons/M1911/` y hacer que
-      `PlayerWeapon` instancie ese prefab en lugar de `M1911Builder` cuando esté asignado.
+- [x] ~~Arma — modelo M1911 en Blender~~ (hecho en la nube: `build_m1911.py` + `export_m1911.py` + `render_m1911.py`).
+- [ ] **Arma — revisar import del FBX** en Unity: que `M1911.fbx` importe sin avisos, materiales remapeados (no rosa) y que
+      `PlayerWeapon.modelPrefab` apunte al FBX (si sale `None`, arrastrar `M1911.fbx` al campo). Comparar con la hoja de
+      referencia y pedir retoques de proporciones si hace falta (se regenera con los scripts).
 - [ ] **Arma — sonido**: disparo, clic en vacío, sacar/meter cargador, soltar corredera (eventos ya expuestos en `PlayerWeapon`).
 - [ ] **Audio real**: sustituir `ProceduralSounds` por clips reales (disparo interior/exterior, mecánica M1911, pasos por
       superficie) y fuentes 3D para jugadores remotos.

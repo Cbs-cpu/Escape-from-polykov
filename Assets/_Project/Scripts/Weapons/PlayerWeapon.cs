@@ -17,8 +17,13 @@ namespace Polykov.Weapons
         [Tooltip("The first-person camera: shots and the obstruction probe start at the eye.")]
         [SerializeField] private Transform eye;
         [SerializeField] private LayerMask hitMask = ~(1 << 8);
+        [Tooltip("Imported weapon model (FBX from ArtSource/Tools/build_m1911.py). Empty = procedural placeholder.")]
+        [SerializeField] private GameObject modelPrefab;
         [SerializeField] private Material steelMaterial;
         [SerializeField] private Material gripMaterial;
+        [SerializeField] private Material steelDarkMaterial;
+        [SerializeField] private Material gripDarkMaterial;
+        [SerializeField] private Material brassMaterial;
         [SerializeField] private uint seed = 1;
 
         private WeaponState _state;
@@ -43,7 +48,16 @@ namespace Polykov.Weapons
         private void Awake()
         {
             _state = WeaponState.Loaded(definition.Stats, definition.StartingReserve, seed);
-            _model = M1911Builder.Build(transform, steelMaterial, gripMaterial, gameObject.layer);
+            var materials = new WeaponMaterials
+            {
+                Steel = steelMaterial,
+                SteelDark = steelDarkMaterial != null ? steelDarkMaterial : steelMaterial,
+                Grip = gripMaterial,
+                GripDark = gripDarkMaterial != null ? gripDarkMaterial : gripMaterial,
+                Brass = brassMaterial != null ? brassMaterial : steelMaterial,
+            };
+            if (modelPrefab != null) _model = WeaponModel.CreateFromModel(modelPrefab, transform, gameObject.layer, materials);
+            if (_model == null) _model = M1911Builder.Build(transform, steelMaterial, gripMaterial, gameObject.layer);
             ImpactEffects.Material = steelMaterial;
         }
 

@@ -850,6 +850,10 @@ MonoBehaviour:
     m_Bits: 4294967039
   steelMaterial: {fileID: 2100000, guid: effb0ac2631147ac84d1838f69d6785f, type: 2}
   gripMaterial: {fileID: 2100000, guid: 227f4cbd0d9643338e50126a387c67f5, type: 2}
+  steelDarkMaterial: {fileID: 2100000, guid: 6410bd5633134544bbf631d0600e4452, type: 2}
+  gripDarkMaterial: {fileID: 2100000, guid: f383dd6b8ca149ddb327e8d5604d0ca7, type: 2}
+  brassMaterial: {fileID: 2100000, guid: c16a8dcef9214ff889919bc8a70b7e8d, type: 2}
+  modelPrefab: {fileID: 919132149155446097, guid: 7c0198be0ad148cc8c2389657bba6aa6, type: 3}
   seed: 1
 --- !u!114 &2857793633178794872
 MonoBehaviour:

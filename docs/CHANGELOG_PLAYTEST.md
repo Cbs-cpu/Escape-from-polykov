@@ -3,6 +3,17 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## M1911 modelada en Blender
+- La pistola ya no es de cajas: modelo low-poly de la M1911A1 (~1.500 tris) hecho en Blender con
+  `ArtSource/Tools/build_m1911.py` (corredera con estrías, miras, ventana de expulsión, casquillo, guardamonte, martillo,
+  seguro, retén, cachas de madera con tornillos, cargador con bala visible). Previews en `docs/screenshots/m1911_*.png`.
+- Import: `Assets/_Project/Art/Weapons/M1911/M1911.fbx`. El juego mide sus puntos (mira, boca, empuñadura) y lo orienta
+  solo, así que da igual la conversión de ejes. Si por lo que sea el FBX no carga, vuelve automáticamente al modelo de cajas.
+- Materiales del proyecto (`Materials/Weapons`): acero, acero oscuro, madera, madera oscura, latón.
+- Corregido: el gatillo ahora se mueve hacia atrás al apretar (antes iba hacia delante).
+- Qué revisar: que la pistola se vea con materiales correctos (no rosa) y bien orientada en la mano; que la corredera
+  retroceda al disparar y el cargador salga por la empuñadura al recargar.
+
 ## Resistencia (stamina)
 - Esprintar gasta resistencia (8 s de sprint desde lleno) y cada salto gasta ~1.1 s. Barra fina abajo en el centro
   (solo aparece si no está llena; roja si estás agotado). Overlay F1: `Stamina: 75%`.

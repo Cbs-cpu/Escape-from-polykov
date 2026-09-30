@@ -4,8 +4,10 @@ namespace Polykov.Weapons
 {
     /// <summary>
     /// Named attachment points and moving parts of a weapon model. Works with the procedural placeholder
-    /// (<see cref="M1911Builder"/>) or an imported model whose children use the same names.
-    /// Weapon space: +Z muzzle, +Y up, origin on the frame top above the trigger.
+    /// (<see cref="M1911Builder"/>) or an imported model (ArtSource/Tools/build_m1911.py) with the same names.
+    /// Weapon space (this transform): +Z muzzle, +Y up, origin on the frame top above the trigger.
+    /// Part motions are computed in weapon space and converted to each part's parent, so they work whatever
+    /// axis conversion the FBX importer applied to the intermediate nodes.
     /// </summary>
     public sealed class WeaponModel : MonoBehaviour
     {
@@ -17,6 +19,14 @@ namespace Polykov.Weapons
         public const string SightName = "SightLine";
         public const string GripCenterName = "GripCenter";
         public const string MagazineGrabName = "MagazineGrab";
+
+        /// <summary>Grip rake of the M1911 frame (degrees): the magazine slides along this axis.</summary>
+        public const float GripRake = 18f;
+
+        // Reference points of the M1911 in weapon space (see build_m1911.py), used to orient imported models.
+        private static readonly Vector3 SightPoint = new Vector3(0f, 0.0395f, -0.0525f);
+        private static readonly Vector3 MuzzlePoint = new Vector3(0f, 0.012f, 0.156f);
+        private static readonly Vector3 GripCenterPoint = new Vector3(0f, -0.0628f, -0.0579f);
 
         public Transform Slide;
         public Transform Magazine;
@@ -34,9 +44,13 @@ namespace Polykov.Weapons
         public Transform LeftHand { get; private set; }
 
         private Vector3 _slideRest;
+        private Vector3 _slideBack;
         private Vector3 _magazineRest;
+        private Vector3 _magazineDown;
         private Quaternion _hammerRest;
+        private Vector3 _hammerAxis;
         private Quaternion _triggerRest;
+        private Vector3 _triggerAxis;
 
         public void Initialize()
         {
@@ -54,10 +68,26 @@ namespace Polykov.Weapons
             LeftHand = new GameObject("LeftHandIK").transform;
             LeftHand.SetParent(transform, false);
 
-            if (Slide != null) _slideRest = Slide.localPosition;
-            if (Magazine != null) _magazineRest = Magazine.localPosition;
-            if (Hammer != null) _hammerRest = Hammer.localRotation;
-            if (Trigger != null) _triggerRest = Trigger.localRotation;
+            if (Slide != null)
+            {
+                _slideRest = Slide.localPosition;
+                _slideBack = ToParentSpace(Slide, Vector3.back);
+            }
+            if (Magazine != null)
+            {
+                _magazineRest = Magazine.localPosition;
+                _magazineDown = ToParentSpace(Magazine, Quaternion.Euler(GripRake, 0f, 0f) * Vector3.down);
+            }
+            if (Hammer != null)
+            {
+                _hammerRest = Hammer.localRotation;
+                _hammerAxis = Quaternion.Inverse(Hammer.rotation) * transform.right;
+            }
+            if (Trigger != null)
+            {
+                _triggerRest = Trigger.localRotation;
+                _triggerAxis = Quaternion.Inverse(Trigger.rotation) * transform.right;
+            }
         }
 
         /// <param name="slideBack">0 = in battery, 1 = fully back (locked or cycling).</param>
@@ -67,14 +97,22 @@ namespace Polykov.Weapons
         /// <param name="triggerPull">0..1.</param>
         public void Pose(float slideBack, float magazineOut, bool magazineVisible, float hammerCocked, float triggerPull)
         {
-            if (Slide != null) Slide.localPosition = _slideRest + Vector3.back * (0.03f * slideBack);
+            if (Slide != null) Slide.localPosition = _slideRest + _slideBack * (0.03f * slideBack);
             if (Magazine != null)
             {
-                Magazine.localPosition = _magazineRest + Vector3.down * (0.16f * magazineOut);
+                Magazine.localPosition = _magazineRest + _magazineDown * (0.16f * magazineOut);
                 if (Magazine.gameObject.activeSelf != magazineVisible) Magazine.gameObject.SetActive(magazineVisible);
             }
-            if (Hammer != null) Hammer.localRotation = _hammerRest * Quaternion.Euler(-60f * hammerCocked, 0f, 0f);
-            if (Trigger != null) Trigger.localRotation = _triggerRest * Quaternion.Euler(-12f * triggerPull, 0f, 0f);
+            // Positive rotation about weapon +X tips a part's top toward the muzzle.
+            if (Hammer != null) Hammer.localRotation = _hammerRest * Quaternion.AngleAxis(-60f * hammerCocked, _hammerAxis);
+            if (Trigger != null) Trigger.localRotation = _triggerRest * Quaternion.AngleAxis(12f * triggerPull, _triggerAxis);
+        }
+
+        /// <summary>A weapon-space offset (meters) expressed in the part's parent space.</summary>
+        private Vector3 ToParentSpace(Transform part, Vector3 weaponSpaceOffset)
+        {
+            Vector3 world = transform.TransformVector(weaponSpaceOffset);
+            return part.parent != null ? part.parent.InverseTransformVector(world) : world;
         }
 
         private Transform Find(string childName)
@@ -82,6 +120,86 @@ namespace Polykov.Weapons
             foreach (Transform t in GetComponentsInChildren<Transform>(true))
                 if (t.name == childName) return t;
             return null;
+        }
+
+        /// <summary>
+        /// Instantiates an imported weapon model under a clean weapon-space root, measuring its named points to
+        /// undo any importer axis conversion or unit scale. Returns null if the model lacks the reference points.
+        /// </summary>
+        public static WeaponModel CreateFromModel(GameObject prefab, Transform parent, int layer, WeaponMaterials materials)
+        {
+            var root = new GameObject(prefab.name) { layer = layer };
+            root.transform.SetParent(parent, false);
+            GameObject instance = Instantiate(prefab, root.transform, false);
+            foreach (Transform t in instance.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer;
+
+            Transform sight = FindIn(instance.transform, SightName);
+            Transform muzzle = FindIn(instance.transform, MuzzleName);
+            Transform grip = FindIn(instance.transform, GripCenterName);
+            if (sight == null || muzzle == null || grip == null)
+            {
+                Destroy(root);
+                return null;
+            }
+
+            Transform r = root.transform;
+            Vector3 forward = r.InverseTransformPoint(muzzle.position) - r.InverseTransformPoint(sight.position);
+            Vector3 up = r.InverseTransformPoint(sight.position) - r.InverseTransformPoint(grip.position);
+            Vector3 expectedForward = MuzzlePoint - SightPoint;
+            Vector3 expectedUp = SightPoint - GripCenterPoint;
+
+            float scale = expectedForward.magnitude / Mathf.Max(forward.magnitude, 1e-6f);
+            Quaternion correction = Quaternion.LookRotation(expectedForward, expectedUp)
+                                    * Quaternion.Inverse(Quaternion.LookRotation(forward, up));
+            Transform t0 = instance.transform;
+            t0.localScale *= scale;
+            t0.localRotation = correction * t0.localRotation;
+            t0.localPosition = correction * t0.localPosition * scale;
+            t0.localPosition += SightPoint - r.InverseTransformPoint(sight.position);
+
+            materials.ApplyTo(instance);
+            var model = root.AddComponent<WeaponModel>();
+            model.Initialize();
+            return model;
+        }
+
+        private static Transform FindIn(Transform root, string childName)
+        {
+            foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
+                if (t.name == childName) return t;
+            return null;
+        }
+    }
+
+    /// <summary>Project materials for weapon models, matched by the source material names (M_Steel, M_Wood...).</summary>
+    [System.Serializable]
+    public struct WeaponMaterials
+    {
+        public Material Steel;
+        public Material SteelDark;
+        public Material Grip;
+        public Material GripDark;
+        public Material Brass;
+
+        public Material For(string sourceName)
+        {
+            string n = sourceName ?? string.Empty;
+            Material m = null;
+            if (n.Contains("Brass")) m = Brass;
+            else if (n.Contains("WoodDark")) m = GripDark;
+            else if (n.Contains("Wood") || n.Contains("Grip")) m = Grip;
+            else if (n.Contains("SteelDark")) m = SteelDark;
+            return m != null ? m : Steel;
+        }
+
+        public void ApplyTo(GameObject model)
+        {
+            foreach (Renderer renderer in model.GetComponentsInChildren<Renderer>(true))
+            {
+                Material[] slots = renderer.sharedMaterials;
+                for (int i = 0; i < slots.Length; i++) slots[i] = For(slots[i] != null ? slots[i].name : null);
+                renderer.sharedMaterials = slots;
+            }
         }
     }
 }

@@ -34,7 +34,7 @@ namespace Polykov.Weapons
             // Frame.
             Box("DustCover", r, new Vector3(0f, -0.007f, 0.078f), new Vector3(0.022f, 0.014f, 0.114f), steel, layer);
             Box("FrameBody", r, new Vector3(0f, -0.011f, -0.028f), new Vector3(0.024f, 0.022f, 0.1f), steel, layer);
-            Box("GuardBottom", r, new Vector3(0f, -0.037f, 0.02f), new Vector3(0.008f, 0.004f, 0.054f), steel, layer);
+            Box("GuardBottom", r, new Vector3(0f, -0.0385f, 0.0085f), new Vector3(0.008f, 0.004f, 0.078f), steel, layer);
             Box("GuardFront", r, new Vector3(0f, -0.022f, 0.045f), new Vector3(0.008f, 0.03f, 0.004f), steel, layer);
             Box("Beavertail", r, new Vector3(0f, -0.001f, -0.074f), new Vector3(0.026f, 0.007f, 0.03f), steel, layer);
             Box("Safety", r, new Vector3(-0.0135f, 0.004f, -0.05f), new Vector3(0.003f, 0.005f, 0.016f), steel, layer);
