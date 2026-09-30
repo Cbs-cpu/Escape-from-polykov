@@ -33,3 +33,8 @@ Marca cada punto con `[x]` al terminarlo.
 - [ ] **IA** (Unity): hornear NavMesh en `MovementTestArena` (AI Navigation → NavMeshSurface) y añadir `NavMeshAgent` al `Scav.prefab`
       (sin él funciona en línea recta). Ajustar `ScavAI.tuning` a gusto; comprobar animación de andar (VelX/VelZ del controlador Operator).
 - [ ] **Daño al jugador**: `ScavAI.Attacked` no hace daño aún (el jugador no tiene salud).
+- [ ] **Menús nuevos** (Unity): comprobar que las fuentes `Resources/Fonts/PolykovGrid-*.ttf` importan como Font y que los
+      iconos 3D (`UnityItemIcons`, capa 31, `Camera.Render` en URP) salen con fondo transparente. Si sale un icono negro o vacío,
+      el resto de la UI funciona igual (usa pictogramas): dime qué ves.
+- [ ] **Inventario → partida**: la pistola se lleva siempre; falta que la munición/cargadores del inventario limiten la munición
+      en la incursión y que al morir se pierda lo que no esté en el contenedor seguro (Fase 2 con servidor).

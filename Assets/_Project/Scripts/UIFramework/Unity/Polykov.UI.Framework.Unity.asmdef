@@ -1,14 +1,9 @@
 {
-    "name": "Polykov.Lobby",
-    "rootNamespace": "Polykov.Lobby",
+    "name": "Polykov.UI.Framework.Unity",
+    "rootNamespace": "Polykov.UI.Framework",
     "references": [
-        "Polykov.Core",
-        "Polykov.Weapons",
-        "Polykov.Weapons.Simulation",
         "Polykov.UI.Framework",
-        "Polykov.UI.Framework.Unity",
-        "Polykov.Inventory.Simulation",
-        "Polykov.Lobby.Screens"
+        "Unity.InputSystem"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

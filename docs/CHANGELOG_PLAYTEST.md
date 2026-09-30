@@ -191,3 +191,22 @@ cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el comm
   deltas de la tabla ya no se solapan.
 - Previsualización sin Unity: `ArtSource/Tools/render_lobby_preview.py` (Blender, mismos assets/cámara/luces) +
   `Tools/lobby_ui_mockup.py` (dibuja la interfaz con el layout del código). Es una aproximación: la luz de URP no es idéntica.
+
+## Menús estilo Tarkov + inventario
+- **Fuente propia "Polykov Grid"** (inspirada en Bender, la de Tarkov, en versión low-poly con esquinas achaflanadas), en
+  todos los menús del lobby. Se regenera con `Tools/FontGen/make_polykov_font.py`.
+- **Lobby nuevo**: barra superior (nivel, apodo, peso, rublos), pestañas inferiores (MENÚ PRINCIPAL · PERSONAJE · ARMERO;
+  escondite, comerciantes y mercadillo bloqueados), menú principal con logo grande y el botón ESCAPE FROM POLYKOV.
+- **PERSONAJE = inventario** tipo Tarkov: ranuras de equipo alrededor del personaje 3D, chaleco táctico, bolsillos,
+  mochila, contenedor seguro y alijo 10×40 con scroll.
+  - Arrastrar y soltar (verde = cabe, rojo = no), **R** gira mientras arrastras, **Ctrl+clic** mueve rápido
+    (del alijo al equipo y al revés), **doble clic** abre contenedores, **clic derecho**: inspeccionar, abrir, modificar,
+    equipar/al alijo, dividir, ordenar, tirar. Las pilas se juntan al soltarlas encima. Las ventanas se arrastran por el título.
+  - Ficha de inspección con peso, precio, propiedades y, en armas, sus características.
+  - Se guarda solo en `profile.txt` (persistentDataPath). Para empezar de cero, borra ese archivo.
+- **Armero ligado al inventario**: solo puedes montar piezas que tengas en el alijo; al montar se consumen y la pieza que
+  quitas vuelve al alijo. El silenciador y el cañón roscado empiezan en el alijo. La pistola de la pistolera es la que llevas a la partida.
+- Iconos: la pistola (con su montaje) y el silenciador se renderizan de sus modelos en tiempo real; el resto son
+  pictogramas low-poly.
+- Qué revisar: fuente nítida, que se vea el personaje entre las ranuras, arrastrar objetos, que el icono de la pistola
+  cambie al montar el silenciador y que al volver a entrar al lobby siga todo donde lo dejaste.

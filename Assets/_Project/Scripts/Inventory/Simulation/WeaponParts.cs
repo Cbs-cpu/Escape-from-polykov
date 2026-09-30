@@ -22,6 +22,21 @@ namespace Polykov.Inventory
 
         public static bool Owns(Profile p, string attachmentId) => FindLoose(p, attachmentId) != null;
 
+        /// <summary>Names of the parts <paramref name="next"/> adds that are not in the inventory (empty = can mount).</summary>
+        public static List<string> Missing(Profile p, WeaponBuild current, WeaponBuild next)
+        {
+            var missing = new List<string>();
+            for (int i = 0; i < WeaponBuild.SlotCount; i++)
+            {
+                var slot = (AttachmentSlot)i;
+                string b = next.Get(slot);
+                if (string.IsNullOrEmpty(b) || b == current.Get(slot) || Owns(p, b)) continue;
+                ItemDef def = p.Db.ForAttachment(b);
+                missing.Add(def != null ? def.Name : b);
+            }
+            return missing;
+        }
+
         /// <summary>
         /// Mounts <paramref name="next"/> on <paramref name="weapon"/>: parts that appear are taken from the inventory,
         /// parts that disappear become items in the stash. All or nothing; <paramref name="reason"/> says why not.

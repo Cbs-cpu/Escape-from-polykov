@@ -31,5 +31,9 @@ Ver `Tools/README.md`. Todo test nuevo de simulación va en `Assets/_Project/Tes
   scripts leen `POLYKOV_ROOT` para las rutas. Los `.blend`/`.fbx` son LFS: `git lfs pull` antes.
 - `grip_preview.py` replica el IK de manos de Unity sobre el rig real y renderiza el agarre: úsalo para cualquier cambio
   de valores de manos/poses del arma antes de subirlo.
-- `render_lobby_preview.py` + `Tools/lobby_ui_mockup.py` reproducen el lobby (escena + IMGUI) para enseñar capturas sin Unity;
-  si cambias cámara, luces o layout del lobby, actualiza también estos dos scripts.
+- Menús: la UI es C# sin motor (`Scripts/UIFramework` + `Scripts/Lobby/Screens`) sobre `IUiBackend`; en Unity la dibuja
+  `UiSurface` (IMGUI) y offline `Tools/UiPreview` (Skia) → `Tools/UiPreview/run_previews.sh <dir> <blender>` genera capturas
+  reales de todas las pantallas (fondos 3D e iconos en Blender con `render_lobby_preview.py`). Úsalo para enseñar cambios de UI.
+- Fuente de la UI: "Polykov Grid" (propia, estilo Bender low-poly), se genera con `Tools/FontGen/make_polykov_font.py`.
+- Inventario: modelo puro en `Scripts/Inventory/Simulation` (tests en `Tests/EditMode/Inventory`); el perfil se guarda en
+  `persistentDataPath/profile.txt`.

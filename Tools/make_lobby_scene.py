@@ -8,8 +8,8 @@ header = arena[:arena.index("--- !u!1 &")]
 for old, new in (("m_Fog: 0", "m_Fog: 1"),
                  ("m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}", "m_FogColor: {r: 0.035, g: 0.038, b: 0.04, a: 1}"),
                  ("m_FogMode: 3", "m_FogMode: 1"),
-                 ("m_LinearFogStart: 0", "m_LinearFogStart: 6"),
-                 ("m_LinearFogEnd: 300", "m_LinearFogEnd: 13")):
+                 ("m_LinearFogStart: 0", "m_LinearFogStart: 10"),
+                 ("m_LinearFogEnd: 300", "m_LinearFogEnd: 20")):
     assert old in header, old
     header = header.replace(old, new)
 body = """--- !u!1 &100

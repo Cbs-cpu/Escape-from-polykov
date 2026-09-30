@@ -3,8 +3,10 @@ Recreates the Unity Lobby scene in Blender (same FBX assets, textures, camera, l
 LobbyController / LobbyStage) and renders the 3D layer of the lobby screens, so the look can be reviewed
 without Unity. The IMGUI layer is drawn on top by Tools/lobby_ui_mockup.py.
 
-Usage:  blender -b -P ArtSource/Tools/render_lobby_preview.py -- <screen> <out.png> [width height]
-        screen = main | armorer | armorer_suppressor
+Usage:  blender -b -P ArtSource/Tools/render_lobby_preview.py -- stage <out.png> <w> <h> <px py pz lx ly lz fov>
+        blender -b -P ... -- armorer|armorer_suppressor <out.png> <w> <h>
+        blender -b -P ... -- icon <itemId> <out.png> [suppressed]
+The stage camera numbers come from Tools/UiPreview ("framing"), i.e. the same StageFraming math as the game.
 Unity -> Blender coordinates: (x, y, z)_unity = (-x, z, -y)_blender, i.e. blender = (-xu, -zu, yu).
 """
 import bpy
@@ -15,9 +17,16 @@ from mathutils import Matrix, Vector
 
 ROOT = os.environ.get("POLYKOV_ROOT", os.getcwd())
 ART = os.path.join(ROOT, "Assets", "_Project", "Art")
-args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else ["main", "lobby.png"]
-SCREEN, OUT = args[0], args[1]
-WIDTH, HEIGHT = (int(args[2]), int(args[3])) if len(args) > 3 else (1920, 1080)
+args = sys.argv[sys.argv.index("--") + 1:] if "--" in sys.argv else ["stage", "lobby.png"]
+SCREEN = args[0]
+if SCREEN == "icon":
+    ICON_ID, OUT = args[1], args[2]
+    ICON_SUPPRESSED = len(args) > 3 and args[3] == "suppressed"
+    WIDTH = HEIGHT = 0
+else:
+    OUT = args[1]
+    WIDTH, HEIGHT = (int(args[2]), int(args[3])) if len(args) > 3 else (1920, 1080)
+SHOT = [float(v) for v in args[4:11]] if SCREEN == "stage" and len(args) >= 11 else None
 
 
 def u2b(x, y, z):
@@ -108,7 +117,7 @@ def outline_material():
     return m
 
 
-def add_fog(m, start=6.0, end=13.0):
+def add_fog(m, start=10.0, end=20.0):
     """Unity linear fog (Lobby.unity) in the background colour, by distance from the camera."""
     nt = m.node_tree
     out = nt.nodes["Material Output"]
@@ -269,13 +278,15 @@ def look(position_b, target_b, fov):
 
 # ---------------------------------------------------------------- stage
 
-if SCREEN == "main":
+if SCREEN == "stage":
     parts = import_fbx("Characters/Operator/Operator.fbx", OPERATOR)
     rig = next(o for o in parts if o.type == "ARMATURE")
     # LobbyStage.Character yaw 165 (Unity) = -165 about Blender Z. On a parent: the Idle action keys the rig object.
     holder = bpy.data.objects.new("LobbyCharacter", None)
     scene.collection.objects.link(holder)
-    holder.rotation_euler = (0, 0, math.radians(-165.0))
+    # The character turns to face the camera (LobbyController): Unity yaw = atan2(cam.x, cam.z).
+    yaw_u = math.degrees(math.atan2(SHOT[0], SHOT[2])) if SHOT else 165.0
+    holder.rotation_euler = (0, 0, math.radians(-yaw_u))
     rig.parent = holder
     idle = next(a for a in bpy.data.actions if a.name.endswith("|Idle"))
     rig.animation_data_create()
@@ -302,7 +313,49 @@ if SCREEN == "main":
             add_fog(mat)
         ob.data.materials.append(mat)
     bpy.data.objects["KeyLight"].data.use_shadow = True
-    look(u2b(0, 1.15, -4.7), u2b(0, 0.9, 0), 30.0)
+    if SHOT:
+        look(u2b(SHOT[0], SHOT[1], SHOT[2]), u2b(SHOT[3], SHOT[4], SHOT[5]), SHOT[6])
+    else:
+        look(u2b(0, 1.15, -4.7), u2b(0, 0.9, 0), 30.0)
+elif SCREEN == "icon":
+    # UnityItemIcons: orthographic side view from the weapon's right (muzzle to the right), transparent background.
+    ICONS = {
+        "m1911a1": ("Weapons/M1911_Tripo/M1911.fbx", WEAPON, 2, 1),
+        "suppressor_45": ("Weapons/M1911_Tripo/Attachments/Suppressor_45.fbx", SUPPRESSOR, 2, 1),
+        "barrel_threaded": ("Weapons/M1911_Tripo/Attachments/Barrel_Threaded.fbx", BARREL, 2, 1),
+    }
+    path, mat, cw, ch = ICONS[ICON_ID]
+    parts = import_fbx(path, mat)
+    if ICON_ID == "m1911a1" and ICON_SUPPRESSED:
+        bpy.context.view_layer.update()
+        muzzle = next(o for o in parts if o.name.startswith("Socket_Muzzle"))
+        for extra_path, extra_mat in (("Weapons/M1911_Tripo/Attachments/Barrel_Threaded.fbx", BARREL),
+                                      ("Weapons/M1911_Tripo/Attachments/Suppressor_45.fbx", SUPPRESSOR)):
+            extra = import_fbx(extra_path, extra_mat)
+            root_of(extra).location = muzzle.matrix_world.translation
+    bpy.context.view_layer.update()
+    lo = Vector((1e9, 1e9, 1e9))
+    hi = -lo
+    for o in bpy.data.objects:
+        if o.type != "MESH":
+            continue
+        for corner in o.bound_box:
+            w = o.matrix_world @ Vector(corner)
+            lo = Vector(map(min, lo, w))
+            hi = Vector(map(max, hi, w))
+    centre = (lo + hi) * 0.5
+    WIDTH, HEIGHT = cw * 128, ch * 128
+    aspect = WIDTH / HEIGHT
+    cam_data.type = "ORTHO"
+    cam_data.sensor_fit = "AUTO"
+    cam_data.ortho_scale = max(hi.y - lo.y, (hi.z - lo.z) * aspect) * 1.12
+    cam.location = centre + Vector((-(hi.x - lo.x) - 2.0, 0, 0))
+    cam.rotation_euler = Vector((1, 0, 0)).to_track_quat("-Z", "Y").to_euler()
+    for L in ("KeyLight", "RimLight", "WeaponKey", "WeaponFill"):
+        bpy.data.objects[L].hide_render = True
+    sun.data.energy = 1.6 * math.pi
+    sun.rotation_euler = u2b(-1.0, -0.6, 0.4).to_track_quat("-Z", "Y").to_euler()
+    scene.render.film_transparent = True
 else:
     parts = import_fbx("Weapons/M1911_Tripo/M1911.fbx", WEAPON)
     root = root_of(parts)
@@ -386,7 +439,8 @@ scene.view_settings.look = "None"
 scene.render.resolution_x = WIDTH
 scene.render.resolution_y = HEIGHT
 scene.render.resolution_percentage = 100
-scene.render.film_transparent = False
+scene.render.film_transparent = SCREEN == "icon"
+scene.render.image_settings.color_mode = "RGBA"
 scene.render.image_settings.file_format = "PNG"
 scene.render.filepath = OUT
 bpy.ops.render.render(write_still=True)

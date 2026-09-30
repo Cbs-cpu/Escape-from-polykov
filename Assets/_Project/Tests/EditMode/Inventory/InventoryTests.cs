@@ -252,6 +252,7 @@ namespace Polykov.Inventory.Tests
             WeaponBuild suppressed = ArmorerModel.Select(WeaponBuild.M1911Default, catalog, AttachmentSlot.Muzzle, "suppressor_45");
             Assert.IsFalse(WeaponParts.Apply(p, gun, WeaponBuild.M1911Default, suppressed, out string reason));
             StringAssert.Contains("Silenciador", reason);
+            CollectionAssert.AreEqual(new[] { "Silenciador .45 ACP" }, WeaponParts.Missing(p, WeaponBuild.M1911Default, suppressed));
             Assert.AreEqual(count, p.AllItems().Count());
             Assert.AreEqual(WeaponBuild.M1911Default.Serialize(), gun.Build);
         }

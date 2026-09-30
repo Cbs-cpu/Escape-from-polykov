@@ -138,9 +138,9 @@ namespace Polykov.UI.Framework
         // ------------------------------------------------------------------ Tarkov-like widgets
 
         /// <summary>Dark panel with a 1 px border and an optional header bar.</summary>
-        public UiRect Panel(UiRect r, string title = null, string rightInfo = null)
+        public UiRect Panel(UiRect r, string title = null, string rightInfo = null, float fillAlpha = -1f)
         {
-            Fill(r, UiTheme.Panel);
+            Fill(r, fillAlpha < 0f ? UiTheme.Panel : UiTheme.Panel.WithAlpha(fillAlpha));
             Frame(r, UiTheme.Border);
             if (title == null) return r.Shrink(1f);
             UiRect header = new UiRect(r.X + 1, r.Y + 1, r.W - 2, 30f);

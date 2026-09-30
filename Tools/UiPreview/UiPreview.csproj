@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Renders the real lobby UI code (Assets/_Project/Scripts/Lobby/Screens + UIFramework) to PNG without Unity,
+    through a Skia implementation of IUiBackend, over 3D backgrounds rendered by Blender. See run_previews.sh.
+  -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>9.0</LangVersion>
+    <Nullable>disable</Nullable>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+    <NoWarn>$(NoWarn);CS0660;CS0661</NoWarn>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="*.cs" />
+    <Compile Include="../SimTests/UnityShim/**/*.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/UIFramework/*.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/Weapons/Simulation/**/*.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/Inventory/Simulation/**/*.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/Lobby/Screens/**/*.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SkiaSharp" Version="2.88.8" />
+    <PackageReference Include="SkiaSharp.NativeAssets.Linux.NoDependencies" Version="2.88.8" />
+  </ItemGroup>
+</Project>
