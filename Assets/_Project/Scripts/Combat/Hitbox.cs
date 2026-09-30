@@ -13,7 +13,11 @@ namespace Polykov.Combat
 
         public void OnShot(in ShotHit hit)
         {
+<<<<<<< HEAD
+            if (Owner != null) Owner.Receive(this, hit);
+=======
             if (Owner != null) Owner.TakeHit(Part, hit, Bone);
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
         }
     }
 }

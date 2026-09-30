@@ -5,17 +5,14 @@ namespace Polykov.Combat
 {
     /// <summary>
     /// Test-range Operator: idle animation, per-bone hitboxes, Tarkov-style body-part HP shown above it.
-    /// Falls when killed and stands up healed after a few seconds.
+    /// Ragdolls when killed (see HumanoidCombatRig) and stands up healed after a few seconds.
     /// </summary>
     public sealed class TrainingDummy : MonoBehaviour
     {
-        private const float FallTime = 0.35f;
-
         private HealthComponent _health;
-        private Transform _body;
+        private HumanoidCombatRig _rig;
         private Camera _camera;
         private float _deadTimer;
-        private float _fall;
         private string _lastHit = string.Empty;
         private float _lastHitUntil;
         private readonly StringBuilder _builder = new StringBuilder(256);
@@ -37,9 +34,8 @@ namespace Polykov.Combat
                 animator.applyRootMotion = false;
             }
             var dummy = root.AddComponent<TrainingDummy>();
-            dummy._body = body.transform;
             dummy._health = root.AddComponent<HealthComponent>();
-            if (animator != null) HumanoidHitboxes.Build(animator, dummy._health, 0);
+            dummy._rig = root.AddComponent<HumanoidCombatRig>();
             dummy._health.Damaged += dummy.OnDamaged;
             dummy._health.Died += dummy.OnDied;
             return dummy;
@@ -64,12 +60,12 @@ namespace Polykov.Combat
             if (dead)
             {
                 _deadTimer -= Time.deltaTime;
-                if (_deadTimer <= 0f) _health.ResetHealth();
+                if (_deadTimer <= 0f)
+                {
+                    _health.ResetHealth();
+                    _rig.Revive();
+                }
             }
-            // Topple backwards around the feet.
-            _fall = Mathf.MoveTowards(_fall, dead ? 1f : 0f, Time.deltaTime / (dead ? FallTime : FallTime * 2f));
-            float eased = dead ? _fall * _fall : Mathf.SmoothStep(0f, 1f, _fall);
-            _body.localRotation = Quaternion.Euler(-85f * eased, 0f, 0f);
         }
 
         private void OnGUI()

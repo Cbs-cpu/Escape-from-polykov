@@ -35,6 +35,12 @@ namespace Polykov.Combat
         /// <summary>A limb (or the head) came off. Dismemberment can be switched off in the settings.</summary>
         public event System.Action<BodyPart, ShotHit> Severed;
 
+        /// <summary>Raised for every bullet that reaches a hitbox, alive or dead (after damage/death).</summary>
+        public event System.Action<Hitbox, ShotHit> ShotReceived;
+
+        /// <summary>The hitbox of the last bullet received (valid inside <see cref="Damaged"/>/<see cref="Died"/>).</summary>
+        public Hitbox LastHitbox { get; private set; }
+
         private void Awake() => ResetHealth();
 
         public void ResetHealth()
@@ -44,7 +50,19 @@ namespace Polykov.Combat
             _hitCounter = 0;
         }
 
+<<<<<<< HEAD
+        /// <summary>Entry point for hitboxes: applies damage and then notifies presentation listeners.</summary>
+        public void Receive(Hitbox hitbox, in ShotHit hit)
+        {
+            LastHitbox = hitbox;
+            TakeHit(hitbox.Part, hit);
+            ShotReceived?.Invoke(hitbox, hit);
+        }
+
+        public void TakeHit(BodyPart part, in ShotHit hit)
+=======
         public void TakeHit(BodyPart part, in ShotHit hit, Transform bone = null)
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
         {
             if (!_state.Alive) return;
             LastHit = hit;

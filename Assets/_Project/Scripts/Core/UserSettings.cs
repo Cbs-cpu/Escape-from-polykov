@@ -3,6 +3,14 @@ using UnityEngine;
 
 namespace Polykov.Core
 {
+    /// <summary>How much blood and wounds are shown (presentation only).</summary>
+    public enum GoreLevel : byte
+    {
+        Off = 0,
+        Reduced = 1,
+        Full = 2,
+    }
+
     /// <summary>
     /// Player preferences (sensitivity, FOV, comfort). Local only, never replicated, persisted in PlayerPrefs.
     /// Presentation code reads these every frame; the menu writes them.
@@ -22,8 +30,12 @@ namespace Polykov.Core
         private static bool _invertY;
         private static bool _toggleCrouch;
         private static float _masterVolume;
+<<<<<<< HEAD
+        private static GoreLevel _gore = GoreLevel.Full;
+=======
         private static int _blood;
         private static bool _dismemberment;
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
 
         /// <summary>Raised after any value changes.</summary>
         public static event Action Changed;
@@ -76,6 +88,18 @@ namespace Polykov.Core
             set => Set(ref _masterVolume, Mathf.Clamp01(value), "masterVolume");
         }
 
+<<<<<<< HEAD
+        /// <summary>Blood, wound decals and splats: Full, Reduced (fewer, smaller) or Off.</summary>
+        public static GoreLevel Gore
+        {
+            get { EnsureLoaded(); return _gore; }
+            set
+            {
+                EnsureLoaded();
+                if (_gore == value) return;
+                _gore = value;
+                PlayerPrefs.SetInt(Prefix + "gore", (int)value);
+=======
         /// <summary>Blood amount: 0 = none, 1 = reduced, 2 = full.</summary>
         public static int Blood
         {
@@ -87,10 +111,13 @@ namespace Polykov.Core
                 EnsureLoaded();
                 _blood = value;
                 PlayerPrefs.SetInt(Prefix + "blood", value);
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
                 Changed?.Invoke();
             }
         }
 
+<<<<<<< HEAD
+=======
         /// <summary>Limbs can be severed (and the head, very rarely).</summary>
         public static bool Dismemberment
         {
@@ -98,6 +125,7 @@ namespace Polykov.Core
             set => Set(ref _dismemberment, value, "dismemberment");
         }
 
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
         public static void ResetToDefaults()
         {
             _mouseSensitivity = DefaultMouseSensitivity;
@@ -107,8 +135,12 @@ namespace Polykov.Core
             _invertY = false;
             _toggleCrouch = false;
             _masterVolume = 0.8f;
+<<<<<<< HEAD
+            _gore = GoreLevel.Full;
+=======
             _blood = 2;
             _dismemberment = true;
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
             _loaded = true;
             Save();
             Changed?.Invoke();
@@ -125,8 +157,12 @@ namespace Polykov.Core
             _invertY = PlayerPrefs.GetInt(Prefix + "invertY", 0) != 0;
             _toggleCrouch = PlayerPrefs.GetInt(Prefix + "toggleCrouch", 0) != 0;
             _masterVolume = PlayerPrefs.GetFloat(Prefix + "masterVolume", 0.8f);
+<<<<<<< HEAD
+            _gore = (GoreLevel)Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "gore", (int)GoreLevel.Full), 0, 2);
+=======
             _blood = PlayerPrefs.GetInt(Prefix + "blood", 2);
             _dismemberment = PlayerPrefs.GetInt(Prefix + "dismemberment", 1) != 0;
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
         }
 
         private static void Set(ref float field, float value, string key)
@@ -156,8 +192,12 @@ namespace Polykov.Core
             PlayerPrefs.SetInt(Prefix + "invertY", _invertY ? 1 : 0);
             PlayerPrefs.SetInt(Prefix + "toggleCrouch", _toggleCrouch ? 1 : 0);
             PlayerPrefs.SetFloat(Prefix + "masterVolume", _masterVolume);
+<<<<<<< HEAD
+            PlayerPrefs.SetInt(Prefix + "gore", (int)_gore);
+=======
             PlayerPrefs.SetInt(Prefix + "blood", _blood);
             PlayerPrefs.SetInt(Prefix + "dismemberment", _dismemberment ? 1 : 0);
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
         }
 
         /// <summary>Writes pending values to disk (call when closing the menu).</summary>

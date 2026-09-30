@@ -19,6 +19,9 @@ namespace Polykov.Weapons
         [Tooltip("The first-person camera: shots and the obstruction probe start at the eye.")]
         [SerializeField] private Transform eye;
         [SerializeField] private LayerMask hitMask = ~(1 << 8);
+
+        /// <summary>Layers bullets can hit (also used by hit effects that probe the scene).</summary>
+        public LayerMask HitMask => hitMask;
         [Tooltip("Imported weapon model (FBX from ArtSource/Tools/build_m1911.py). Empty = procedural placeholder.")]
         [SerializeField] private GameObject modelPrefab;
         [Tooltip("Material for every part of the imported model (textured atlas). Empty = remap by material name.")]

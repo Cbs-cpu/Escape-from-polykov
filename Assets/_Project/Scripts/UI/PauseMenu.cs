@@ -70,7 +70,11 @@ namespace Polykov.UI
 
         private void DrawMenu(float screenW, float screenH)
         {
+<<<<<<< HEAD
+            float height = 640f;
+=======
             float height = 660f;
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
             var area = new Rect((screenW - Width) * 0.5f, (screenH - height) * 0.5f, Width, height);
             GUI.Box(area, GUIContent.none);
             GUI.Box(area, GUIContent.none);
@@ -92,6 +96,10 @@ namespace Polykov.UI
             string[] bloodNames = { "Sin sangre", "Reducida", "Completa" };
             UserSettings.Blood = GUILayout.Toolbar(UserSettings.Blood, bloodNames);
             GUILayout.EndHorizontal();
+
+            if (GUILayout.Button("Sangre: " + GoreLabel(UserSettings.Gore) + " (clic para cambiar)", GUILayout.Height(26f)))
+                UserSettings.Gore = UserSettings.Gore == GoreLevel.Full ? GoreLevel.Reduced
+                    : UserSettings.Gore == GoreLevel.Reduced ? GoreLevel.Off : GoreLevel.Full;
 
             GUILayout.Space(12f);
             GUILayout.Label("Perfil de movimiento (F2 para alternar jugando)", _label);
@@ -118,6 +126,9 @@ namespace Polykov.UI
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
         }
+
+        private static string GoreLabel(GoreLevel level) =>
+            level == GoreLevel.Full ? "completa" : level == GoreLevel.Reduced ? "reducida" : "desactivada";
 
         private bool PresetButton(string text, int index)
         {

@@ -10,8 +10,14 @@ namespace Polykov.EditorTools
     public sealed class OperatorModelPostprocessor : AssetPostprocessor
     {
         public const string ModelPath = "Assets/_Project/Art/Characters/Operator/Operator.fbx";
+<<<<<<< HEAD
+        public const string ScavModelPath = "Assets/_Project/Art/Characters/Scav/Scav.fbx";
+        private const string ScavAlbedoPath = "Assets/_Project/Art/Characters/Scav/T_Scav_Albedo.png";
+        private const string ScavNormalPath = "Assets/_Project/Art/Characters/Scav/T_Scav_Normal.png";
+=======
         /// <summary>Same 52-bone skeleton: humanoid avatar, animated with the Operator's clips (retargeted).</summary>
         public const string ScavModelPath = "Assets/_Project/Art/Characters/Scav/Scav.fbx";
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
         private const string PalettePath = "Assets/_Project/Art/Characters/Operator/T_Operator_Palette.png";
 
         private static readonly HashSet<string> Looping = new HashSet<string>
@@ -23,8 +29,12 @@ namespace Polykov.EditorTools
 
         private void OnPreprocessModel()
         {
+<<<<<<< HEAD
+            if (!IsCharacterModel(assetPath)) return;
+=======
             bool scav = assetPath == ScavModelPath;
             if (assetPath != ModelPath && !scav) return;
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
             var importer = (ModelImporter)assetImporter;
             importer.globalScale = 1f;
             importer.useFileScale = true;
@@ -46,7 +56,7 @@ namespace Polykov.EditorTools
 
         private void OnPreprocessAnimation()
         {
-            if (assetPath != ModelPath) return;
+            if (!IsCharacterModel(assetPath)) return;
             var importer = (ModelImporter)assetImporter;
             ModelImporterClipAnimation[] clips = importer.defaultClipAnimations;
             foreach (ModelImporterClipAnimation clip in clips)
@@ -67,8 +77,22 @@ namespace Polykov.EditorTools
             importer.clipAnimations = clips;
         }
 
+        private static bool IsCharacterModel(string path) => path == ModelPath || path == ScavModelPath;
+
         private void OnPreprocessTexture()
         {
+            if (assetPath == ScavAlbedoPath || assetPath == ScavNormalPath)
+            {
+                var scav = (TextureImporter)assetImporter;
+                bool normal = assetPath == ScavNormalPath;
+                scav.textureType = normal ? TextureImporterType.NormalMap : TextureImporterType.Default;
+                scav.filterMode = UnityEngine.FilterMode.Point;
+                scav.mipmapEnabled = false;
+                scav.maxTextureSize = 512;
+                scav.wrapMode = UnityEngine.TextureWrapMode.Clamp;
+                scav.sRGBTexture = !normal;
+                return;
+            }
             if (assetPath != PalettePath) return;
             var importer = (TextureImporter)assetImporter;
             importer.textureType = TextureImporterType.Default;
