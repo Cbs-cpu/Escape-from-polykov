@@ -1,6 +1,6 @@
 # Red (Fase 2) — diseño y estado
 
-> Estado: **lógica de netcode pura hecha y testeada** (`Assets/_Project/Scripts/Netcode`, 20 tests).
+> Estado: **lógica de netcode pura hecha y testeada** (`Assets/_Project/Scripts/Netcode`, 18 tests).
 > Pendiente en local: integrar el transporte (Netcode for GameObjects + Unity Transport) — ver `docs/TODO_LOCAL.md`.
 
 ## Modelo

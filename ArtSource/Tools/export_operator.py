@@ -6,8 +6,8 @@ Works on temporary duplicates so the .blend keeps its editable per-part material
 import bpy
 import os
 
-PROJECT = r"C:\Users\Cobos\Escape from Polykov"
-OUT_DIR = os.path.join(PROJECT, r"Assets\_Project\Art\Characters\Operator")
+PROJECT = os.environ.get("POLYKOV_ROOT", r"C:\Users\Cobos\Escape from Polykov")
+OUT_DIR = os.path.join(PROJECT, "Assets", "_Project", "Art", "Characters", "Operator")
 FBX_PATH = os.path.join(OUT_DIR, "Operator.fbx")
 PALETTE_PATH = os.path.join(OUT_DIR, "T_Operator_Palette.png")
 MESHES = ["Operator_Body", "Operator_Head"]

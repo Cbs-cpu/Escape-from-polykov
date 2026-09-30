@@ -21,6 +21,9 @@ namespace Polykov.Animation
         [Tooltip("Pelvis drop at full crouch (m). Feet stay planted by IK, so the knees bend.")]
         [SerializeField, Range(0f, 0.7f)] private float crouchPelvisDrop = 0.42f;
 
+        [Tooltip("Optional. When its controller has crouch clips, the procedural crouch drop is disabled.")]
+        [SerializeField] private PlayerAnimator playerAnimator;
+
         private Animator _animator;
         private float _leftWeight;
         private float _rightWeight;
@@ -44,7 +47,8 @@ namespace Polykov.Animation
             float pelvisTarget = grounded ? Mathf.Clamp(Mathf.Min(leftDelta, rightDelta, 0f), -maxPelvisDrop, 0f) : 0f;
             // Crouch pose without dedicated clips: lower the hips and let the foot IK bend the legs.
             // Only while grounded, otherwise the feet would poke out of the (shrunk) capsule.
-            if (grounded) pelvisTarget -= motor.State.Crouch * crouchPelvisDrop;
+            bool clips = playerAnimator != null && playerAnimator.HasCrouchClips;
+            if (grounded && !clips) pelvisTarget -= motor.State.Crouch * crouchPelvisDrop;
             _pelvisOffset = Damp(_pelvisOffset, pelvisTarget, pelvisSharpness, dt);
             _animator.bodyPosition += Vector3.up * _pelvisOffset;
 

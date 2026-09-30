@@ -14,6 +14,8 @@ namespace Polykov.Animation
         [SerializeField] private Animator animator;
         [SerializeField] private PlayerMotor motor;
         [SerializeField] private PlayerLook look;
+        [Tooltip("Optional. When its controller has crouch clips, the procedural crouch bend is disabled.")]
+        [SerializeField] private PlayerAnimator playerAnimator;
 
         [Header("Look")]
         [Tooltip("Fraction of a downward view pitch absorbed by the spine; the neck and head take the rest. " +
@@ -58,7 +60,8 @@ namespace Polykov.Animation
             Vector3 forward = yaw * Vector3.forward;
 
             // Pitch: bend the spine chain, then neck and head.
-            float crouchBend = motor.State.Crouch * crouchSpineBend;
+            bool clips = playerAnimator != null && playerAnimator.HasCrouchClips;
+            float crouchBend = clips ? 0f : motor.State.Crouch * crouchSpineBend;
             float spinePitch = look.Pitch * (look.Pitch > 0f ? spinePitchShareDown : spinePitchShareUp) + crouchBend;
             float headPitch = look.Pitch - spinePitch;
             Rotate(_spine, right, spinePitch * 0.3f);

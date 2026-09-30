@@ -4,7 +4,7 @@ import math
 import os
 from mathutils import Vector
 
-OUT = r"C:\Users\Cobos\Escape from Polykov\docs\screenshots"
+OUT = os.path.join(os.environ.get("POLYKOV_ROOT", r"C:\Users\Cobos\Escape from Polykov"), "docs", "screenshots")
 os.makedirs(OUT, exist_ok=True)
 scene = bpy.context.scene
 

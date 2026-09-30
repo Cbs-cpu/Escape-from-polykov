@@ -3,6 +3,17 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Animaciones de agacharse + inclinación corregida al correr
+- 5 clips nuevos en el Operator: `Crouch_Idle`, `Crouch_F/B/L/R` (zancada a 1.5 m/s, pies apoyados: tobillos a ±2 cm del
+  suelo medido en Blender). Hoja: `docs/screenshots/anim_crouch_and_lean_sheet.png`.
+- **Arreglado un fallo previo**: correr, esprintar y strafe inclinaban el torso **hacia atrás** (signo invertido en
+  `build_animations.py`). Ahora se inclinan hacia delante y la cabeza compensa para mirar al frente.
+- Al abrir Unity, el `AC_Operator` **se regenera solo** (una vez) con un árbol Standing/Crouched mezclado por el
+  parámetro `Crouch`; conserva el GUID, así que el prefab no se rompe. Si no se regenera: menú *Polykov > Build Operator Animator*.
+- Con los clips activos, la pose procedural de agacharse (bajar pelvis en FootIK, doblar espalda) se desactiva sola.
+- Qué revisar: agacharse parado y andando en las 4 direcciones (pies sin patinar), y que al correr/esprintar el cuerpo
+  vaya hacia delante. Consola: debe salir `[Polykov] ... rebuilding AC_Operator` la primera vez.
+
 ## Agarre de la pistola verificado con el esqueleto real
 - Las manos se han ajustado **viendo al Operator en Blender** con el mismo IK que usa Unity
   (`ArtSource/Tools/grip_preview.py`). Mira `docs/screenshots/grip_*.png`: cadera y apuntado, en primera y tercera persona.

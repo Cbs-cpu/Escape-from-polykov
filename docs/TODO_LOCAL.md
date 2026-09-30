@@ -12,8 +12,7 @@ Marca cada punto con `[x]` al terminarlo.
 ## Pendiente
 - [ ] **Crouch**: verificar en la arena que existe algún hueco bajo (~1.4 m) para probar el bloqueo por techo; si no, añadir
       uno al blockout (`MovementTestArena`, zona de pasillos).
-- [ ] **Crouch (arte)**: clips propios `Crouch_Idle`, `Crouch_Walk_F/B/L/R` en `ArtSource/Tools/build_animations.py` y añadir
-      una capa/blend tree de crouch en `OperatorAnimatorBuilder` (parámetro `Crouch`). Hasta entonces la pose es procedural.
+- [x] ~~Crouch (arte)~~: clips hechos en la nube; el controller se regenera solo al abrir Unity (comprobar consola).
 - [ ] **Arma — ajuste visual de manos** (necesita ver el editor): en Play Mode ajustar `WD_M1911` (Hands) y `HandIK` hasta que
       ambas manos agarren bien la M1911 en cadera y apuntando; copiar los valores al asset (Play Mode los pierde en componentes,
       no en el asset) y hacer commit. Revisar también en tercera persona desde la Scene view.

@@ -778,6 +778,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Polykov.Animation::Polykov.Animation.FootIK
   motor: {fileID: 8327803297820930270}
+  playerAnimator: {fileID: 7878190769245930132}
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967039
@@ -802,6 +803,7 @@ MonoBehaviour:
   animator: {fileID: 3380824778610415095}
   motor: {fileID: 8327803297820930270}
   look: {fileID: 4148688137752740380}
+  playerAnimator: {fileID: 7878190769245930132}
   spinePitchShare: 0.5
   leanAngle: 18
   leanReach: 0.34
