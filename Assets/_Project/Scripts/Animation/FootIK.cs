@@ -18,6 +18,8 @@ namespace Polykov.Animation
         [SerializeField, Range(0f, 1f)] private float rotationWeight = 0.8f;
         [SerializeField] private float pelvisSharpness = 14f;
         [SerializeField] private float weightSharpness = 10f;
+        [Tooltip("Pelvis drop at full crouch (m). Feet stay planted by IK, so the knees bend.")]
+        [SerializeField, Range(0f, 0.7f)] private float crouchPelvisDrop = 0.42f;
 
         private Animator _animator;
         private float _leftWeight;
@@ -40,6 +42,9 @@ namespace Polykov.Animation
             _rightWeight = Damp(_rightWeight, rightHit ? target : 0f, weightSharpness, dt);
 
             float pelvisTarget = grounded ? Mathf.Clamp(Mathf.Min(leftDelta, rightDelta, 0f), -maxPelvisDrop, 0f) : 0f;
+            // Crouch pose without dedicated clips: lower the hips and let the foot IK bend the legs.
+            // Only while grounded, otherwise the feet would poke out of the (shrunk) capsule.
+            if (grounded) pelvisTarget -= motor.State.Crouch * crouchPelvisDrop;
             _pelvisOffset = Damp(_pelvisOffset, pelvisTarget, pelvisSharpness, dt);
             _animator.bodyPosition += Vector3.up * _pelvisOffset;
 

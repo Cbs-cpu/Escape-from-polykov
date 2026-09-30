@@ -59,6 +59,12 @@ namespace Polykov.Movement
         [Tooltip("Speed multiplier at full lean.")]
         [Range(0f, 1f)] public float LeanMoveMultiplier;
 
+        [Header("Crouch")]
+        [Tooltip("Max speed while fully crouched (m/s).")]
+        [Min(0f)] public float CrouchSpeed;
+        [Tooltip("Seconds to go from standing to fully crouched (and back).")]
+        [Min(0.01f)] public float CrouchTime;
+
         [Header("State")]
         [Min(0f)] public float IdleSpeedThreshold;
 
@@ -87,6 +93,8 @@ namespace Polykov.Movement
             HardLandingSpeed = 5f,
             LeanTime = 0.18f,
             LeanMoveMultiplier = 0.7f,
+            CrouchSpeed = 1.5f,
+            CrouchTime = 0.22f,
             IdleSpeedThreshold = 0.15f,
         };
     }

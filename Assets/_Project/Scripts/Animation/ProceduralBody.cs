@@ -22,6 +22,10 @@ namespace Polykov.Animation
         [Tooltip("Fraction of an upward view pitch absorbed by the spine.")]
         [SerializeField, Range(0f, 1f)] private float spinePitchShareUp = 0.45f;
 
+        [Header("Crouch")]
+        [Tooltip("Forward bend of the spine at full crouch (degrees); the neck compensates so the view is unchanged.")]
+        [SerializeField, Range(0f, 40f)] private float crouchSpineBend = 16f;
+
         [Header("Lean")]
         [Tooltip("Total torso roll at full lean (degrees).")]
         [SerializeField, Range(0f, 40f)] private float leanAngle = 18f;
@@ -54,7 +58,8 @@ namespace Polykov.Animation
             Vector3 forward = yaw * Vector3.forward;
 
             // Pitch: bend the spine chain, then neck and head.
-            float spinePitch = look.Pitch * (look.Pitch > 0f ? spinePitchShareDown : spinePitchShareUp);
+            float crouchBend = motor.State.Crouch * crouchSpineBend;
+            float spinePitch = look.Pitch * (look.Pitch > 0f ? spinePitchShareDown : spinePitchShareUp) + crouchBend;
             float headPitch = look.Pitch - spinePitch;
             Rotate(_spine, right, spinePitch * 0.3f);
             Rotate(_chest, right, spinePitch * 0.35f);

@@ -1,3 +1,4 @@
+using Polykov.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,7 +22,9 @@ namespace Polykov.Input
         private InputAction _pause;
         private InputAction _jump;
         private InputAction _lean;
+        private InputAction _crouch;
         private bool _jumpLatched;
+        private bool _crouchToggled;
 
         /// <summary>When true, gameplay input reads as neutral (e.g. cursor unlocked, menus open).</summary>
         public bool Blocked { get; set; }
@@ -32,6 +35,12 @@ namespace Polykov.Input
         /// <summary>-1 = lean left (Q), +1 = lean right (E).</summary>
         public float Lean => Blocked ? 0f : Mathf.Clamp(_lean.ReadValue<float>(), -1f, 1f);
         public bool PausePressedThisFrame => _pause.WasPressedThisFrame();
+
+        /// <summary>
+        /// Crouch intent. Hold mode: key held. Toggle mode (UserSettings.ToggleCrouch): press toggles,
+        /// sprinting or jumping stands you up.
+        /// </summary>
+        public bool Crouch => !Blocked && (UserSettings.ToggleCrouch ? _crouchToggled : _crouch.IsPressed());
 
         /// <summary>
         /// Returns true once per jump press. Presses are latched between simulation ticks so none are lost
@@ -54,11 +63,15 @@ namespace Polykov.Input
             _pause = _map.FindAction("Pause", true);
             _jump = _map.FindAction("Jump", true);
             _lean = _map.FindAction("Lean", true);
+            _crouch = _map.FindAction("Crouch", true);
         }
 
         private void Update()
         {
-            if (!Blocked && _jump.WasPressedThisFrame()) _jumpLatched = true;
+            if (Blocked) return;
+            if (_jump.WasPressedThisFrame()) _jumpLatched = true;
+            if (_crouch.WasPressedThisFrame()) _crouchToggled = !_crouchToggled;
+            if (_sprint.WasPressedThisFrame() || _jump.WasPressedThisFrame()) _crouchToggled = false;
         }
 
         private void OnEnable() => _map?.Enable();

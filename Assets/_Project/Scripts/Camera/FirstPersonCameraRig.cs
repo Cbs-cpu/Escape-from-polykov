@@ -99,7 +99,8 @@ namespace Polykov.CameraSystem
                 roll = _tilt + leanRoll + Mathf.Sin(_bobPhase) * settings.RollAmplitude * w;
 
                 Quaternion pivotRotation = Quaternion.Euler(look.Pitch, look.Yaw, roll);
-                Vector3 neck = motor.InterpolatedPosition + Vector3.up * settings.NeckHeight;
+                float heightScale = motor.StandingHeight > 0f ? motor.CurrentHeight / motor.StandingHeight : 1f;
+                Vector3 neck = motor.InterpolatedPosition + Vector3.up * (settings.NeckHeight * heightScale);
                 eye = neck + pivotRotation * new Vector3(0f, settings.EyeOffset.x, settings.EyeOffset.y);
                 eye += yawRotation * new Vector3(lateral, vertical, 0f);
             }

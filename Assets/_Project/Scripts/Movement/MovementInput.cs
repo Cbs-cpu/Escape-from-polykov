@@ -18,13 +18,20 @@ namespace Polykov.Movement
         public readonly bool Jump;
         /// <summary>Desired lean, -1 = full left, +1 = full right.</summary>
         public readonly float Lean;
+        /// <summary>Wants to be crouched (hold/toggle already resolved by the input layer).</summary>
+        public readonly bool Crouch;
 
         public MovementInput(Vector2 move, float yaw, bool sprint, bool walk)
-            : this(move, yaw, sprint, walk, false, 0f)
+            : this(move, yaw, sprint, walk, false, 0f, false)
         {
         }
 
         public MovementInput(Vector2 move, float yaw, bool sprint, bool walk, bool jump, float lean)
+            : this(move, yaw, sprint, walk, jump, lean, false)
+        {
+        }
+
+        public MovementInput(Vector2 move, float yaw, bool sprint, bool walk, bool jump, float lean, bool crouch)
         {
             Move = move;
             Yaw = yaw;
@@ -32,6 +39,7 @@ namespace Polykov.Movement
             Walk = walk;
             Jump = jump;
             Lean = lean;
+            Crouch = crouch;
         }
     }
 }

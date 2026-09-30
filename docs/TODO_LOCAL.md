@@ -10,3 +10,7 @@ Marca cada punto con `[x]` al terminarlo.
 - [ ] Jugar `Assets/_Project/Scenes/MovementTestArena.unity` y revisar lo indicado en `docs/CHANGELOG_PLAYTEST.md`.
 
 ## Pendiente
+- [ ] **Crouch**: verificar en la arena que existe algún hueco bajo (~1.4 m) para probar el bloqueo por techo; si no, añadir
+      uno al blockout (`MovementTestArena`, zona de pasillos).
+- [ ] **Crouch (arte)**: clips propios `Crouch_Idle`, `Crouch_Walk_F/B/L/R` en `ArtSource/Tools/build_animations.py` y añadir
+      una capa/blend tree de crouch en `OperatorAnimatorBuilder` (parámetro `Crouch`). Hasta entonces la pose es procedural.

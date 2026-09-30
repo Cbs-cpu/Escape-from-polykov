@@ -2,6 +2,7 @@
     "name": "Polykov.Input",
     "rootNamespace": "Polykov.Input",
     "references": [
+        "Polykov.Core",
         "Unity.InputSystem"
     ],
     "includePlatforms": [],

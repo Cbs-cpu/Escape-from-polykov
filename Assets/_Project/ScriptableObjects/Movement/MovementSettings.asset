@@ -35,4 +35,6 @@ MonoBehaviour:
     HardLandingSpeed: 5
     LeanTime: 0.18
     LeanMoveMultiplier: 0.7
+    CrouchSpeed: 1.5
+    CrouchTime: 0.22
     IdleSpeedThreshold: 0.15
