@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fce129f43e7eeaf4a9adb86287d54a29, type: 3}
+  m_Name: AD_Suppressor_45
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.AttachmentDefinition
+  Rules:
+    Id: suppressor_45
+    Slot: 0
+    Requires:
+    - Slot: 1
+      AttachmentId: barrel_threaded
+    ErgonomicsAdd: -8
+    RecoilMultiplier: 0.9
+    WeightAddKg: 0.35
+    LengthAddM: 0.16
+    LoudnessMultiplier: 0.25
+    MuzzleFlashMultiplier: 0.15
+  Prefab: {fileID: 100100000, guid: 59414952285714549a5b2d1922bc47cb, type: 3}
+  MuzzleSocketName: 

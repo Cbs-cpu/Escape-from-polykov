@@ -32,6 +32,17 @@ MonoBehaviour:
     RecoilVariance: 0.3
     AimRecoilMultiplier: 0.75
   StartingReserve: 28
+  Attachments:
+  - {fileID: 11400000, guid: bf502b83c01e45108d9957bca2af3df4, type: 2}
+  - {fileID: 11400000, guid: 257a2afe243742b09b73eda379530b57, type: 2}
+  - {fileID: 11400000, guid: 0e8fabd5b6044d74b0f5b8afc17a427a, type: 2}
+  - {fileID: 11400000, guid: 789cf43f45c64ad49d5efc8e42cbd048, type: 2}
+  - {fileID: 11400000, guid: 6bdab092fade40ad855c5d23ef161144, type: 2}
+  DefaultBuild:
+    Muzzle: 
+    Barrel: barrel_standard
+    Grips: grips_wood
+    Magazine: magazine_7
   Range: 150
   ImpactForce: 4
   Damage: 62

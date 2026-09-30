@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fce129f43e7eeaf4a9adb86287d54a29, type: 3}
+  m_Name: AD_Barrel_Standard
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.AttachmentDefinition
+  Rules:
+    Id: barrel_standard
+    Slot: 1
+    Requires: []
+    ErgonomicsAdd: 0
+    RecoilMultiplier: 1
+    WeightAddKg: 0
+    LengthAddM: 0
+    LoudnessMultiplier: 1
+    MuzzleFlashMultiplier: 1
+  Prefab: {fileID: 0}
+  MuzzleSocketName: 

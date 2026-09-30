@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fce129f43e7eeaf4a9adb86287d54a29, type: 3}
+  m_Name: AD_Barrel_Threaded
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.AttachmentDefinition
+  Rules:
+    Id: barrel_threaded
+    Slot: 1
+    Requires: []
+    ErgonomicsAdd: 0
+    RecoilMultiplier: 1
+    WeightAddKg: 0.02
+    LengthAddM: 0.01
+    LoudnessMultiplier: 1
+    MuzzleFlashMultiplier: 1
+  Prefab: {fileID: 100100000, guid: f2ad3f28c9026e64c9073089e9f861bb, type: 3}
+  MuzzleSocketName: 

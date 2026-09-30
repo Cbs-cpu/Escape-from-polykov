@@ -14,6 +14,12 @@ namespace Polykov.Weapons
         public WeaponStats Stats = WeaponStats.M1911;
         [Min(0)] public int StartingReserve = 28;
 
+        [Header("Modding")]
+        [Tooltip("Attachments available for this weapon.")]
+        public AttachmentDefinition[] Attachments = System.Array.Empty<AttachmentDefinition>();
+        [Tooltip("Factory configuration.")]
+        public WeaponBuild DefaultBuild = WeaponBuild.M1911Default;
+
         [Header("Hit")]
         [Min(1f)] public float Range = 150f;
         [Tooltip("Impulse applied to rigidbodies that are hit.")]
@@ -105,6 +111,16 @@ namespace Polykov.Weapons
         [Header("Aim down sights")]
         [Range(0f, 30f)] public float AdsFovReduction = 10f;
         [Range(0.2f, 1f)] public float AdsSensitivity = 0.8f;
+
+        /// <summary>Pure-rules catalog built from <see cref="Attachments"/> (null entries skipped).</summary>
+        public AttachmentCatalog BuildCatalog()
+        {
+            var catalog = new AttachmentCatalog();
+            if (Attachments != null)
+                foreach (var a in Attachments)
+                    if (a != null) catalog.Add(a.Rules);
+            return catalog;
+        }
 
         public Quaternion RightHandRotation => Quaternion.LookRotation(RightHandForward, RightHandUp);
         public Quaternion LeftHandRotation => Quaternion.LookRotation(LeftHandForward, LeftHandUp);
