@@ -28,6 +28,22 @@ namespace Polykov.Combat
             if (keyboard == null) return;
             if (keyboard.f3Key.wasPressedThisFrame) Build();
             if (keyboard.f4Key.wasPressedThisFrame) weapon.Resupply();
+            // Dismemberment is rare by design; this makes it reliable once a limb is destroyed and hit again.
+            if (keyboard.f10Key.wasPressedThisFrame) weapon.CalibreBoost = weapon.CalibreBoost > 1f ? 1f : 60f;
+        }
+
+        private GUIStyle _style;
+
+        private void OnGUI()
+        {
+            if (weapon.CalibreBoost <= 1f) return;
+            if (_style == null)
+            {
+                _style = new GUIStyle(GUI.skin.label) { fontSize = 15, alignment = TextAnchor.UpperCenter };
+                _style.normal.textColor = new Color(1f, 0.55f, 0.4f);
+            }
+            GUI.Label(new Rect(Screen.width * 0.5f - 300f, 14f, 600f, 30f),
+                "MODO DESMEMBRAR (pruebas, F10): destruye un miembro y dispara otra vez para cortarlo", _style);
         }
 
         private void Build()

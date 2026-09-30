@@ -22,6 +22,9 @@ namespace Polykov.EditorTools
             "Crouch_Idle", "Crouch_F", "Crouch_B", "Crouch_L", "Crouch_R",
         };
 
+        // Bump when import settings change so Unity reimports the character models (v2: readable Scav mesh).
+        public override uint GetVersion() => 2;
+
         private void OnPreprocessModel()
         {
             if (!IsCharacterModel(assetPath)) return;
@@ -33,7 +36,8 @@ namespace Polykov.EditorTools
             importer.importLights = false;
             importer.importVisibility = false;
             importer.meshCompression = ModelImporterMeshCompression.Off;
-            importer.isReadable = false;
+            // The Scav can lose limbs: severing rebuilds its meshes at runtime, which needs CPU access.
+            importer.isReadable = assetPath == ScavModelPath;
             importer.importNormals = ModelImporterNormals.Import;
             importer.materialImportMode = ModelImporterMaterialImportMode.None;
             importer.animationType = ModelImporterAnimationType.Human;

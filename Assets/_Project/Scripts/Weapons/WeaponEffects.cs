@@ -22,6 +22,9 @@ namespace Polykov.Weapons
 
         private EffectPool _effects;
         private BloodEffects _blood;
+
+        /// <summary>The player's blood effects, for other systems that bleed (dismemberment). Null until Awake.</summary>
+        public static BloodEffects SharedBlood { get; private set; }
         private DebrisPool _casings;
         private DebrisPool _magazines;
         private bool _magazineDropped;
@@ -36,6 +39,7 @@ namespace Polykov.Weapons
                 _effects.Prewarm(view.ImpactMetal);
                 _effects.Prewarm(view.BulletHole);
                 _blood = new BloodEffects(_effects, view, weapon.HitMask, _effects.transform);
+                SharedBlood = _blood;
             }
             if (casingPrefab != null)
             {
@@ -67,6 +71,7 @@ namespace Polykov.Weapons
 
         private void OnDestroy()
         {
+            if (SharedBlood == _blood) SharedBlood = null;
             if (_effects != null) Destroy(_effects.gameObject);
             if (_casings != null) Destroy(_casings.gameObject);
             if (_magazines != null) Destroy(_magazines.gameObject);

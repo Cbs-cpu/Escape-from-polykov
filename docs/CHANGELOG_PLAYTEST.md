@@ -3,6 +3,22 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Desmembramiento visual (paso 10)
+- Cuando `WoundModel` decide cortar (probabilidad baja, solo en un miembro ya **destruido** y con suficiente daño de sobra), el
+  miembro **sale del cuerpo**: se recorta en runtime la malla del Scav por los huesos afectados, se tapa el muñón con una
+  tapa de carne y el miembro sale despedido como objeto físico (con su copia de huesos y colisiones), con chorro de sangre
+  y mancha en el suelo. Brazos y piernas se cortan por el codo/rodilla si el disparo fue por debajo, si no por hombro/cadera.
+  Cabeza: muy rara, y mata al instante.
+- No se ha tocado ningún modelo 3D. El FBX del Scav se reimporta solo con lectura de malla activada (necesaria para cortar);
+  si en consola sale `Dismemberment needs a readable mesh`, activa *Read/Write* en el importador de `Scav.fbx`.
+- **Cómo probarlo:** en la arena, pulsa **F10** (modo desmembrar, aviso arriba), dispara a un brazo o pierna de un Scav
+  hasta destruirlo (vida a 0) y dispara otra vez: el miembro sale despedido. Ajustes de sangre y desmembramiento en el
+  menú de pausa (Esc). Máx. 8 miembros a la vez en escena (el más viejo se retira) y 45 s de vida.
+- Límites conocidos: el corte sigue la frontera de triángulos (aspecto facetado, coherente con el estilo low-poly); el miembro
+  es un objeto rígido (sin ragdoll propio por dedos/codos).
+- Pruebas automáticas: 8 tests de `MeshSplitter`/`StumpCap` (partición sin pérdida de triángulos, anillo de corte cerrado
+  aunque haya vértices duplicados por costuras UV, orientación de la tapa).
+
 ## Fusión con tu trabajo local (commit «update» de main)
 - Arma: se mantiene el sistema de la nube como base (seguro/inspeccionar/recámara, red, salud, agarre verificado).
 - De tu versión se conserva:

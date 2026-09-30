@@ -17,6 +17,7 @@ namespace Polykov.Combat
         private HealthComponent _health;
         private HitReactor _reactor;
         private Ragdoll _ragdoll;
+        private Dismemberment _dismemberment;
         private Transform _hips;
         private Vector3 _lastHips;
         private Vector3 _velocity;
@@ -50,6 +51,9 @@ namespace Polykov.Combat
             _ragdoll = gameObject.AddComponent<Ragdoll>();
             _ragdoll.Init(animator);
             if (GetComponent<WoundDecals>() == null) gameObject.AddComponent<WoundDecals>();
+            // After the ragdoll subscribed to Died, so severed parts can be re-frozen once it wakes the bodies.
+            _dismemberment = gameObject.AddComponent<Dismemberment>();
+            _dismemberment.Init(animator, _health);
 
             _hips = animator.GetBoneTransform(HumanBodyBones.Hips);
             _lastHips = _hips.position;
@@ -105,6 +109,7 @@ namespace Polykov.Combat
         {
             if (_ragdoll == null) return;
             _ragdoll.Deactivate();
+            if (_dismemberment != null) _dismemberment.Restore();
             _reactor.enabled = true;
             _reactor.ResetAll();
             _justDied = false;

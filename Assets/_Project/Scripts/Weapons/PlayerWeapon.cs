@@ -79,6 +79,8 @@ namespace Polykov.Weapons
         public WeaponState State => _state;
         public WeaponModel Model => _model;
         public bool Obstructed => _obstructed;
+        /// <summary>Test multiplier for dismemberment odds (range tool). 1 = the weapon's real calibre.</summary>
+        public float CalibreBoost { get; set; } = 1f;
         public bool TriggerHeld => input.FireHeld;
 
         /// <summary>Raised on the tick a round is fired (after the hitscan).</summary>
@@ -231,7 +233,7 @@ namespace Polykov.Weapons
 
             var receiver = hit.collider.GetComponentInParent<IShotReceiver>();
             receiver?.OnShot(new ShotHit(hit.point, hit.normal, direction, definition.Damage, definition.ImpactForce,
-                definition.CalibreMultiplier, eye.position));
+                definition.CalibreMultiplier * CalibreBoost, eye.position));
             if (SimpleImpactMarkers) ImpactEffects.Spawn(hit.point, hit.normal);
             HitSurface?.Invoke(hit, direction);
         }

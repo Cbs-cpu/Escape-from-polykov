@@ -114,6 +114,19 @@ namespace Polykov.Weapons
                 Splat(floor.point, floor.normal, Random.Range(0.5f, 1f) * (full ? 1f : 0.6f));
         }
 
+        /// <summary>A burst of blood from an open wound (severed limb stump): spray along <paramref name="direction"/>.</summary>
+        public void Spurt(Vector3 point, Vector3 direction, float amount = 1f)
+        {
+            GoreLevel gore = UserSettings.Gore;
+            if (gore == GoreLevel.Off || _view == null || direction.sqrMagnitude < 1e-6f) return;
+            float scale = (gore == GoreLevel.Full ? 1.6f : 0.9f) * amount;
+            Spawn(_view.BloodExit, point, direction, scale);
+            if (gore == GoreLevel.Full) Spawn(_view.BloodMist, point, direction, 1.4f);
+            if (Physics.Raycast(point, Vector3.down, out RaycastHit floor, 3f, _mask, QueryTriggerInteraction.Ignore) &&
+                floor.collider.GetComponentInParent<SurfaceMaterial>() is not { Type: SurfaceType.Flesh })
+                Splat(floor.point, floor.normal, Random.Range(1f, 1.8f) * amount);
+        }
+
         private void Spawn(GameObject prefab, Vector3 point, Vector3 direction, float scale)
         {
             if (prefab == null || direction.sqrMagnitude < 1e-6f) return;
