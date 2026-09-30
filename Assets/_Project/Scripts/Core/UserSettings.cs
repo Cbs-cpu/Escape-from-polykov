@@ -21,6 +21,7 @@ namespace Polykov.Core
         private static float _cameraShake;
         private static bool _invertY;
         private static bool _toggleCrouch;
+        private static float _masterVolume;
 
         /// <summary>Raised after any value changes.</summary>
         public static event Action Changed;
@@ -66,6 +67,13 @@ namespace Polykov.Core
             set => Set(ref _toggleCrouch, value, "toggleCrouch");
         }
 
+        /// <summary>Master volume 0..1.</summary>
+        public static float MasterVolume
+        {
+            get { EnsureLoaded(); return _masterVolume; }
+            set => Set(ref _masterVolume, Mathf.Clamp01(value), "masterVolume");
+        }
+
         public static void ResetToDefaults()
         {
             _mouseSensitivity = DefaultMouseSensitivity;
@@ -74,6 +82,7 @@ namespace Polykov.Core
             _cameraShake = 1f;
             _invertY = false;
             _toggleCrouch = false;
+            _masterVolume = 0.8f;
             _loaded = true;
             Save();
             Changed?.Invoke();
@@ -89,6 +98,7 @@ namespace Polykov.Core
             _cameraShake = PlayerPrefs.GetFloat(Prefix + "cameraShake", 1f);
             _invertY = PlayerPrefs.GetInt(Prefix + "invertY", 0) != 0;
             _toggleCrouch = PlayerPrefs.GetInt(Prefix + "toggleCrouch", 0) != 0;
+            _masterVolume = PlayerPrefs.GetFloat(Prefix + "masterVolume", 0.8f);
         }
 
         private static void Set(ref float field, float value, string key)
@@ -117,6 +127,7 @@ namespace Polykov.Core
             PlayerPrefs.SetFloat(Prefix + "cameraShake", _cameraShake);
             PlayerPrefs.SetInt(Prefix + "invertY", _invertY ? 1 : 0);
             PlayerPrefs.SetInt(Prefix + "toggleCrouch", _toggleCrouch ? 1 : 0);
+            PlayerPrefs.SetFloat(Prefix + "masterVolume", _masterVolume);
         }
 
         /// <summary>Writes pending values to disk (call when closing the menu).</summary>

@@ -50,8 +50,26 @@ namespace Polykov.Weapons
         private float _kickRot;
         private float _kickRotVelocity;
 
-        private void OnEnable() => weapon.Fired += OnFired;
-        private void OnDisable() => weapon.Fired -= OnFired;
+        private float _dip;
+        private float _dipVelocity;
+
+        private void OnEnable()
+        {
+            weapon.Fired += OnFired;
+            motor.Jumped += OnJumped;
+            motor.Landed += OnLanded;
+        }
+
+        private void OnDisable()
+        {
+            weapon.Fired -= OnFired;
+            motor.Jumped -= OnJumped;
+            motor.Landed -= OnLanded;
+        }
+
+        // Inertia: the weapon lags behind vertical body motion.
+        private void OnJumped() => _dipVelocity -= 0.35f;
+        private void OnLanded(float impact) => _dipVelocity -= Mathf.Min(impact * 0.09f, 0.9f);
 
         private void Start()
         {
@@ -136,6 +154,9 @@ namespace Polykov.Weapons
             _bobWeight = Damp(_bobWeight, move.Grounded ? Mathf.Clamp(speed / runSpeed, 0f, 1.5f) : 0f, 8f, dt);
             float bob = def.BobAmount * _bobWeight * steadiness * (1f - lowered * 0.5f);
             position += new Vector3(Mathf.Sin(_bobPhase) * bob, -Mathf.Abs(Mathf.Cos(_bobPhase)) * bob, 0f);
+
+            Spring(ref _dip, ref _dipVelocity, 90f, 0.55f, dt);
+            position.y += _dip * steadiness;
 
             // Recoil spring (critically-damped-ish).
             Spring(ref _kickPos, ref _kickPosVelocity, def.KickSpring, def.KickDamping, dt);

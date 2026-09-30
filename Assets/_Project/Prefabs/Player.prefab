@@ -287,6 +287,7 @@ GameObject:
   - component: {fileID: 8277110902143749282}
   - component: {fileID: 7947354288216775995}
   - component: {fileID: 4836029443205171434}
+  - component: {fileID: 4243366258866668146}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -938,3 +939,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponHud
   weapon: {fileID: 6872715214061853040}
   visible: 1
+--- !u!114 &4243366258866668146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea3d589f7ea348d4b7142f15539aa703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Audio::Polykov.Audio.PlayerAudio
+  motor: {fileID: 8327803297820930270}
+  weapon: {fileID: 6872715214061853040}
+  strideLength: {x: 0.62, y: 1.05}
+  footstepVolume: 0.35
+  crouchFootstepVolume: 0.12
+  gunshotVolume: 0.9
+  handlingVolume: 0.5

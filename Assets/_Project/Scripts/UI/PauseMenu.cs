@@ -70,7 +70,7 @@ namespace Polykov.UI
 
         private void DrawMenu(float screenW, float screenH)
         {
-            float height = 560f;
+            float height = 600f;
             var area = new Rect((screenW - Width) * 0.5f, (screenH - height) * 0.5f, Width, height);
             GUI.Box(area, GUIContent.none);
             GUI.Box(area, GUIContent.none);
@@ -83,6 +83,7 @@ namespace Polykov.UI
             UserSettings.Fov = Slider("Campo de visión (FOV)", UserSettings.Fov, 60f, 110f, "0");
             UserSettings.HeadBob = Slider("Balanceo de cámara", UserSettings.HeadBob, 0f, 1f, "0%");
             UserSettings.CameraShake = Slider("Sacudidas de cámara", UserSettings.CameraShake, 0f, 1f, "0%");
+            UserSettings.MasterVolume = Slider("Volumen", UserSettings.MasterVolume, 0f, 1f, "0%");
             UserSettings.InvertY = GUILayout.Toggle(UserSettings.InvertY, " Invertir eje Y");
             UserSettings.ToggleCrouch = GUILayout.Toggle(UserSettings.ToggleCrouch, " Agacharse alterna (en vez de mantener)");
 

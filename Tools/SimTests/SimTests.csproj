@@ -20,6 +20,7 @@
     <Compile Include="../../Assets/_Project/Scripts/Movement/**/*.cs" Exclude="../../Assets/_Project/Scripts/Movement/MovementSettings.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Weapons/Simulation/**/*.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Animation/IK/TwoBoneIKSolver.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/Audio/SoundSynth.cs" />
     <Compile Include="../../Assets/_Project/Tests/EditMode/**/*.cs" />
   </ItemGroup>
 

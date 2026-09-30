@@ -3,6 +3,15 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Sonido procedural + inercia del arma
+- Sonidos **sintetizados en código** (provisionales, sin archivos): disparo, clic en vacío, sacar/meter cargador, soltar
+  corredera (recarga en vacío), pasos (cadencia según distancia recorrida: nunca desincronizados con la velocidad; agachado
+  suenan más bajo), salto y aterrizaje (más fuerte cuanto más alta la caída).
+- Nuevo ajuste **Volumen** en el menú de pausa.
+- El arma baja un poco al saltar y se hunde al aterrizar (inercia), menos al apuntar.
+- Qué revisar: que el disparo suene contundente y sin chasquidos raros, y que los pasos coincidan con los pies.
+  Volúmenes en `PlayerAudio` (componente del Player).
+
 ## Arma: M1911 en las manos (primera versión jugable)
 - El personaje lleva una **M1911 provisional hecha de cajas** (proporciones reales, corredera, cargador, martillo, gatillo, miras).
   El modelo bueno se hará en Blender con los mismos nombres de piezas (ver `docs/TODO_LOCAL.md`).

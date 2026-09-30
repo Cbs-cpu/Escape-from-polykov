@@ -23,3 +23,7 @@ Marca cada punto con `[x]` al terminarlo.
       +Z hacia la boca, origen sobre el guardamonte. Exportar FBX a `Assets/_Project/Art/Weapons/M1911/` y hacer que
       `PlayerWeapon` instancie ese prefab en lugar de `M1911Builder` cuando esté asignado.
 - [ ] **Arma — sonido**: disparo, clic en vacío, sacar/meter cargador, soltar corredera (eventos ya expuestos en `PlayerWeapon`).
+- [ ] **Audio real**: sustituir `ProceduralSounds` por clips reales (disparo interior/exterior, mecánica M1911, pasos por
+      superficie) y fuentes 3D para jugadores remotos.
+- [ ] **Decisión pendiente (usuario)**: ¿volver a añadir mando (gamepad)? El SPEC lo pide (historias 12 y 28) pero un commit
+      anterior dejó el input solo en teclado+ratón. El código (`PlayerInputReader.ReadLookDelta`) ya soporta sticks.

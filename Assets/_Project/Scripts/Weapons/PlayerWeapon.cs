@@ -24,6 +24,7 @@ namespace Polykov.Weapons
         private WeaponState _state;
         private WeaponModel _model;
         private bool _obstructed;
+        private bool _lastReloadWasEmpty;
 
         public WeaponDefinition Definition => definition;
         public WeaponState State => _state;
@@ -35,6 +36,9 @@ namespace Polykov.Weapons
         public event System.Action<WeaponState> Fired;
         public event System.Action DryFired;
         public event System.Action ReloadStarted;
+        public event System.Action MagazineInserted;
+        /// <summary>Raised when a reload completes; true if it was an empty reload (slide released).</summary>
+        public event System.Action<bool> ReloadFinished;
 
         private void Awake()
         {
@@ -65,7 +69,13 @@ namespace Polykov.Weapons
                 Fired?.Invoke(_state);
             }
             if (_state.JustDryFired) DryFired?.Invoke();
-            if (_state.JustStartedReload) ReloadStarted?.Invoke();
+            if (_state.JustStartedReload)
+            {
+                _lastReloadWasEmpty = _state.Reload == ReloadKind.Empty;
+                ReloadStarted?.Invoke();
+            }
+            if (_state.JustInsertedMagazine) MagazineInserted?.Invoke();
+            if (_state.JustFinishedReload) ReloadFinished?.Invoke(_lastReloadWasEmpty);
         }
 
         private void ProbeObstruction()
