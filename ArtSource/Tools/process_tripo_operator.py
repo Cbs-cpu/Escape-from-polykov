@@ -8,40 +8,53 @@ import bpy
 import bmesh
 from mathutils import Vector
 
-MESH = "Operator_Tripo_LP"
-RIG = "Operator_Rig"
-OUTLINE = 0.0014
+MESH = globals().get("TRIPO_MESH", "Operator_Tripo_LP")
+RIG = globals().get("TRIPO_RIG", "Operator_Rig")
+NAMES = globals().get("TRIPO_NAMES", ("Operator_Body", "Operator_Head"))
+OUTLINE = globals().get("TRIPO_OUTLINE", 0.0014)
 
-# (head, tail, parent) in the mesh's A-pose, Blender space (+X = character left, -Y = front).
+# Left-side joints of the mesh as generated (Blender space, +X = character left, -Y = front). Default = Operator (A-pose).
+JOINTS = globals().get("TRIPO_JOINTS", {
+    "shoulder_in": (0.04, 0.03, 1.44), "shoulder": (0.20, 0.04, 1.46), "elbow": (0.3125, 0.06, 1.185),
+    "wrist": (0.333, 0.0, 0.946), "hand_end": (0.335, -0.02, 0.862),
+    "hip": (0.083, -0.02, 0.95), "knee": (0.135, 0.0, 0.49), "ankle": (0.205, 0.083, 0.10),
+    "ball": (0.212, -0.05, 0.03), "toe": (0.215, -0.125, 0.03),
+    "pelvis": 0.95, "spine": 1.05, "chest": 1.20, "upper_chest": 1.34, "neck": 1.46, "head": 1.58, "head_top": 1.80,
+})
+J = {k: (Vector(v) if isinstance(v, tuple) else v) for k, v in JOINTS.items()}
+
 A_POSE = {
-    "Hips": ((0, 0.0, 0.95), (0, 0.0, 1.05), None),
-    "Spine": ((0, 0.0, 1.05), (0, 0.005, 1.20), "Hips"),
-    "Chest": ((0, 0.005, 1.20), (0, 0.01, 1.34), "Spine"),
-    "UpperChest": ((0, 0.01, 1.34), (0, 0.02, 1.46), "Chest"),
-    "Neck": ((0, 0.02, 1.46), (0, 0.01, 1.58), "UpperChest"),
-    "Head": ((0, 0.01, 1.58), (0, 0.01, 1.80), "Neck"),
-    "LeftShoulder": ((0.04, 0.03, 1.44), (0.18, 0.04, 1.46), "UpperChest"),
-    "LeftUpperArm": ((0.20, 0.04, 1.46), (0.3125, 0.06, 1.185), "LeftShoulder"),
-    "LeftLowerArm": ((0.3125, 0.06, 1.185), (0.333, 0.0, 0.946), "LeftUpperArm"),
-    "LeftHand": ((0.333, 0.0, 0.946), (0.335, -0.02, 0.862), "LeftLowerArm"),
-    "LeftUpperLeg": ((0.083, -0.02, 0.95), (0.135, 0.0, 0.49), "Hips"),
-    "LeftLowerLeg": ((0.135, 0.0, 0.49), (0.205, 0.083, 0.10), "LeftUpperLeg"),
-    "LeftFoot": ((0.205, 0.083, 0.10), (0.212, -0.05, 0.03), "LeftLowerLeg"),
-    "LeftToes": ((0.212, -0.05, 0.03), (0.215, -0.125, 0.03), "LeftFoot"),
+    "Hips": ((0, 0.0, J["pelvis"]), (0, 0.0, J["spine"]), None),
+    "Spine": ((0, 0.0, J["spine"]), (0, 0.005, J["chest"]), "Hips"),
+    "Chest": ((0, 0.005, J["chest"]), (0, 0.01, J["upper_chest"]), "Spine"),
+    "UpperChest": ((0, 0.01, J["upper_chest"]), (0, 0.02, J["neck"]), "Chest"),
+    "Neck": ((0, 0.02, J["neck"]), (0, 0.01, J["head"]), "UpperChest"),
+    "Head": ((0, 0.01, J["head"]), (0, 0.01, J["head_top"]), "Neck"),
+    "LeftShoulder": (tuple(J["shoulder_in"]), tuple(J["shoulder"].lerp(J["shoulder_in"], 0.12)), "UpperChest"),
+    "LeftUpperArm": (tuple(J["shoulder"]), tuple(J["elbow"]), "LeftShoulder"),
+    "LeftLowerArm": (tuple(J["elbow"]), tuple(J["wrist"]), "LeftUpperArm"),
+    "LeftHand": (tuple(J["wrist"]), tuple(J["hand_end"]), "LeftLowerArm"),
+    "LeftUpperLeg": (tuple(J["hip"]), tuple(J["knee"]), "Hips"),
+    "LeftLowerLeg": (tuple(J["knee"]), tuple(J["ankle"]), "LeftUpperLeg"),
+    "LeftFoot": (tuple(J["ankle"]), tuple(J["ball"]), "LeftLowerLeg"),
+    "LeftToes": (tuple(J["ball"]), tuple(J["toe"]), "LeftFoot"),
 }
-# Fingers hang below the palm (palm faces the thigh, thumb forward).
+# Fingers continue along the hand direction; they spread front-to-back (thumb forward) in both A- and T-poses.
 FINGERS = {"Index": -0.028, "Middle": -0.010, "Ring": 0.009, "Little": 0.026}
 SEGS = (("Proximal", 0.034), ("Intermediate", 0.024), ("Distal", 0.019))
+_hand_dir = (J["hand_end"] - J["wrist"]).normalized()
 for f, y in FINGERS.items():
-    top, parent = Vector((0.335, y - 0.02, 0.862)), "LeftHand"
+    top, parent = J["hand_end"] + Vector((0, y, 0)), "LeftHand"
     for seg, length in SEGS:
-        bottom = top + Vector((0, 0, -length))
+        bottom = top + _hand_dir * length
         A_POSE[f"Left{f}{seg}"] = (tuple(top), tuple(bottom), parent)
         parent, top = f"Left{f}{seg}", bottom
-THUMB = [(0.328, -0.028, 0.930), (0.322, -0.052, 0.900), (0.318, -0.066, 0.878), (0.316, -0.074, 0.860)]
-A_POSE["LeftThumbProximal"] = (THUMB[0], THUMB[1], "LeftHand")
-A_POSE["LeftThumbIntermediate"] = (THUMB[1], THUMB[2], "LeftThumbProximal")
-A_POSE["LeftThumbDistal"] = (THUMB[2], THUMB[3], "LeftThumbIntermediate")
+_t0 = J["wrist"].lerp(J["hand_end"], 0.3) + Vector((0, -0.028, 0))
+_tdir = (_hand_dir * 0.5 + Vector((0, -0.85, 0))).normalized()
+THUMB = [_t0, _t0 + _tdir * 0.03, _t0 + _tdir * 0.052, _t0 + _tdir * 0.068]
+A_POSE["LeftThumbProximal"] = (tuple(THUMB[0]), tuple(THUMB[1]), "LeftHand")
+A_POSE["LeftThumbIntermediate"] = (tuple(THUMB[1]), tuple(THUMB[2]), "LeftThumbProximal")
+A_POSE["LeftThumbDistal"] = (tuple(THUMB[2]), tuple(THUMB[3]), "LeftThumbIntermediate")
 for n in [k for k in A_POSE if k.startswith("Left")]:
     h, t, p = A_POSE[n]
     A_POSE["Right" + n[4:]] = ((-h[0], h[1], h[2]), (-t[0], t[1], t[2]), ("Right" + p[4:]) if p and p.startswith("Left") else p)
@@ -128,7 +141,7 @@ def split_head(mesh):
     def head_weight(v):
         return sum(g.weight for g in v.groups if g.group in head_groups)
 
-    heavy = [head_weight(v) > 0.5 and v.co.z > 1.50 for v in me.vertices]
+    heavy = [head_weight(v) > 0.5 and v.co.z > J["neck"] + 0.04 for v in me.vertices]
     bm = bmesh.new()
     bm.from_mesh(me)
     bm.verts.ensure_lookup_table()
@@ -144,8 +157,8 @@ def split_head(mesh):
     bpy.ops.mesh.separate(type="SELECTED")
     bpy.ops.object.mode_set(mode="OBJECT")
     head = [o for o in bpy.context.selected_objects if o != mesh][0]
-    mesh.name = mesh.data.name = "Operator_Body"
-    head.name = head.data.name = "Operator_Head"
+    mesh.name = mesh.data.name = NAMES[0]
+    head.name = head.data.name = NAMES[1]
     return mesh, head
 
 
