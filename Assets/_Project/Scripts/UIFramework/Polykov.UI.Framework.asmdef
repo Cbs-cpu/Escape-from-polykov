@@ -1,0 +1,14 @@
+{
+    "name": "Polykov.UI.Framework",
+    "rootNamespace": "Polykov.UI.Framework",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": true
+}

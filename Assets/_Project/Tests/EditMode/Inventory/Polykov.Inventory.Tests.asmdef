@@ -1,0 +1,25 @@
+{
+    "name": "Polykov.Inventory.Tests",
+    "rootNamespace": "Polykov.Inventory.Tests",
+    "references": [
+        "Polykov.Inventory.Simulation",
+        "Polykov.Weapons.Simulation",
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
