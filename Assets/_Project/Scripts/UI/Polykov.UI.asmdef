@@ -5,7 +5,9 @@
         "Polykov.Core",
         "Polykov.Movement",
         "Polykov.Player",
-        "Unity.InputSystem"
+        "Unity.InputSystem",
+        "Polykov.UI.Framework",
+        "Polykov.UI.Framework.Unity"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

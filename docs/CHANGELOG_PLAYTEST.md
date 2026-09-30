@@ -210,3 +210,5 @@ cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el comm
   pictogramas low-poly.
 - Qué revisar: fuente nítida, que se vea el personaje entre las ranuras, arrastrar objetos, que el icono de la pistola
   cambie al montar el silenciador y que al volver a entrar al lobby siga todo donde lo dejaste.
+- **Menú de pausa (Esc) rehecho** con el mismo estilo: ajustes a la izquierda (deslizadores, casillas, sangre y perfil
+  de movimiento como botones), lista de controles a la derecha, REANUDAR / VOLVER AL LOBBY / RESTABLECER AJUSTES.

@@ -140,6 +140,28 @@ namespace Polykov.Tools.UiPreview
                 s.Tab = LobbyTab.Character;
                 s.Inventory.ShowWindow(ctx.Profile.Equipped(EquipSlot.Backpack), false, new UiVec(820, 330));
             }, (ctx, s, ui) => new UiVec(300, 1000), null);
+            // In-raid pause menu over the main-menu backdrop (the arena has no offline render yet).
+            {
+                var input = new UiInput();
+                var ui = new Ui(backend, input);
+                using var bmp = new SKBitmap(W, H);
+                using var canvas = new SKCanvas(bmp);
+                backend.Canvas = canvas;
+                SKImage background = LoadImage(Path.Combine(bgDir, "bg_character.png"));
+                var settings = new PauseSettings { Presets = new[] { "Default", "Tactical (heavy)", "Arcade (snappy)" }, Preset = 1, Gore = 2 };
+                for (int i = 0; i < 3; i++)
+                {
+                    input.BeginFrame(new UiVec(700, 900 - 60 + 30 + 20));
+                    canvas.Clear(new SKColor(9, 10, 11));
+                    if (background != null) canvas.DrawImage(background, new SKRect(0, 0, W, H));
+                    ui.BeginFrame(W, H, 0.1f * (i + 1));
+                    PauseScreen.Frame(ui, settings);
+                    ui.EndFrame();
+                }
+                string path = Path.Combine(outDir, "09_pausa.png");
+                using (var f = File.Create(path)) bmp.Encode(f, SKEncodedImageFormat.Png, 95);
+                Console.WriteLine("wrote " + path);
+            }
             return 0;
 
             void Run(string name, string bg, Action<LobbyContext, LobbyScreens, Ui> setup, Func<LobbyContext, LobbyScreens, Ui, UiVec> hover,

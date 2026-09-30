@@ -15,6 +15,7 @@
     <Compile Include="*.cs" />
     <Compile Include="../SimTests/UnityShim/**/*.cs" />
     <Compile Include="../../Assets/_Project/Scripts/UIFramework/*.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/UIFramework/Screens/*.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Weapons/Simulation/**/*.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Inventory/Simulation/**/*.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Lobby/Screens/**/*.cs" />
