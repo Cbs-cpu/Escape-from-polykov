@@ -1,12 +1,12 @@
+using Polykov.Weapons;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace Polykov.Weapons
+namespace Polykov.Combat
 {
     /// <summary>
-    /// Dev tool: F3 places a row of steel targets in front of the player (5, 10, 15, 25 m) wherever you are;
-    /// F4 refills spare ammo. Targets are plain primitives with colliders, so shots, impacts and the
-    /// obstruction probe all work against them.
+    /// Dev tool: F3 places a row of steel targets in front of the player (5, 10, 15, 25 m) and a training dummy
+    /// (an Operator with per-bone hitboxes and body-part HP) wherever you are; F4 refills spare ammo.
     /// </summary>
     public sealed class TestRange : MonoBehaviour
     {
@@ -15,6 +15,10 @@ namespace Polykov.Weapons
         [SerializeField] private Material standMaterial;
         [SerializeField] private float[] distances = { 5f, 10f, 15f, 25f };
         [SerializeField] private LayerMask groundMask = ~(1 << 8);
+        [Header("Training dummy")]
+        [SerializeField] private GameObject dummyModel;
+        [SerializeField] private RuntimeAnimatorController dummyController;
+        [SerializeField] private float dummyDistance = 7f;
 
         private Transform _range;
 
@@ -41,6 +45,15 @@ namespace Polykov.Weapons
                         QueryTriggerInteraction.Ignore))
                     spot = ground.point;
                 CreateTarget(spot, Quaternion.LookRotation(-forward), 1f + i * 0.15f);
+            }
+
+            if (dummyModel != null)
+            {
+                Vector3 spot = transform.position + forward * dummyDistance;
+                if (Physics.Raycast(spot + Vector3.up * 3f, Vector3.down, out RaycastHit ground, 10f, groundMask,
+                        QueryTriggerInteraction.Ignore))
+                    spot = ground.point;
+                TrainingDummy.Spawn(dummyModel, dummyController, spot, Quaternion.LookRotation(-forward), _range);
             }
         }
 

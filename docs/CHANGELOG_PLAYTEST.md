@@ -3,6 +3,14 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Salud por zonas + muñeco de entrenamiento
+- Daño estilo Tarkov: cabeza 35, tórax 85, estómago 70, brazos 60, piernas 65. Muere con cabeza o tórax a 0. Un miembro a 0
+  reparte el daño siguiente al resto (estómago x1.5, brazos x0.7, piernas x1).
+- La M1911 hace 62: **1 tiro a la cabeza o 2 al tórax** matan.
+- **F3** ahora también pone un **Operator de entrenamiento** a 7 m con hitboxes por hueso. Encima muestra la vida de cada
+  zona y el último impacto (`-62 tórax`). Al morir cae hacia atrás y a los 3 s se levanta curado.
+- Qué revisar: que los disparos en cada parte del cuerpo resten a la zona correcta (cabeza, brazos, piernas...).
+
 ## Manipulación del arma: seguro, inspeccionar, comprobar recámara
 - **B** seguro: la palanca sube, el gatillo queda bloqueado (ni dispara ni hace clic), HUD `SEGURO (B)`. Se puede recargar con seguro.
 - **L** inspeccionar (~3 s): la pistola se gira para ver el lado izquierdo y luego el derecho, a una mano.

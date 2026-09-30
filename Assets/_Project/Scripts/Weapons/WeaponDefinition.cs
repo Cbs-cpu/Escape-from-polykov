@@ -18,7 +18,8 @@ namespace Polykov.Weapons
         [Min(1f)] public float Range = 150f;
         [Tooltip("Impulse applied to rigidbodies that are hit.")]
         [Min(0f)] public float ImpactForce = 4f;
-        [Min(0f)] public float Damage = 35f;
+        [Tooltip(".45 ACP FMJ: two thorax hits or one headshot kill (HealthTuning.Default).")]
+        [Min(0f)] public float Damage = 62f;
 
         [Header("Poses (camera space)")]
         public Vector3 HipPosition = new Vector3(0.12f, -0.19f, 0.36f);
