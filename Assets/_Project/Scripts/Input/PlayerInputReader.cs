@@ -23,7 +23,12 @@ namespace Polykov.Input
         private InputAction _jump;
         private InputAction _lean;
         private InputAction _crouch;
+        private InputAction _fire;
+        private InputAction _aim;
+        private InputAction _reload;
         private bool _jumpLatched;
+        private bool _fireLatched;
+        private bool _reloadLatched;
         private bool _crouchToggled;
 
         /// <summary>When true, gameplay input reads as neutral (e.g. cursor unlocked, menus open).</summary>
@@ -40,6 +45,25 @@ namespace Polykov.Input
         /// Crouch intent. Hold mode: key held. Toggle mode (UserSettings.ToggleCrouch): press toggles,
         /// sprinting or jumping stands you up.
         /// </summary>
+        public bool FireHeld => !Blocked && _fire.IsPressed();
+        public bool AimHeld => !Blocked && _aim.IsPressed();
+
+        /// <summary>True once per trigger press, latched between simulation ticks.</summary>
+        public bool ConsumeFirePressed()
+        {
+            bool pressed = _fireLatched;
+            _fireLatched = false;
+            return pressed;
+        }
+
+        /// <summary>True once per reload press, latched between simulation ticks.</summary>
+        public bool ConsumeReload()
+        {
+            bool pressed = _reloadLatched;
+            _reloadLatched = false;
+            return pressed;
+        }
+
         public bool Crouch => !Blocked && (UserSettings.ToggleCrouch ? _crouchToggled : _crouch.IsPressed());
 
         /// <summary>
@@ -64,12 +88,17 @@ namespace Polykov.Input
             _jump = _map.FindAction("Jump", true);
             _lean = _map.FindAction("Lean", true);
             _crouch = _map.FindAction("Crouch", true);
+            _fire = _map.FindAction("Fire", true);
+            _aim = _map.FindAction("Aim", true);
+            _reload = _map.FindAction("Reload", true);
         }
 
         private void Update()
         {
             if (Blocked) return;
             if (_jump.WasPressedThisFrame()) _jumpLatched = true;
+            if (_fire.WasPressedThisFrame()) _fireLatched = true;
+            if (_reload.WasPressedThisFrame()) _reloadLatched = true;
             if (_crouch.WasPressedThisFrame()) _crouchToggled = !_crouchToggled;
             if (_sprint.WasPressedThisFrame() || _jump.WasPressedThisFrame()) _crouchToggled = false;
         }

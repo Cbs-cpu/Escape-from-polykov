@@ -3,6 +3,24 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Arma: M1911 en las manos (primera versión jugable)
+- El personaje lleva una **M1911 provisional hecha de cajas** (proporciones reales, corredera, cargador, martillo, gatillo, miras).
+  El modelo bueno se hará en Blender con los mismos nombres de piezas (ver `docs/TODO_LOCAL.md`).
+- **Clic izquierdo** dispara (semiautomática: un disparo por clic, máx. ~450 disparos/min). **Clic derecho** apunta por las miras
+  (zoom suave y sensibilidad ×0.8). **R** recarga. Munición abajo a la derecha: `7+1 / 28`.
+- Recarga táctica (queda bala en recámara → 7+1, ~1.7 s) y en vacío (corredera bloqueada atrás, más larga ~2.2 s, al final
+  la corredera vuelve). La mano izquierda va a por el cargador y vuelve al arma.
+- Esprintar baja el arma y la lleva a una mano; al dejar de esprintar tarda ~0.2 s en poder disparar.
+- Pegado a una pared el arma se recoge con el cañón arriba y **no dispara** (HUD: `BLOQUEADA`).
+- Retroceso: la cámara sube y vuelve ~70 % sola; el arma tiene golpe hacia atrás y levanta la boca; balanceo al girar y al andar.
+- **F3** coloca dianas de acero a 5/10/15/25 m delante de ti (caen al darles y se levantan). **F4** rellena munición.
+- Qué revisar (lo más importante):
+  1. **Manos**: ¿la derecha agarra la empuñadura y la izquierda la envuelve? Mira hacia abajo y en tercera persona (Scene view).
+     Si están mal colocadas o giradas, ajusta en Play Mode `WD_M1911` → *Hands* (`RightHandPosition/Forward/Up`,
+     `LeftHand...`) y `HandIK` (pistas de codo, curvatura de dedos) y apunta los valores buenos.
+  2. **Apuntado**: la mira trasera y delantera deben quedar centradas; si no, `AdsSightDistance` y el objeto `SightLine`.
+  3. **Posición de cadera** (`HipPosition/HipEuler`) y cuánto retroceso (`KickBack`, `KickRotation`, `CameraRecoilReturn`).
+
 ## Agacharse (C)
 - **C** agacha (mantener). En el menú de pausa puedes cambiarlo a *alternar*; en modo alternar, esprintar o saltar te levanta.
 - Agachado: velocidad máx. 1.5 m/s, no se puede esprintar ni saltar, la transición dura ~0.22 s.

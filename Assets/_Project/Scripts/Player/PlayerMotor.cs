@@ -47,6 +47,8 @@ namespace Polykov.Player
         public event System.Action Jumped;
         /// <summary>Raised on the tick the character lands; argument is the downward impact speed (m/s).</summary>
         public event System.Action<float> Landed;
+        /// <summary>Raised after every simulation tick with the tick length. Other tick-based systems (weapon) hook here.</summary>
+        public event System.Action<float> Ticked;
 
         public MovementState State => _state;
         public GroundInfo Ground => _ground;
@@ -138,6 +140,7 @@ namespace Polykov.Player
 
             _currentPosition = transform.position;
             Tick++;
+            Ticked?.Invoke(dt);
         }
 
         /// <summary>Resizes the capsule keeping the feet in place.</summary>

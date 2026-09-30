@@ -38,6 +38,23 @@ DefaultImporter:
   assetBundleName: 
   assetBundleVariant: 
 """
+NATIVE = """fileFormatVersion: 2
+guid: {{guid}}
+NativeFormatImporter:
+  externalObjects: {{{{}}}}
+  mainObjectFileID: {main}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+"""
+PREFAB = """fileFormatVersion: 2
+guid: {guid}
+PrefabImporter:
+  externalObjects: {{}}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+"""
 TEXT = """fileFormatVersion: 2
 guid: {guid}
 TextScriptImporter:
@@ -51,7 +68,11 @@ TextScriptImporter:
 def template(path: pathlib.Path) -> str:
     if path.is_dir():
         return FOLDER
-    return {".cs": SCRIPT, ".asmdef": ASMDEF, ".md": TEXT, ".txt": TEXT, ".json": TEXT}.get(path.suffix, DEFAULT)
+    native = {".mat": 2100000, ".asset": 11400000, ".controller": 9100000, ".anim": 7400000}
+    if path.suffix in native:
+        return NATIVE.format(main=native[path.suffix])
+    return {".cs": SCRIPT, ".asmdef": ASMDEF, ".prefab": PREFAB, ".md": TEXT, ".txt": TEXT,
+            ".json": TEXT}.get(path.suffix, DEFAULT)
 
 
 def main() -> int:

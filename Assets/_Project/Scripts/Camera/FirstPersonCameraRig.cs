@@ -31,6 +31,11 @@ namespace Polykov.CameraSystem
         private float _dip;
         private float _dipVelocity;
 
+        /// <summary>Degrees subtracted from the FOV (aim-down-sights zoom). Set by the weapon every frame.</summary>
+        public float ZoomFov { get; set; }
+
+        public Camera Camera => targetCamera;
+
         private void OnEnable() => motor.Landed += OnLanded;
         private void OnDisable() => motor.Landed -= OnLanded;
 
@@ -110,7 +115,7 @@ namespace Polykov.CameraSystem
 
             float targetFov = UserSettings.Fov + (state.Locomotion == LocomotionState.Sprint ? settings.SprintFovBoost : 0f);
             _fov = Damp(_fov, targetFov, settings.FovSharpness, dt);
-            targetCamera.fieldOfView = _fov;
+            targetCamera.fieldOfView = Mathf.Max(20f, _fov - ZoomFov);
         }
 
         private void UpdateLandingSpring(float dt)
