@@ -19,6 +19,8 @@ namespace Polykov.Weapons
         [SerializeField] private LayerMask hitMask = ~(1 << 8);
         [Tooltip("Imported weapon model (FBX from ArtSource/Tools/build_m1911.py). Empty = procedural placeholder.")]
         [SerializeField] private GameObject modelPrefab;
+        [Tooltip("Material for every part of the imported model (textured atlas). Empty = remap by material name.")]
+        [SerializeField] private Material modelMaterial;
         [SerializeField] private Material steelMaterial;
         [SerializeField] private Material gripMaterial;
         [SerializeField] private Material steelDarkMaterial;
@@ -41,6 +43,10 @@ namespace Polykov.Weapons
         /// <summary>Raised on the tick a round is fired (after the hitscan).</summary>
         public event System.Action<WeaponState> Fired;
         public event System.Action DryFired;
+        /// <summary>Raised for every bullet that hits something (effects, decals). Direction is the shot direction.</summary>
+        public event System.Action<RaycastHit, Vector3> HitSurface;
+        /// <summary>When false the placeholder impact cubes are skipped (a VFX component handles impacts).</summary>
+        public bool SimpleImpactMarkers { get; set; } = true;
         public event System.Action ReloadStarted;
         public event System.Action MagazineInserted;
         /// <summary>Raised when a reload completes; true if it was an empty reload (slide released).</summary>
@@ -62,7 +68,7 @@ namespace Polykov.Weapons
                 GripDark = gripDarkMaterial != null ? gripDarkMaterial : gripMaterial,
                 Brass = brassMaterial != null ? brassMaterial : steelMaterial,
             };
-            if (modelPrefab != null) _model = WeaponModel.CreateFromModel(modelPrefab, transform, gameObject.layer, materials);
+            if (modelPrefab != null) _model = WeaponModel.CreateFromModel(modelPrefab, transform, gameObject.layer, materials, modelMaterial);
             if (_model == null) _model = M1911Builder.Build(transform, steelMaterial, gripMaterial, gameObject.layer);
             ImpactEffects.Material = steelMaterial;
         }
@@ -84,6 +90,8 @@ namespace Polykov.Weapons
             var tickInput = new WeaponInput(input.FireHeld, input.ConsumeFirePressed(), input.AimHeld, input.ConsumeReload(),
                 safety, inspect, chamberCheck);
             _state = WeaponMotor.Step(_state, tickInput, context, definition.Stats, dt);
+            // Aiming slows the body and blocks sprint (applied by the motor from the next tick).
+            motor.Aiming = tickInput.AimHeld && _state.Action == WeaponAction.None;
 
             if (_state.JustFired)
             {
@@ -127,7 +135,8 @@ namespace Polykov.Weapons
 
             var receiver = hit.collider.GetComponentInParent<IShotReceiver>();
             receiver?.OnShot(new ShotHit(hit.point, hit.normal, direction, definition.Damage));
-            ImpactEffects.Spawn(hit.point, hit.normal);
+            if (SimpleImpactMarkers) ImpactEffects.Spawn(hit.point, hit.normal);
+            HitSurface?.Invoke(hit, direction);
         }
     }
 }

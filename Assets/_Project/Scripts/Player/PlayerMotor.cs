@@ -51,6 +51,11 @@ namespace Polykov.Player
         /// <summary>Raised after every simulation tick with the tick length. Other tick-based systems (weapon) hook here.</summary>
         public event System.Action<float> Ticked;
 
+        /// <summary>Set by the weapon system: aiming down sights slows movement and blocks sprint.</summary>
+        public bool Aiming { get; set; }
+        /// <summary>Set by the weapon system while firing/reloading: sprint input is ignored.</summary>
+        public bool SprintBlocked { get; set; }
+
         public MovementState State => _state;
         public GroundInfo Ground => _ground;
         /// <summary>Active tuning: the settings asset, unless a runtime override (preset) is set.</summary>
@@ -127,8 +132,8 @@ namespace Polykov.Player
         {
             _previousPosition = transform.position;
 
-            var tickInput = new MovementInput(input.Move, look.Yaw, input.SprintHeld, input.WalkHeld,
-                input.ConsumeJump(), input.Lean, input.Crouch);
+            var tickInput = new MovementInput(input.Move, look.Yaw, input.SprintHeld && !SprintBlocked, input.WalkHeld,
+                input.ConsumeJump(), input.Lean, input.Crouch, Aiming);
             if (InputFilter != null) tickInput = InputFilter(tickInput);
             LastInput = tickInput;
 

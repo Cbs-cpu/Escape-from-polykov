@@ -21,6 +21,7 @@ import sys
 # Errors caused by the old reference assemblies, not by our code (API is settable in Unity 6).
 KNOWN_FALSE_POSITIVES = [
     "'AnimatorControllerParameter.name' cannot be assigned to",
+    "does not contain a definition for 'linearVelocity'",
 ]
 
 ROOT = pathlib.Path(__file__).resolve().parents[2]

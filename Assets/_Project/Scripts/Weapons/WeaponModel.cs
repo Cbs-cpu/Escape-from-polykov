@@ -48,6 +48,8 @@ namespace Polykov.Weapons
 
         private Vector3 _slideRest;
         private Vector3 _slideBack;
+        private Vector3 _barrelRest;
+        private Vector3 _barrelBack;
         private Vector3 _magazineRest;
         private Vector3 _magazineDown;
         private Quaternion _hammerRest;
@@ -69,6 +71,18 @@ namespace Polykov.Weapons
             MagazineGrab = MagazineGrab != null ? MagazineGrab : Find(MagazineGrabName);
             Safety = Safety != null ? Safety : Find(SafetyName);
 
+            Barrel = FindIn(transform, "M1911_Barrel");
+            EjectionPort = FindIn(transform, "Socket_EjectionPort");
+            if (MagazineGrab == null && Magazine != null)
+            {
+                // Models without the point: the support hand takes the magazine base, next to the mag well.
+                Transform well = FindIn(transform, "Socket_MagWell");
+                Vector3 basePoint = well != null ? well.position : Magazine.position;
+                MagazineGrab = new GameObject(MagazineGrabName).transform;
+                MagazineGrab.position = basePoint + transform.TransformVector(new Vector3(-0.03f, -0.035f, 0f));
+                MagazineGrab.SetParent(Magazine, true);
+            }
+
             RightHand = new GameObject("RightHandIK").transform;
             RightHand.SetParent(transform, false);
             LeftHand = new GameObject("LeftHandIK").transform;
@@ -78,6 +92,11 @@ namespace Polykov.Weapons
             {
                 _slideRest = Slide.localPosition;
                 _slideBack = ToParentSpace(Slide, Vector3.back);
+            }
+            if (Barrel != null)
+            {
+                _barrelRest = Barrel.localPosition;
+                _barrelBack = ToParentSpace(Barrel, Vector3.back);
             }
             if (Magazine != null)
             {
@@ -115,6 +134,7 @@ namespace Polykov.Weapons
         public void Pose(float slideBack, float magazineOut, bool magazineVisible, float hammerCocked, float triggerPull)
         {
             if (Slide != null) Slide.localPosition = _slideRest + _slideBack * (0.03f * slideBack);
+            if (Barrel != null) Barrel.localPosition = _barrelRest + _barrelBack * (0.03f * 0.3f * slideBack);
             if (Magazine != null)
             {
                 Magazine.localPosition = _magazineRest + _magazineDown * (0.16f * magazineOut);
@@ -132,18 +152,27 @@ namespace Polykov.Weapons
             return part.parent != null ? part.parent.InverseTransformVector(world) : world;
         }
 
-        private Transform Find(string childName)
+        // Names used by the textured model (ArtSource/Tools/build_m1911.py): parts "M1911_*", points "Socket_*".
+        private static readonly (string canonical, string alias)[] Aliases =
         {
-            foreach (Transform t in GetComponentsInChildren<Transform>(true))
-                if (t.name == childName) return t;
-            return null;
-        }
+            (SlideName, "M1911_Slide"), (MagazineName, "M1911_Magazine"), (HammerName, "M1911_Hammer"),
+            (TriggerName, "M1911_Trigger"), (SafetyName, "M1911_Safety"), (MuzzleName, "Socket_Muzzle"),
+            (SightName, "Socket_RearSight"), (GripCenterName, "Socket_RightHand"),
+        };
+
+        private Transform Find(string childName) => FindIn(transform, childName);
+
+        /// <summary>Barrel (textured model): travels back with the slide for part of its stroke.</summary>
+        public Transform Barrel { get; private set; }
+        /// <summary>Where spent casings leave the gun (null on models without the socket).</summary>
+        public Transform EjectionPort { get; private set; }
 
         /// <summary>
         /// Instantiates an imported weapon model under a clean weapon-space root, measuring its named points to
         /// undo any importer axis conversion or unit scale. Returns null if the model lacks the reference points.
         /// </summary>
-        public static WeaponModel CreateFromModel(GameObject prefab, Transform parent, int layer, WeaponMaterials materials)
+        public static WeaponModel CreateFromModel(GameObject prefab, Transform parent, int layer, WeaponMaterials materials,
+            Material overrideMaterial = null)
         {
             var root = new GameObject(prefab.name) { layer = layer };
             root.transform.SetParent(parent, false);
@@ -153,19 +182,28 @@ namespace Polykov.Weapons
             Transform sight = FindIn(instance.transform, SightName);
             Transform muzzle = FindIn(instance.transform, MuzzleName);
             Transform grip = FindIn(instance.transform, GripCenterName);
+            Transform frontSight = FindIn(instance.transform, "Socket_FrontSight");
             if (sight == null || muzzle == null || grip == null)
             {
                 Destroy(root);
                 return null;
             }
 
+            // Measure the model: line of sight (rear -> front sight, or rear sight -> muzzle) becomes +Z,
+            // "up" is from the grip to the rear sight, and the rear sight lands on this project's sight point.
             Transform r = root.transform;
-            Vector3 forward = r.InverseTransformPoint(muzzle.position) - r.InverseTransformPoint(sight.position);
-            Vector3 up = r.InverseTransformPoint(sight.position) - r.InverseTransformPoint(grip.position);
-            Vector3 expectedForward = MuzzlePoint - SightPoint;
+            Vector3 rear = r.InverseTransformPoint(sight.position);
+            Vector3 ahead = r.InverseTransformPoint(frontSight != null ? frontSight.position : muzzle.position);
+            Vector3 gripPoint = r.InverseTransformPoint(grip.position);
+            Vector3 forward = ahead - rear;
+            Vector3 up = rear - gripPoint;
+            Vector3 expectedForward = frontSight != null ? Vector3.forward : MuzzlePoint - SightPoint;
             Vector3 expectedUp = SightPoint - GripCenterPoint;
 
-            float scale = expectedForward.magnitude / Mathf.Max(forward.magnitude, 1e-6f);
+            // Only fix gross unit mismatches (cm vs m); real models differ from our reference by a few percent.
+            float ratio = (MuzzlePoint - SightPoint).magnitude
+                          / Mathf.Max((r.InverseTransformPoint(muzzle.position) - rear).magnitude, 1e-6f);
+            float scale = ratio > 2f || ratio < 0.5f ? ratio : 1f;
             Quaternion correction = Quaternion.LookRotation(expectedForward, expectedUp)
                                     * Quaternion.Inverse(Quaternion.LookRotation(forward, up));
             Transform t0 = instance.transform;
@@ -174,7 +212,19 @@ namespace Polykov.Weapons
             t0.localPosition = correction * t0.localPosition * scale;
             t0.localPosition += SightPoint - r.InverseTransformPoint(sight.position);
 
-            materials.ApplyTo(instance);
+            if (overrideMaterial != null)
+            {
+                foreach (Renderer renderer in instance.GetComponentsInChildren<Renderer>(true))
+                {
+                    Material[] slots = renderer.sharedMaterials;
+                    for (int i = 0; i < slots.Length; i++) slots[i] = overrideMaterial;
+                    renderer.sharedMaterials = slots;
+                }
+            }
+            else
+            {
+                materials.ApplyTo(instance);
+            }
             var model = root.AddComponent<WeaponModel>();
             model.Initialize();
             return model;
@@ -184,6 +234,12 @@ namespace Polykov.Weapons
         {
             foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
                 if (t.name == childName) return t;
+            foreach ((string canonical, string alias) in Aliases)
+            {
+                if (canonical != childName) continue;
+                foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
+                    if (t.name == alias) return t;
+            }
             return null;
         }
     }

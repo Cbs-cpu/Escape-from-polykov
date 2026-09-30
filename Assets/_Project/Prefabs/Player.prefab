@@ -290,6 +290,7 @@ GameObject:
   - component: {fileID: 4243366258866668146}
   - component: {fileID: 8218634897002200831}
   - component: {fileID: 2805363465361043963}
+  - component: {fileID: 4946354579058309595}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -856,7 +857,8 @@ MonoBehaviour:
   steelDarkMaterial: {fileID: 2100000, guid: 6410bd5633134544bbf631d0600e4452, type: 2}
   gripDarkMaterial: {fileID: 2100000, guid: f383dd6b8ca149ddb327e8d5604d0ca7, type: 2}
   brassMaterial: {fileID: 2100000, guid: c16a8dcef9214ff889919bc8a70b7e8d, type: 2}
-  modelPrefab: {fileID: 919132149155446097, guid: 7c0198be0ad148cc8c2389657bba6aa6, type: 3}
+  modelPrefab: {fileID: 919132149155446097, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+  modelMaterial: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
   seed: 1
 --- !u!114 &2857793633178794872
 MonoBehaviour:
@@ -1003,3 +1005,22 @@ MonoBehaviour:
   packetLoss: 0.05
   redundancy: 4
   serverBufferTicks: 3
+--- !u!114 &4946354579058309595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a3bae1ee90f48b3a3701b67f7510e30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponEffects
+  weapon: {fileID: 6872715214061853040}
+  motor: {fileID: 8327803297820930270}
+  view: {fileID: 11400000, guid: 43d7e36d772f24e478739061c139ab3d, type: 2}
+  casingPrefab: {fileID: 3619478467975940818, guid: 83fdc3b3c93f5c84a9803e1805ae3015, type: 3}
+  droppedMagazinePrefab: {fileID: 3392027894695469421, guid: 1d54731799ada7842ae6300f8177f1a7, type: 3}
+  casingPoolSize: 24
+  magazinePoolSize: 4

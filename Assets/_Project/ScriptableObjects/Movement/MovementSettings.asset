@@ -19,9 +19,10 @@ MonoBehaviour:
     StrafeMultiplier: 0.85
     BackwardMultiplier: 0.7
     SprintMaxAngle: 50
-    AccelerationTime: 0.18
-    SprintAccelerationTime: 0.45
-    DecelerationTime: 0.12
+    AccelerationTime: 0.13
+    SprintAccelerationTime: 0.35
+    DecelerationTime: 0.09
+    TurnTime: 0.07
     AirControl: 0.1
     UphillMinMultiplier: 0.8
     MaxWalkableSlope: 45
@@ -43,4 +44,5 @@ MonoBehaviour:
     StaminaRegenRate: 0.9
     StaminaRegenDelay: 1.1
     ExhaustedRecovery: 0.35
+    AimMoveMultiplier: 0.6
     IdleSpeedThreshold: 0.15

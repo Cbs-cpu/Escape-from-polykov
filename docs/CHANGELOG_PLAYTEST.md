@@ -3,6 +3,24 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Fusión con tu trabajo local (commit «update» de main)
+- Arma: se mantiene el sistema de la nube como base (seguro/inspeccionar/recámara, red, salud, agarre verificado).
+- De tu versión se conserva:
+  - la **M1911 con texturas** (`M1911.fbx` + `M_M1911`);
+  - los **VFX**: fogonazo, impactos por superficie (hormigón/metal), agujeros de bala;
+  - los **casquillos** que salen despedidos y el **cargador que cae** al recargar (nuevo componente `WeaponEffects`);
+  - las **dianas colgantes** de la arena y las superficies (`SurfaceMaterial`, `SteelTarget`);
+  - el pipeline de modificadores de cámara;
+  - los cambios de movimiento: **frenada lateral nítida** (`TurnTime`), aceleraciones nuevas, y **apuntar ralentiza
+    (x0.6) y bloquea el sprint**.
+- Tu script `build_m1911.py` es el oficial. El mío se guarda como `build_m1911_blockout.py`.
+- Se ha retirado tu lógica de arma duplicada (PlayerWeaponController, WeaponSimulation, WeaponPose, WeaponMechanics, ArmIK,
+  WeaponCameraEffects). Sigue en el historial de git si quieres recuperar algo.
+- Qué revisar: que la pistola texturizada se vea bien orientada en la mano y al apuntar (miras alineadas), fogonazo,
+  casquillos, cargador al suelo, e impactos con chispas en metal y polvo en hormigón.
+- **Importante:** `main` se había sobrescrito con un push forzado. Para no perder trabajo, la próxima vez usa
+  `git pull` antes de `git push`, y nunca `--force`.
+
 ## Salud por zonas + muñeco de entrenamiento
 - Daño estilo Tarkov: cabeza 35, tórax 85, estómago 70, brazos 60, piernas 65. Muere con cabeza o tórax a 0. Un miembro a 0
   reparte el daño siguiente al resto (estómago x1.5, brazos x0.7, piernas x1).

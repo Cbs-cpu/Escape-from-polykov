@@ -30,11 +30,20 @@ namespace Polykov.CameraSystem
         private bool _headInitialized;
         private float _dip;
         private float _dipVelocity;
+        private readonly System.Collections.Generic.List<ICameraModifier> _modifiers =
+            new System.Collections.Generic.List<ICameraModifier>(4);
+
+        public Camera Camera => targetCamera;
+
+        public void AddModifier(ICameraModifier modifier)
+        {
+            if (!_modifiers.Contains(modifier)) _modifiers.Add(modifier);
+        }
+
+        public void RemoveModifier(ICameraModifier modifier) => _modifiers.Remove(modifier);
 
         /// <summary>Degrees subtracted from the FOV (aim-down-sights zoom). Set by the weapon every frame.</summary>
         public float ZoomFov { get; set; }
-
-        public Camera Camera => targetCamera;
 
         private void OnEnable() => motor.Landed += OnLanded;
         private void OnDisable() => motor.Landed -= OnLanded;
@@ -111,11 +120,18 @@ namespace Polykov.CameraSystem
             }
 
             eye += Vector3.up * _dip;
-            transform.SetPositionAndRotation(eye, Quaternion.Euler(look.Pitch, look.Yaw, roll));
 
             float targetFov = UserSettings.Fov + (state.Locomotion == LocomotionState.Sprint ? settings.SprintFovBoost : 0f);
             _fov = Damp(_fov, targetFov, settings.FovSharpness, dt);
-            targetCamera.fieldOfView = Mathf.Max(20f, _fov - ZoomFov);
+
+            var frame = new CameraFrame
+            {
+                Position = eye, Pitch = look.Pitch, Yaw = look.Yaw, Roll = roll, FieldOfView = Mathf.Max(20f, _fov - ZoomFov),
+            };
+            for (int i = 0; i < _modifiers.Count; i++) _modifiers[i].ModifyCamera(ref frame, dt);
+
+            transform.SetPositionAndRotation(frame.Position, Quaternion.Euler(frame.Pitch, frame.Yaw, frame.Roll));
+            targetCamera.fieldOfView = frame.FieldOfView;
         }
 
         private void UpdateLandingSpring(float dt)

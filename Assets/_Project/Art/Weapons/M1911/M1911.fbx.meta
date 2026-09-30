@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 7c0198be0ad148cc8c2389657bba6aa6
+guid: 6f6ce305c20bdaf4e86c644968a3f085
 ModelImporter:
   serializedVersion: 24600
   internalIDToNameTable: []
   externalObjects: {}
   materials:
-    materialImportMode: 2
+    materialImportMode: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
@@ -42,8 +42,8 @@ ModelImporter:
     preBakeConvexCollisionMesh: 0
     preBakeTriangleCollisionMesh: 0
     importPhysicalCameras: 1
-    importVisibility: 0
-    importBlendShapes: 0
+    importVisibility: 1
+    importBlendShapes: 1
     importCameras: 0
     importLights: 0
     nodeNameCollisionStrategy: 1
@@ -92,7 +92,7 @@ ModelImporter:
     skeleton: []
     armTwist: 0.5
     foreArmTwist: 0.5
-    upperArmTwist: 0.5
+    upperLegTwist: 0.5
     legTwist: 0.5
     armStretch: 0.05
     legStretch: 0.05

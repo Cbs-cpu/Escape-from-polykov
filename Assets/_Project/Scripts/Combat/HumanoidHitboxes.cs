@@ -62,6 +62,7 @@ namespace Polykov.Combat
             capsule.radius = radius;
             capsule.height = length + radius * 2f;
             capsule.center = new Vector3(0f, 0f, length * 0.5f);
+            go.AddComponent<Weapons.SurfaceMaterial>().Type = Weapons.SurfaceType.Flesh;
             var hitbox = go.AddComponent<Hitbox>();
             hitbox.Part = part;
             hitbox.Owner = owner;

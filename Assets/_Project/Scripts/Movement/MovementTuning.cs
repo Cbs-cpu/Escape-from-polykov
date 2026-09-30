@@ -27,6 +27,8 @@ namespace Polykov.Movement
         [Min(0.01f)] public float SprintAccelerationTime;
         [Tooltip("Time to brake from run speed to standstill.")]
         [Min(0.01f)] public float DecelerationTime;
+        [Tooltip("Time for ground friction to remove sideways velocity when changing direction. Lower = crisper, less icy.")]
+        [Min(0.01f)] public float TurnTime;
         [Tooltip("Fraction of ground acceleration available in the air.")]
         [Range(0f, 1f)] public float AirControl;
 
@@ -78,6 +80,9 @@ namespace Polykov.Movement
         [Min(0f)] public float StaminaRegenDelay;
         [Tooltip("After running out, fraction of stamina needed before sprinting again.")]
         [Range(0f, 1f)] public float ExhaustedRecovery;
+        [Header("Aim")]
+        [Tooltip("Speed multiplier while aiming down sights.")]
+        [Range(0f, 1f)] public float AimMoveMultiplier;
 
         [Header("State")]
         [Min(0f)] public float IdleSpeedThreshold;
@@ -90,9 +95,10 @@ namespace Polykov.Movement
             StrafeMultiplier = 0.85f,
             BackwardMultiplier = 0.7f,
             SprintMaxAngle = 50f,
-            AccelerationTime = 0.18f,
-            SprintAccelerationTime = 0.45f,
-            DecelerationTime = 0.12f,
+            AccelerationTime = 0.13f,
+            SprintAccelerationTime = 0.35f,
+            DecelerationTime = 0.09f,
+            TurnTime = 0.07f,
             AirControl = 0.1f,
             UphillMinMultiplier = 0.8f,
             MaxWalkableSlope = 45f,
@@ -115,6 +121,7 @@ namespace Polykov.Movement
             StaminaRegenRate = 0.9f,
             StaminaRegenDelay = 1.1f,
             ExhaustedRecovery = 0.35f,
+            AimMoveMultiplier = 0.6f,
             IdleSpeedThreshold = 0.15f,
         };
     }

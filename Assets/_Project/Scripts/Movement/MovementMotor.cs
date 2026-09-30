@@ -28,7 +28,7 @@ namespace Polykov.Movement
 
             bool staminaEnabled = tuning.MaxStamina > 0f;
             bool exhausted = staminaEnabled && state.Exhausted;
-            bool sprinting = hasInput && input.Sprint && !input.Walk && grounded && !crouching && !exhausted
+            bool sprinting = hasInput && input.Sprint && !input.Walk && !input.Aim && grounded && !crouching && !exhausted
                              && direction.y >= Mathf.Cos(tuning.SprintMaxAngle * Mathf.Deg2Rad);
 
             // Lean: sprinting cancels it; leaning slows you down.
@@ -43,6 +43,7 @@ namespace Polykov.Movement
             float targetSpeed = hasInput
                 ? baseSpeed * DirectionalFactor(direction, tuning) * magnitude * SlopeFactor(worldDirection, ground, tuning)
                   * Mathf.Lerp(1f, tuning.LeanMoveMultiplier, Mathf.Abs(lean))
+                  * (input.Aim ? tuning.AimMoveMultiplier : 1f)
                 : 0f;
             Vector3 targetVelocity = worldDirection * targetSpeed;
 
@@ -57,9 +58,7 @@ namespace Polykov.Movement
                 if (landingImpact > tuning.HardLandingSpeed) planar *= tuning.LandingMomentum;
             }
 
-            float rate = AccelerationRate(planar, targetVelocity, targetSpeed, tuning);
-            if (!grounded) rate *= tuning.AirControl;
-            planar = Vector3.MoveTowards(planar, targetVelocity, rate * deltaTime);
+            planar = Accelerate(planar, worldDirection, targetSpeed, grounded, tuning, deltaTime);
 
             float jumpBuffer = input.Jump ? tuning.JumpBufferTime : Mathf.Max(0f, state.JumpBuffer - deltaTime);
             float coyote = grounded ? tuning.CoyoteTime : Mathf.Max(0f, state.CoyoteTime - deltaTime);
@@ -163,16 +162,36 @@ namespace Polykov.Movement
             return Mathf.Lerp(1f, tuning.UphillMinMultiplier, uphill * steepness);
         }
 
-        private static float AccelerationRate(Vector3 current, Vector3 target, float targetSpeed, in MovementTuning tuning)
+        /// <summary>
+        /// Velocity is split into the component along the wished direction (accelerates / brakes toward the
+        /// target speed) and the lateral remainder, which ground friction removes quickly. Killing the lateral
+        /// part fast is what makes direction changes crisp instead of icy.
+        /// </summary>
+        private static Vector3 Accelerate(Vector3 planar, Vector3 wishDirection, float targetSpeed, bool grounded,
+            in MovementTuning tuning, float dt)
         {
-            float currentSpeed = current.magnitude;
-            bool braking = targetSpeed < currentSpeed - 1e-3f || Vector3.Dot(target, current) < 0f;
-            if (braking) return tuning.RunSpeed / tuning.DecelerationTime;
+            float control = grounded ? 1f : tuning.AirControl;
+            float accel = tuning.RunSpeed / tuning.AccelerationTime * control;
+            float decel = tuning.RunSpeed / tuning.DecelerationTime * control;
+            float turn = tuning.RunSpeed / tuning.TurnTime * control;
 
-            bool enteringSprint = targetSpeed > tuning.RunSpeed && currentSpeed >= tuning.RunSpeed * 0.95f;
-            if (enteringSprint) return Mathf.Max(tuning.SprintSpeed - tuning.RunSpeed, 0.01f) / tuning.SprintAccelerationTime;
+            // In the air momentum is kept: no braking, only weak steering.
+            if (targetSpeed <= 0f)
+                return grounded ? Vector3.MoveTowards(planar, Vector3.zero, decel * dt) : planar;
 
-            return tuning.RunSpeed / tuning.AccelerationTime;
+            float along = Vector3.Dot(planar, wishDirection);
+            Vector3 lateral = planar - wishDirection * along;
+            lateral = Vector3.MoveTowards(lateral, Vector3.zero, turn * dt);
+
+            float rate;
+            if (!grounded && along > targetSpeed) rate = 0f;
+            else if (along < 0f || along > targetSpeed) rate = decel;
+            else if (targetSpeed > tuning.RunSpeed && along >= tuning.RunSpeed * 0.95f)
+                rate = Mathf.Max(tuning.SprintSpeed - tuning.RunSpeed, 0.01f) / tuning.SprintAccelerationTime * control;
+            else rate = accel;
+            along = Mathf.MoveTowards(along, targetSpeed, rate * dt);
+
+            return wishDirection * along + lateral;
         }
 
         private static Vector3 AlignToGround(Vector3 planar, Vector3 normal)
