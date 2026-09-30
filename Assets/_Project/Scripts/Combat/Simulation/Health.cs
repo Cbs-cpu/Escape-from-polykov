@@ -141,9 +141,12 @@ namespace Polykov.Combat
         /// <summary>This hit destroyed the part it landed on.</summary>
         public readonly bool DestroyedPart;
         public readonly bool Killed;
+        /// <summary>Damage beyond 0 HP on the hit part (feeds WoundModel); the full damage when the part was already destroyed.</summary>
+        public readonly float Overflow;
 
-        public DamageResult(float applied, bool spread, bool destroyedPart, bool killed)
+        public DamageResult(float applied, bool spread, bool destroyedPart, bool killed, float overflow = 0f)
         {
+            Overflow = overflow;
             Applied = applied;
             Spread = spread;
             DestroyedPart = destroyedPart;
@@ -167,17 +170,20 @@ namespace Polykov.Combat
             float before = s.Total;
             bool spread = false;
             bool destroyed = false;
+            float overflow = 0f;
 
             if (s[part] > 0f)
             {
                 float hp = s[part] - damage;
                 destroyed = hp <= 0f;
+                overflow = Mathf.Max(0f, -hp);
                 s[part] = Mathf.Max(0f, hp);
             }
             else
             {
                 // Blacked limb: the hit spreads, scaled, evenly over every part that still has HP.
                 spread = true;
+                overflow = damage;
                 float amount = damage * tuning.Spread(part);
                 int alive = 0;
                 for (int i = 0; i < HealthTuning.PartCount; i++)
@@ -202,7 +208,7 @@ namespace Polykov.Combat
                 s.KillingPart = s.Head <= 0f ? BodyPart.Head : BodyPart.Thorax;
             }
 
-            result = new DamageResult(before - s.Total, spread, destroyed, killed);
+            result = new DamageResult(before - s.Total, spread, destroyed, killed, overflow);
             return s;
         }
     }
