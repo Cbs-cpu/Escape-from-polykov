@@ -21,6 +21,7 @@ namespace Polykov.Weapons
         [SerializeField, Range(1, 8)] private int magazinePoolSize = 4;
 
         private EffectPool _effects;
+        private BloodEffects _blood;
         private DebrisPool _casings;
         private DebrisPool _magazines;
         private bool _magazineDropped;
@@ -34,6 +35,7 @@ namespace Polykov.Weapons
                 _effects.Prewarm(view.ImpactConcrete);
                 _effects.Prewarm(view.ImpactMetal);
                 _effects.Prewarm(view.BulletHole);
+                _blood = new BloodEffects(_effects, view, weapon.HitMask, _effects.transform);
             }
             if (casingPrefab != null)
             {
@@ -124,6 +126,8 @@ namespace Polykov.Weapons
             if (view == null) return;
             var surface = hit.collider.GetComponentInParent<SurfaceMaterial>();
             SurfaceType type = surface != null ? surface.Type : SurfaceType.Concrete;
+
+            if (type == SurfaceType.Flesh) _blood?.Hit(hit, direction, weapon.Definition.Damage);
 
             GameObject impact = type == SurfaceType.Metal ? view.ImpactMetal : view.ImpactConcrete;
             if (type != SurfaceType.Flesh && impact != null)

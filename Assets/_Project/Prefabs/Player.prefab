@@ -454,7 +454,7 @@ MonoBehaviour:
   eye: {fileID: 534249625826917619}
   hitMask:
     serializedVersion: 2
-    m_Bits: 4294967039
+    m_Bits: 4294964991
   modelPrefab: {fileID: 919132149155446097, guid: e9be28d5ae53bd6429e56dfe4893a1bf, type: 3}
   modelMaterial: {fileID: 2100000, guid: 5e33ba6a3ff97ea49a967d2ccda621b2, type: 2}
   outlineMaterial: {fileID: 2100000, guid: 4b8b05f17c45ce84382d0a36d6524186, type: 2}

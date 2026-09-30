@@ -66,6 +66,15 @@ MonoBehaviour:
   ImpactMetal: {fileID: 3231177600203104036, guid: da07646752afdc949ba5a5b028c18b61, type: 3}
   BulletHole: {fileID: 4099009938296315923, guid: f5a956ee41ca3c74e9fb475972ebb380, type: 3}
   BulletHoleSize: 0.035
+  BloodEntry: {fileID: 4482742818171422560, guid: 535bdcb566eb7dc4a9b44f1676fd3b69, type: 3}
+  BloodExit: {fileID: 2019222198574822073, guid: d5c026c8d644852418d9a50d2bcd53ec, type: 3}
+  BloodMist: {fileID: 8055781714089905723, guid: 55f0297435a20424abcec262538c48ec, type: 3}
+  WoundMaterial: {fileID: 2100000, guid: d73dcfb5b1d72f24986f427290cb1460, type: 2}
+  WoundSize: 0.06
+  SplatMaterial: {fileID: 2100000, guid: 9b45b0e6867b1a94b91b20855e6e6fca, type: 2}
+  SplatSize: 0.32
+  SplatRange: 4
+  MaxExitThickness: 0.45
   HitForce: 6
   EjectVelocity: {x: 1.9, y: 1.6, z: -0.35}
   EjectRandomness: 0.35

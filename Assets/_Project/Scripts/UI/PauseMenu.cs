@@ -70,7 +70,7 @@ namespace Polykov.UI
 
         private void DrawMenu(float screenW, float screenH)
         {
-            float height = 600f;
+            float height = 640f;
             var area = new Rect((screenW - Width) * 0.5f, (screenH - height) * 0.5f, Width, height);
             GUI.Box(area, GUIContent.none);
             GUI.Box(area, GUIContent.none);
@@ -86,6 +86,10 @@ namespace Polykov.UI
             UserSettings.MasterVolume = Slider("Volumen", UserSettings.MasterVolume, 0f, 1f, "0%");
             UserSettings.InvertY = GUILayout.Toggle(UserSettings.InvertY, " Invertir eje Y");
             UserSettings.ToggleCrouch = GUILayout.Toggle(UserSettings.ToggleCrouch, " Agacharse alterna (en vez de mantener)");
+
+            if (GUILayout.Button("Sangre: " + GoreLabel(UserSettings.Gore) + " (clic para cambiar)", GUILayout.Height(26f)))
+                UserSettings.Gore = UserSettings.Gore == GoreLevel.Full ? GoreLevel.Reduced
+                    : UserSettings.Gore == GoreLevel.Reduced ? GoreLevel.Off : GoreLevel.Full;
 
             GUILayout.Space(12f);
             GUILayout.Label("Perfil de movimiento (F2 para alternar jugando)", _label);
@@ -112,6 +116,9 @@ namespace Polykov.UI
             GUILayout.EndHorizontal();
             GUILayout.EndArea();
         }
+
+        private static string GoreLabel(GoreLevel level) =>
+            level == GoreLevel.Full ? "completa" : level == GoreLevel.Reduced ? "reducida" : "desactivada";
 
         private bool PresetButton(string text, int index)
         {

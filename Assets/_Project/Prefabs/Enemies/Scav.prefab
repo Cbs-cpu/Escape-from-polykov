@@ -1,0 +1,1536 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &472588181890477550
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3508190378543394465}
+  - component: {fileID: 1493390825217594927}
+  - component: {fileID: 4849141759549362899}
+  - component: {fileID: 5992634660706329693}
+  m_Layer: 10
+  m_Name: Hitbox_Head
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3508190378543394465
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472588181890477550}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7112904, y: -0, z: -0, w: 0.7028983}
+  m_LocalPosition: {x: 0, y: -0.00000024869976, z: -0.000000035767947}
+  m_LocalScale: {x: 1, y: 1.0000004, z: 1.0000004}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6325051774634720581}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &1493390825217594927
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472588181890477550}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.1
+  m_Height: 0.43
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.11500001}
+--- !u!114 &4849141759549362899
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472588181890477550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &5992634660706329693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472588181890477550}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 0
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &1552167171998419666
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7418784435550975194}
+  - component: {fileID: 307414254975256162}
+  - component: {fileID: 1913090714484182769}
+  - component: {fileID: 5634510118707085483}
+  m_Layer: 10
+  m_Name: Hitbox_RightLeg
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7418784435550975194
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552167171998419666}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.0016711634, y: -0.7071048, z: -0.70710486, w: -0.0016711552}
+  m_LocalPosition: {x: 0.0000000062131864, y: 0.00000008010034, z: -0.00000017588032}
+  m_LocalScale: {x: 1, y: 0.99999976, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3030247696972019981}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &307414254975256162
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552167171998419666}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.064
+  m_Height: 0.49025
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.18112499}
+--- !u!114 &1913090714484182769
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552167171998419666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &5634510118707085483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1552167171998419666}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 6
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &1826063496145675080
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5263953164069863523}
+  - component: {fileID: 8647166125373686765}
+  - component: {fileID: 7138859832836782504}
+  - component: {fileID: 3083710140824738647}
+  m_Layer: 10
+  m_Name: Hitbox_LeftLeg
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5263953164069863523
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826063496145675080}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.0055762636, y: -0.7070848, z: -0.70708495, w: 0.005576243}
+  m_LocalPosition: {x: -0.000000008251578, y: -0.0000000051211217, z: -0.00000019311716}
+  m_LocalScale: {x: 0.9999996, y: 0.99999934, z: 0.99999946}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5547706133686248953}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &8647166125373686765
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826063496145675080}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.064
+  m_Height: 0.49025017
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.18112507}
+--- !u!114 &7138859832836782504
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826063496145675080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &3083710140824738647
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1826063496145675080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 5
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &2194585981218525951
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7985487802852764533}
+  - component: {fileID: 4354226452741795451}
+  - component: {fileID: 7229323198083949465}
+  - component: {fileID: 3637858166485098488}
+  m_Layer: 10
+  m_Name: Hitbox_RightLeg
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7985487802852764533
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2194585981218525951}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7069267, y: 0.015952803, z: 0.015952816, w: 0.70692694}
+  m_LocalPosition: {x: 0.000000017517294, y: 0.0000001588765, z: 0.00000023025692}
+  m_LocalScale: {x: 1, y: 0.99999976, z: 0.9999997}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2707732701545327023}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &4354226452741795451
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2194585981218525951}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.055999998
+  m_Height: 0.2552095
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.07160475}
+--- !u!114 &7229323198083949465
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2194585981218525951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &3637858166485098488
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2194585981218525951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 6
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &2295312406955162387
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8031793842433043752}
+  - component: {fileID: 5496109959831859995}
+  - component: {fileID: 5773793500135676121}
+  - component: {fileID: 785409713455690965}
+  m_Layer: 10
+  m_Name: Hitbox_LeftLeg
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8031793842433043752
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2295312406955162387}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7068528, y: 0.018948238, z: 0.018948244, w: 0.706853}
+  m_LocalPosition: {x: 0.000000004537697, y: 0.000000051491362, z: 0.00000010075307}
+  m_LocalScale: {x: 0.99999976, y: 0.9999999, z: 0.9999996}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 393591697026493170}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &5496109959831859995
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2295312406955162387}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.08
+  m_Height: 0.6177534
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.22887668}
+--- !u!114 &5773793500135676121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2295312406955162387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &785409713455690965
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2295312406955162387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 5
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &2310043492983242400
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1921361042476506209}
+  - component: {fileID: 7002273433380119277}
+  - component: {fileID: 4790580744706094836}
+  - component: {fileID: 5600337470556616593}
+  m_Layer: 10
+  m_Name: Hitbox_Thorax
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1921361042476506209
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2310043492983242400}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.71407205, y: -0, z: -0, w: 0.7000723}
+  m_LocalPosition: {x: 0, y: -0.00000009055163, z: -0.000000020647457}
+  m_LocalScale: {x: 1, y: 1.0000002, z: 1.0000002}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5909426683070285657}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7002273433380119277
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2310043492983242400}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.16
+  m_Height: 0.5904164
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.13520819}
+--- !u!114 &4790580744706094836
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2310043492983242400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &5600337470556616593
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2310043492983242400}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 1
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &2749429149448720937
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 201370502755238959}
+  - component: {fileID: 6751069085924225941}
+  - component: {fileID: 8789819994895012635}
+  - component: {fileID: 6508426026456939768}
+  m_Layer: 10
+  m_Name: Hitbox_LeftArm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &201370502755238959
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2749429149448720937}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.36621496, y: -0.60564965, z: -0.6414913, w: -0.29591236}
+  m_LocalPosition: {x: 0.000000022351735, y: 0.000000014901159, z: -0.000000031160074}
+  m_LocalScale: {x: 1.0000001, y: 1, z: 0.9999999}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8267287221076695542}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &6751069085924225941
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2749429149448720937}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.0385
+  m_Height: 0.16615719
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.044578597}
+--- !u!114 &8789819994895012635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2749429149448720937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &6508426026456939768
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2749429149448720937}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 3
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &4033499823623827001
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1566645548662192936}
+  - component: {fileID: 108621374511711167}
+  - component: {fileID: 8156404281155765967}
+  - component: {fileID: 2339620974438005674}
+  m_Layer: 10
+  m_Name: Hitbox_LeftLeg
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1566645548662192936
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4033499823623827001}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.7069199, y: 0.016263282, z: 0.01626329, w: -0.70691967}
+  m_LocalPosition: {x: -0.000000012563947, y: -0.000000074355086, z: 0.0000002211667}
+  m_LocalScale: {x: 0.9999999, y: 0.9999993, z: 0.9999992}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 573266864559732338}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &108621374511711167
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4033499823623827001}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.055999998
+  m_Height: 0.25520968
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.07160485}
+--- !u!114 &8156404281155765967
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4033499823623827001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &2339620974438005674
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4033499823623827001}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 5
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &5563389726587088076
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4489039113456371399}
+  - component: {fileID: 5241078085248530583}
+  - component: {fileID: 6586737803011452534}
+  - component: {fileID: 7624788366014556979}
+  m_Layer: 10
+  m_Name: Hitbox_LeftArm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4489039113456371399
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563389726587088076}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.2996396, y: -0.64048135, z: -0.640481, w: -0.2996397}
+  m_LocalPosition: {x: 0.00000007857856, y: 0.0000000578709, z: -0.000000014551913}
+  m_LocalScale: {x: 1, y: 1.0000004, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4141553634851564800}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &5241078085248530583
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563389726587088076}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.044
+  m_Height: 0.25270885
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.08235442}
+--- !u!114 &6586737803011452534
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563389726587088076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &7624788366014556979
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5563389726587088076}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 3
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &5887168810220246415
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5992758419909531246}
+  - component: {fileID: 7056949316076941340}
+  - component: {fileID: 8749978457909547369}
+  - component: {fileID: 5431602974645322752}
+  m_Layer: 10
+  m_Name: Hitbox_RightArm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5992758419909531246
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5887168810220246415}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.07826491, y: 0.70276195, z: 0.70276237, w: 0.07826478}
+  m_LocalPosition: {x: 0.000000014646078, y: 0.0000001288346, z: -0.000000053379452}
+  m_LocalScale: {x: 1.0000004, y: 1.0000001, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6268198054032661300}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7056949316076941340
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5887168810220246415}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.055
+  m_Height: 0.36775202
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.12887602}
+--- !u!114 &8749978457909547369
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5887168810220246415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &5431602974645322752
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5887168810220246415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 4
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &7195846964553013308
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2618852703952629904}
+  - component: {fileID: 3978427988748798287}
+  - component: {fileID: 4404898205195214544}
+  - component: {fileID: 6801356481379220829}
+  m_Layer: 10
+  m_Name: Hitbox_RightLeg
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2618852703952629904
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7195846964553013308}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.7068528, y: -0.018948238, z: -0.018948244, w: 0.706853}
+  m_LocalPosition: {x: -0.000000004537697, y: 0.000000051491362, z: 0.00000010075307}
+  m_LocalScale: {x: 0.99999976, y: 0.9999999, z: 0.9999996}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8320503438414634007}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &3978427988748798287
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7195846964553013308}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.08
+  m_Height: 0.6177534
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.22887668}
+--- !u!114 &4404898205195214544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7195846964553013308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &6801356481379220829
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7195846964553013308}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 6
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &7301886641589544651
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6178772453348112046}
+  - component: {fileID: 309904030042883438}
+  - component: {fileID: 7493133899960128195}
+  m_Layer: 10
+  m_Name: Scav
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6178772453348112046
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301886641589544651}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 9148949325250639405}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &309904030042883438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301886641589544651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84e83d88ab844cd184013a846dbb781a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.HealthComponent
+  tuning:
+    Head: 35
+    Thorax: 85
+    Stomach: 70
+    Arm: 60
+    Leg: 65
+    StomachSpread: 1.5
+    ArmSpread: 0.7
+    LegSpread: 1
+--- !u!114 &7493133899960128195
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301886641589544651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3e3d7ab3557b6ac4598db26ae8e8e2f9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.HumanoidCombatRig
+  animator: {fileID: 0}
+--- !u!1 &7419925236624870855
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6360014535764769294}
+  - component: {fileID: 2502076913741385047}
+  - component: {fileID: 1026684541757737957}
+  - component: {fileID: 4955528683910055599}
+  m_Layer: 10
+  m_Name: Hitbox_LeftArm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6360014535764769294
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419925236624870855}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.07826491, y: -0.70276195, z: -0.70276237, w: 0.07826478}
+  m_LocalPosition: {x: -0.000000014646078, y: 0.0000001288346, z: -0.000000053379452}
+  m_LocalScale: {x: 1.0000004, y: 1.0000001, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5205126958010868445}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &2502076913741385047
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419925236624870855}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.055
+  m_Height: 0.36775202
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.12887602}
+--- !u!114 &1026684541757737957
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419925236624870855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &4955528683910055599
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7419925236624870855}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 3
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &7482159443312408027
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6263911298820464633}
+  - component: {fileID: 3954379764985150171}
+  - component: {fileID: 6281292085923146964}
+  - component: {fileID: 7422057633254941774}
+  m_Layer: 10
+  m_Name: Hitbox_RightArm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6263911298820464633
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482159443312408027}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.36621496, y: 0.60564965, z: 0.6414913, w: -0.29591236}
+  m_LocalPosition: {x: -0.000000022351735, y: 0.000000014901159, z: -0.000000031160074}
+  m_LocalScale: {x: 1.0000001, y: 1, z: 0.9999999}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2202316990844544017}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &3954379764985150171
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482159443312408027}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.0385
+  m_Height: 0.16615719
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.044578597}
+--- !u!114 &6281292085923146964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482159443312408027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &7422057633254941774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7482159443312408027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 4
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &7840155600967542593
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7307447750214327424}
+  - component: {fileID: 2634827547859828173}
+  - component: {fileID: 5618026959028165730}
+  - component: {fileID: 5588577347387434581}
+  m_Layer: 10
+  m_Name: Hitbox_Stomach
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7307447750214327424
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7840155600967542593}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0.6993215, y: -0, z: -0, w: 0.7148073}
+  m_LocalPosition: {x: 0, y: -0.00000011904592, z: 0.000000006238949}
+  m_LocalScale: {x: 1, y: 0.99999994, z: 0.99999994}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4778686153913780067}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &2634827547859828173
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7840155600967542593}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.15
+  m_Height: 0.55004334
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.12502168}
+--- !u!114 &5618026959028165730
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7840155600967542593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &5588577347387434581
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7840155600967542593}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 2
+  Owner: {fileID: 309904030042883438}
+--- !u!1 &8506252258781530117
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1908924852079233884}
+  - component: {fileID: 7726916116441788806}
+  - component: {fileID: 3288166635157145377}
+  - component: {fileID: 3311254699346327651}
+  m_Layer: 10
+  m_Name: Hitbox_RightArm
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1908924852079233884
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8506252258781530117}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.2996396, y: 0.64048135, z: 0.640481, w: -0.2996397}
+  m_LocalPosition: {x: -0.00000007857856, y: 0.0000000578709, z: -0.000000014551913}
+  m_LocalScale: {x: 1, y: 1.0000004, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2809735762193054943}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!136 &7726916116441788806
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8506252258781530117}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.044
+  m_Height: 0.25270885
+  m_Direction: 2
+  m_Center: {x: 0, y: 0, z: 0.08235442}
+--- !u!114 &3288166635157145377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8506252258781530117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5a4d7cd514b6ed848a68f9611fc1acac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.SurfaceMaterial
+  Type: 4
+--- !u!114 &3311254699346327651
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8506252258781530117}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a9f90d976758406987fd1c703b7f648f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.Hitbox
+  Part: 4
+  Owner: {fileID: 309904030042883438}
+--- !u!1001 &8754190141647507910
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 6178772453348112046}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -4076607204029528410, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9453fa43b99525e4092c408056b4faf9, type: 2}
+    - target: {fileID: -4076607204029528410, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4b8b05f17c45ce84382d0a36d6524186, type: 2}
+    - target: {fileID: 919132149155446097, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_Name
+      value: Model
+      objectReference: {fileID: 0}
+    - target: {fileID: 4694838498191457914, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 9453fa43b99525e4092c408056b4faf9, type: 2}
+    - target: {fileID: 4694838498191457914, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: 'm_Materials.Array.data[1]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 4b8b05f17c45ce84382d0a36d6524186, type: 2}
+    - target: {fileID: 5866666021909216657, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: b99d2f4381d74314f8c0c74f40bb2ff3, type: 2}
+    - target: {fileID: 5866666021909216657, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      propertyPath: m_ApplyRootMotion
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -4959470134881446235, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7307447750214327424}
+    - targetCorrespondingSourceObject: {fileID: 8938361157432834868, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 8031793842433043752}
+    - targetCorrespondingSourceObject: {fileID: -5368210660293364673, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5263953164069863523}
+    - targetCorrespondingSourceObject: {fileID: 9117966943795931060, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1566645548662192936}
+    - targetCorrespondingSourceObject: {fileID: 722119956665109969, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2618852703952629904}
+    - targetCorrespondingSourceObject: {fileID: 6012511888306743499, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7418784435550975194}
+    - targetCorrespondingSourceObject: {fileID: 6696550309855049833, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7985487802852764533}
+    - targetCorrespondingSourceObject: {fileID: -6088970259010759009, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1921361042476506209}
+    - targetCorrespondingSourceObject: {fileID: -5674127685925965029, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6360014535764769294}
+    - targetCorrespondingSourceObject: {fileID: -4610313158460015418, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4489039113456371399}
+    - targetCorrespondingSourceObject: {fileID: -8374887290274101200, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 201370502755238959}
+    - targetCorrespondingSourceObject: {fileID: 3367065925020691587, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3508190378543394465}
+    - targetCorrespondingSourceObject: {fileID: -5800568811198805262, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5992758419909531246}
+    - targetCorrespondingSourceObject: {fileID: 6882360355186158873, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1908924852079233884}
+    - targetCorrespondingSourceObject: {fileID: -1734710284717066793, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6263911298820464633}
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+--- !u!4 &393591697026493170 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8938361157432834868, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &573266864559732338 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 9117966943795931060, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2202316990844544017 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -1734710284717066793, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2707732701545327023 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6696550309855049833, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2809735762193054943 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6882360355186158873, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3030247696972019981 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6012511888306743499, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4141553634851564800 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4610313158460015418, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4778686153913780067 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -4959470134881446235, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5205126958010868445 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5674127685925965029, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5547706133686248953 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5368210660293364673, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5909426683070285657 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -6088970259010759009, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6268198054032661300 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -5800568811198805262, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &6325051774634720581 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3367065925020691587, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8267287221076695542 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8374887290274101200, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8320503438414634007 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 722119956665109969, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &9148949325250639405 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
+  m_PrefabInstance: {fileID: 8754190141647507910}
+  m_PrefabAsset: {fileID: 0}

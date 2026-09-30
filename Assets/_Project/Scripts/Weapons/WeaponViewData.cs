@@ -78,6 +78,19 @@ namespace Polykov.Weapons
         public GameObject ImpactMetal;
         public GameObject BulletHole;
         public float BulletHoleSize = 0.035f;
+        [Header("Blood (flesh hits)")]
+        public GameObject BloodEntry;
+        public GameObject BloodExit;
+        public GameObject BloodMist;
+        [Tooltip("Decal stuck to the body at the wound.")]
+        public Material WoundMaterial;
+        public float WoundSize = 0.06f;
+        [Tooltip("Decal sprayed on surfaces behind the target and on the floor.")]
+        public Material SplatMaterial;
+        public float SplatSize = 0.32f;
+        public float SplatRange = 4f;
+        [Tooltip("The bullet counts as passing through when the far side of the body is within this distance.")]
+        public float MaxExitThickness = 0.45f;
         [Tooltip("Impulse applied to rigidbodies that get hit.")]
         public float HitForce = 6f;
 

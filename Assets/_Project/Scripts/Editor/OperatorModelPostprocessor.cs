@@ -10,6 +10,9 @@ namespace Polykov.EditorTools
     public sealed class OperatorModelPostprocessor : AssetPostprocessor
     {
         public const string ModelPath = "Assets/_Project/Art/Characters/Operator/Operator.fbx";
+        public const string ScavModelPath = "Assets/_Project/Art/Characters/Scav/Scav.fbx";
+        private const string ScavAlbedoPath = "Assets/_Project/Art/Characters/Scav/T_Scav_Albedo.png";
+        private const string ScavNormalPath = "Assets/_Project/Art/Characters/Scav/T_Scav_Normal.png";
         private const string PalettePath = "Assets/_Project/Art/Characters/Operator/T_Operator_Palette.png";
 
         private static readonly HashSet<string> Looping = new HashSet<string>
@@ -21,7 +24,7 @@ namespace Polykov.EditorTools
 
         private void OnPreprocessModel()
         {
-            if (assetPath != ModelPath) return;
+            if (!IsCharacterModel(assetPath)) return;
             var importer = (ModelImporter)assetImporter;
             importer.globalScale = 1f;
             importer.useFileScale = true;
@@ -42,7 +45,7 @@ namespace Polykov.EditorTools
 
         private void OnPreprocessAnimation()
         {
-            if (assetPath != ModelPath) return;
+            if (!IsCharacterModel(assetPath)) return;
             var importer = (ModelImporter)assetImporter;
             ModelImporterClipAnimation[] clips = importer.defaultClipAnimations;
             foreach (ModelImporterClipAnimation clip in clips)
@@ -63,8 +66,22 @@ namespace Polykov.EditorTools
             importer.clipAnimations = clips;
         }
 
+        private static bool IsCharacterModel(string path) => path == ModelPath || path == ScavModelPath;
+
         private void OnPreprocessTexture()
         {
+            if (assetPath == ScavAlbedoPath || assetPath == ScavNormalPath)
+            {
+                var scav = (TextureImporter)assetImporter;
+                bool normal = assetPath == ScavNormalPath;
+                scav.textureType = normal ? TextureImporterType.NormalMap : TextureImporterType.Default;
+                scav.filterMode = UnityEngine.FilterMode.Point;
+                scav.mipmapEnabled = false;
+                scav.maxTextureSize = 512;
+                scav.wrapMode = UnityEngine.TextureWrapMode.Clamp;
+                scav.sRGBTexture = !normal;
+                return;
+            }
             if (assetPath != PalettePath) return;
             var importer = (TextureImporter)assetImporter;
             importer.textureType = TextureImporterType.Default;

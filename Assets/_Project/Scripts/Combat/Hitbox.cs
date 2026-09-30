@@ -11,7 +11,7 @@ namespace Polykov.Combat
 
         public void OnShot(in ShotHit hit)
         {
-            if (Owner != null) Owner.TakeHit(Part, hit);
+            if (Owner != null) Owner.Receive(this, hit);
         }
     }
 }

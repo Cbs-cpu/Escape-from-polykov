@@ -3,6 +3,14 @@ using UnityEngine;
 
 namespace Polykov.Core
 {
+    /// <summary>How much blood and wounds are shown (presentation only).</summary>
+    public enum GoreLevel : byte
+    {
+        Off = 0,
+        Reduced = 1,
+        Full = 2,
+    }
+
     /// <summary>
     /// Player preferences (sensitivity, FOV, comfort). Local only, never replicated, persisted in PlayerPrefs.
     /// Presentation code reads these every frame; the menu writes them.
@@ -22,6 +30,7 @@ namespace Polykov.Core
         private static bool _invertY;
         private static bool _toggleCrouch;
         private static float _masterVolume;
+        private static GoreLevel _gore = GoreLevel.Full;
 
         /// <summary>Raised after any value changes.</summary>
         public static event Action Changed;
@@ -74,6 +83,20 @@ namespace Polykov.Core
             set => Set(ref _masterVolume, Mathf.Clamp01(value), "masterVolume");
         }
 
+        /// <summary>Blood, wound decals and splats: Full, Reduced (fewer, smaller) or Off.</summary>
+        public static GoreLevel Gore
+        {
+            get { EnsureLoaded(); return _gore; }
+            set
+            {
+                EnsureLoaded();
+                if (_gore == value) return;
+                _gore = value;
+                PlayerPrefs.SetInt(Prefix + "gore", (int)value);
+                Changed?.Invoke();
+            }
+        }
+
         public static void ResetToDefaults()
         {
             _mouseSensitivity = DefaultMouseSensitivity;
@@ -83,6 +106,7 @@ namespace Polykov.Core
             _invertY = false;
             _toggleCrouch = false;
             _masterVolume = 0.8f;
+            _gore = GoreLevel.Full;
             _loaded = true;
             Save();
             Changed?.Invoke();
@@ -99,6 +123,7 @@ namespace Polykov.Core
             _invertY = PlayerPrefs.GetInt(Prefix + "invertY", 0) != 0;
             _toggleCrouch = PlayerPrefs.GetInt(Prefix + "toggleCrouch", 0) != 0;
             _masterVolume = PlayerPrefs.GetFloat(Prefix + "masterVolume", 0.8f);
+            _gore = (GoreLevel)Mathf.Clamp(PlayerPrefs.GetInt(Prefix + "gore", (int)GoreLevel.Full), 0, 2);
         }
 
         private static void Set(ref float field, float value, string key)
@@ -128,6 +153,7 @@ namespace Polykov.Core
             PlayerPrefs.SetInt(Prefix + "invertY", _invertY ? 1 : 0);
             PlayerPrefs.SetInt(Prefix + "toggleCrouch", _toggleCrouch ? 1 : 0);
             PlayerPrefs.SetFloat(Prefix + "masterVolume", _masterVolume);
+            PlayerPrefs.SetInt(Prefix + "gore", (int)_gore);
         }
 
         /// <summary>Writes pending values to disk (call when closing the menu).</summary>

@@ -19,9 +19,23 @@ namespace Polykov.Combat
         public event System.Action<BodyPart, DamageResult, ShotHit> Damaged;
         public event System.Action<BodyPart> Died;
 
+        /// <summary>Raised for every bullet that reaches a hitbox, alive or dead (after damage/death).</summary>
+        public event System.Action<Hitbox, ShotHit> ShotReceived;
+
+        /// <summary>The hitbox of the last bullet received (valid inside <see cref="Damaged"/>/<see cref="Died"/>).</summary>
+        public Hitbox LastHitbox { get; private set; }
+
         private void Awake() => ResetHealth();
 
         public void ResetHealth() => _state = HealthState.Full(tuning);
+
+        /// <summary>Entry point for hitboxes: applies damage and then notifies presentation listeners.</summary>
+        public void Receive(Hitbox hitbox, in ShotHit hit)
+        {
+            LastHitbox = hitbox;
+            TakeHit(hitbox.Part, hit);
+            ShotReceived?.Invoke(hitbox, hit);
+        }
 
         public void TakeHit(BodyPart part, in ShotHit hit)
         {

@@ -1,7 +1,10 @@
 {
     "name": "Polykov.Editor",
     "rootNamespace": "Polykov.EditorTools",
-    "references": [],
+    "references": [
+        "Polykov.Combat",
+        "Polykov.Weapons"
+    ],
     "includePlatforms": [
         "Editor"
     ],
