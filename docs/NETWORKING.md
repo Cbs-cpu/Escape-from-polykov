@@ -21,7 +21,7 @@ Por qué funciona sin correcciones en condiciones normales: la simulación es **
 
 | Tipo | Lado | Qué hace |
 |---|---|---|
-| `PlayerCommand` | C→S | Input de un tick: movimiento, arma, pitch. 12 bytes: tick u32, move 2×s8, yaw u16, pitch s16 (0.01°), lean s8, flags u8. `AsRepeat()` para huecos. |
+| `PlayerCommand` | C→S | Input de un tick: movimiento, arma, pitch. 13 bytes: tick u32, move 2×s8, yaw u16, pitch s16 (0.01°), lean s8, flags u8, acciones u8 (seguro, inspeccionar, recámara). `AsRepeat()` para huecos. |
 | `ByteWriter/ByteReader` | ambos | Serialización little-endian sin allocations. |
 | `NetPlayerState` | S→C | Estado autoritativo: posición, yaw, pitch, `MovementState`. |
 | `IPlayerSimulator` | ambos | Un tick de simulación. La implementación Unity usará `CharacterController` (colisiones); los tests, suelo plano. |

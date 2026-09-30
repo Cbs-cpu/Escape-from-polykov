@@ -3,6 +3,16 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Manipulación del arma: seguro, inspeccionar, comprobar recámara
+- **B** seguro: la palanca sube, el gatillo queda bloqueado (ni dispara ni hace clic), HUD `SEGURO (B)`. Se puede recargar con seguro.
+- **L** inspeccionar (~3 s): la pistola se gira para ver el lado izquierdo y luego el derecho, a una mano.
+  L otra vez, apuntar, disparar, recargar o esprintar la cancelan (el clic que cancela **no** dispara).
+- **T** comprobar recámara (~1.3 s): pinzado frontal de la corredera, se abre un poco y vuelve; mensaje
+  `Recámara: con bala` / `VACÍA`.
+- Poses verificadas en Blender: `docs/screenshots/grip_inspect_*`, `grip_check_*`. Todo ajustable en `WD_M1911`
+  (secciones *Inspect* y *Chamber check*).
+- 11 tests nuevos del arma; el comando de red pasa a 13 bytes (nuevo byte de acciones).
+
 ## Simulador de red dentro del juego (F6) — Fase 2 sin red
 - **F6** activa un "servidor" invisible: tus comandos le llegan con **100 ms ±10**, **5 % de pérdida** y redundancia x4;
   él te simula con colisiones reales y te devuelve el estado; tu personaje **predice** y **reconcilia** como en multijugador.

@@ -30,6 +30,7 @@ namespace Polykov.Weapons
         private WeaponModel _model;
         private bool _obstructed;
         private bool _lastReloadWasEmpty;
+        private WeaponAction _lastAction;
 
         public WeaponDefinition Definition => definition;
         public WeaponState State => _state;
@@ -44,6 +45,11 @@ namespace Polykov.Weapons
         public event System.Action MagazineInserted;
         /// <summary>Raised when a reload completes; true if it was an empty reload (slide released).</summary>
         public event System.Action<bool> ReloadFinished;
+        /// <summary>Raised when the safety flips; argument: now on.</summary>
+        public event System.Action<bool> SafetyToggled;
+        public event System.Action<WeaponAction> ActionStarted;
+        /// <summary>Raised when an action completes; for a chamber check, the state holds the result.</summary>
+        public event System.Action<WeaponAction, WeaponState> ActionCompleted;
 
         private void Awake()
         {
@@ -74,7 +80,9 @@ namespace Polykov.Weapons
         {
             ProbeObstruction();
             var context = new WeaponContext(motor.State.Locomotion == LocomotionState.Sprint, _obstructed);
-            var tickInput = new WeaponInput(input.FireHeld, input.ConsumeFirePressed(), input.AimHeld, input.ConsumeReload());
+            input.ConsumeWeaponActions(out bool safety, out bool inspect, out bool chamberCheck);
+            var tickInput = new WeaponInput(input.FireHeld, input.ConsumeFirePressed(), input.AimHeld, input.ConsumeReload(),
+                safety, inspect, chamberCheck);
             _state = WeaponMotor.Step(_state, tickInput, context, definition.Stats, dt);
 
             if (_state.JustFired)
@@ -90,6 +98,13 @@ namespace Polykov.Weapons
             }
             if (_state.JustInsertedMagazine) MagazineInserted?.Invoke();
             if (_state.JustFinishedReload) ReloadFinished?.Invoke(_lastReloadWasEmpty);
+            if (_state.JustToggledSafety) SafetyToggled?.Invoke(_state.SafetyOn);
+            if (_state.JustStartedAction)
+            {
+                _lastAction = _state.Action;
+                ActionStarted?.Invoke(_state.Action);
+            }
+            if (_state.JustCompletedAction) ActionCompleted?.Invoke(_lastAction, _state);
         }
 
         private void ProbeObstruction()

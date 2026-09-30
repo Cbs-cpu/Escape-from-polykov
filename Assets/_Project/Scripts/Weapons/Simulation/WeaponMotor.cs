@@ -23,6 +23,10 @@ namespace Polykov.Weapons
             s.JustStartedReload = false;
             s.JustInsertedMagazine = false;
             s.JustFinishedReload = false;
+            s.JustToggledSafety = false;
+            s.JustStartedAction = false;
+            s.JustCompletedAction = false;
+            s.JustCancelledAction = false;
             s.RecoilKick = Vector2.zero;
             s.SpreadOffset = Vector2.zero;
 
@@ -31,14 +35,55 @@ namespace Polykov.Weapons
             bool lower = context.Sprinting || context.Obstructed;
             s.Lowered = Mathf.MoveTowards(s.Lowered, lower ? 1f : 0f, deltaTime / stats.ReadyTime);
 
-            bool aim = input.AimHeld && !lower;
+            if (input.SafetyToggle)
+            {
+                s.SafetyOn = !s.SafetyOn;
+                s.JustToggledSafety = true;
+            }
+
+            // Hand actions (inspect, chamber check): anything that needs the weapon interrupts them.
+            bool actionBlocked = false;
+            if (s.Action != WeaponAction.None)
+            {
+                bool again = (s.Action == WeaponAction.Inspect && input.InspectPressed)
+                             || (s.Action == WeaponAction.ChamberCheck && input.ChamberCheckPressed);
+                if (again || input.AimHeld || input.TriggerPressed || input.ReloadPressed || lower)
+                {
+                    s.Action = WeaponAction.None;
+                    s.ActionElapsed = 0f;
+                    s.JustCancelledAction = true;
+                    actionBlocked = true; // the press that cancelled must not also fire or restart
+                }
+                else
+                {
+                    s.ActionElapsed += deltaTime;
+                    float duration = s.Action == WeaponAction.Inspect ? stats.InspectTime : stats.ChamberCheckTime;
+                    if (s.ActionElapsed >= duration)
+                    {
+                        if (s.Action == WeaponAction.ChamberCheck) s.LastChamberCheckLoaded = s.Chambered;
+                        s.Action = WeaponAction.None;
+                        s.ActionElapsed = 0f;
+                        s.JustCompletedAction = true;
+                    }
+                }
+            }
+            else if (!s.IsReloading && !lower && !input.AimHeld && (input.InspectPressed || input.ChamberCheckPressed))
+            {
+                s.Action = input.ChamberCheckPressed ? WeaponAction.ChamberCheck : WeaponAction.Inspect;
+                s.ActionElapsed = 0f;
+                s.JustStartedAction = true;
+            }
+
+            bool aim = input.AimHeld && !lower && s.Action == WeaponAction.None;
             s.Aim = Mathf.MoveTowards(s.Aim, aim ? 1f : 0f, deltaTime / stats.AimTime);
 
             if (s.IsReloading) AdvanceReload(ref s, stats, deltaTime);
-            else if (input.ReloadPressed && CanReload(s, stats)) StartReload(ref s);
+            else if (input.ReloadPressed && s.Action == WeaponAction.None && CanReload(s, stats)) StartReload(ref s);
 
             bool wantsShot = stats.FireMode == FireMode.Semi ? input.TriggerPressed : input.TriggerHeld;
-            bool canFire = !s.IsReloading && !lower && s.Lowered < ReadyThreshold && s.Cooldown <= 0f;
+            // The safety blocks the trigger itself: no shot and no dry-fire click.
+            bool canFire = !s.IsReloading && s.Action == WeaponAction.None && !actionBlocked && !s.SafetyOn
+                           && !lower && s.Lowered < ReadyThreshold && s.Cooldown <= 0f;
             if (wantsShot && canFire)
             {
                 if (s.Chambered) Fire(ref s, stats);

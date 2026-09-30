@@ -53,6 +53,11 @@ namespace Polykov.Weapons
         private float _dip;
         private float _dipVelocity;
 
+        private float _action;
+        private WeaponAction _actionKind;
+        private float _actionT;
+        private float _safety;
+
         private void OnEnable()
         {
             weapon.Fired += OnFired;
@@ -140,6 +145,22 @@ namespace Polykov.Weapons
             position = Vector3.Lerp(position, def.ReloadPosition, reload);
             rotation = Quaternion.Slerp(rotation, Quaternion.Euler(def.ReloadEuler), reload);
 
+            // Hand actions: keep the last kind and phase while blending out so the pose never pops.
+            if (state.Action != WeaponAction.None)
+            {
+                _actionKind = state.Action;
+                float duration = state.Action == WeaponAction.Inspect ? def.Stats.InspectTime : def.Stats.ChamberCheckTime;
+                _actionT = Mathf.Clamp01(state.ActionElapsed / duration);
+            }
+            _action = Damp(_action, state.Action != WeaponAction.None ? 1f : 0f, 8f, dt);
+            if (_action > 0.001f)
+            {
+                ActionPose(def, out Vector3 actionPosition, out Quaternion actionRotation);
+                float w = Mathf.SmoothStep(0f, 1f, _action);
+                position = Vector3.Lerp(position, actionPosition, w);
+                rotation = Quaternion.Slerp(rotation, actionRotation, w);
+            }
+
             // Sway: the weapon lags camera turns a little.
             float yawRate = Mathf.DeltaAngle(_lastYaw, look.Yaw) / dt;
             float pitchRate = (look.Pitch - _lastPitch) / dt;
@@ -195,11 +216,39 @@ namespace Polykov.Weapons
             return new Vector3(0f, 0f, def.AdsSightDistance) - sightLocal;
         }
 
+        /// <summary>Camera-space pose of the current hand action at its phase.</summary>
+        private void ActionPose(WeaponDefinition def, out Vector3 position, out Quaternion rotation)
+        {
+            if (_actionKind == WeaponAction.Inspect)
+            {
+                // Left side up to 45%, turn over to the right side, hold, hand back.
+                float turn = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.45f, 0.62f, _actionT));
+                position = Vector3.Lerp(def.InspectLeftPosition, def.InspectRightPosition, turn);
+                rotation = Quaternion.Slerp(Quaternion.Euler(def.InspectLeftEuler), Quaternion.Euler(def.InspectRightEuler), turn);
+            }
+            else
+            {
+                position = def.ChamberCheckPosition;
+                rotation = Quaternion.Euler(def.ChamberCheckEuler);
+            }
+        }
+
+        /// <summary>Slide travel of a press check: back, look, forward.</summary>
+        private float ChamberCheckSlide(WeaponDefinition def)
+        {
+            if (_actionKind != WeaponAction.ChamberCheck || _action < 0.01f) return 0f;
+            float open = Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.25f, 0.4f, _actionT))
+                         * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.7f, 0.82f, _actionT)));
+            return open * def.ChamberCheckSlide * _action;
+        }
+
         private void AnimateParts(WeaponDefinition def, WeaponState state, float dt)
         {
-            // Slide: blowback after each shot, locked back while nothing is chambered.
+            // Slide: blowback after each shot, locked back while nothing is chambered, press check.
             _slideKick = Mathf.Max(0f, _slideKick - dt / 0.07f);
-            float slide = state.Chambered ? Mathf.Sin(_slideKick * Mathf.PI) : 1f;
+            float slide = state.Chambered ? Mathf.Max(Mathf.Sin(_slideKick * Mathf.PI), ChamberCheckSlide(def)) : 1f;
+            _safety = Damp(_safety, state.SafetyOn ? 1f : 0f, 25f, dt);
+            _model.PoseSafety(_safety);
 
             // Magazine: old one drops out, new one comes up and seats at the insert point.
             float magazineOut = 0f;
@@ -231,6 +280,19 @@ namespace Polykov.Weapons
                 toMagazine = t > 0.05f && t < def.Stats.MagazineInsertPoint + 0.05f;
             }
             _leftToMagazine = Damp(_leftToMagazine, toMagazine ? 1f : 0f, 12f, dt);
+
+            // Press check: the support hand pinches the slide serrations.
+            float slideGrab = _actionKind == WeaponAction.ChamberCheck
+                ? Mathf.SmoothStep(0f, 1f, _action) * (1f - Mathf.SmoothStep(0f, 1f, Mathf.InverseLerp(0.85f, 1f, _actionT)))
+                : 0f;
+            if (slideGrab > 0.001f)
+            {
+                Vector3 grabPosition = _model.transform.TransformPoint(def.SlideGrabPosition);
+                if (_model.Slide != null) grabPosition += _model.transform.TransformVector(Vector3.back * (0.03f * ChamberCheckSlide(def)));
+                _model.LeftHand.SetPositionAndRotation(
+                    Vector3.Lerp(_model.LeftHand.position, grabPosition, slideGrab),
+                    Quaternion.Slerp(_model.LeftHand.rotation, _model.transform.rotation * def.SlideGrabRotation, slideGrab));
+            }
             if (_leftToMagazine > 0.001f)
             {
                 // Position from the magazine point (it moves with the magazine); orientation in weapon space.
@@ -243,13 +305,15 @@ namespace Polykov.Weapons
 
             // Sprinting with a pistol: one hand, the other arm swings with the animation.
             float sprintOneHanded = Mathf.SmoothStep(0f, 1f, _lowered) * (1f - _obstructed);
-            hands.LeftWeight = 1f - sprintOneHanded;
+            // Inspecting is one-handed too: the support hand lets go while the weapon is turned over.
+            float inspecting = _actionKind == WeaponAction.Inspect ? Mathf.SmoothStep(0f, 1f, _action) : 0f;
+            hands.LeftWeight = (1f - sprintOneHanded) * (1f - inspecting);
             hands.Weight = 1f;
             hands.TriggerPull = _triggerPull;
             Transform weaponRoot = _model.transform;
             hands.RightThumbDirection = weaponRoot.TransformDirection(def.RightThumbForward);
             // While the support hand holds the magazine its thumb is left to the curl.
-            hands.LeftThumbDirection = weaponRoot.TransformDirection(def.LeftThumbForward) * (1f - _leftToMagazine);
+            hands.LeftThumbDirection = weaponRoot.TransformDirection(def.LeftThumbForward) * (1f - _leftToMagazine) * (1f - slideGrab);
         }
 
         private static void Spring(ref float x, ref float v, float stiffness, float damping, float dt)

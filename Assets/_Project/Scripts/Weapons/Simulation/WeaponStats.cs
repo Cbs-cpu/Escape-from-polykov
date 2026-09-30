@@ -36,6 +36,10 @@ namespace Polykov.Weapons
         [Min(0.01f)] public float AimTime;
         [Tooltip("Seconds to lower/raise the weapon (sprint, obstruction). Can't fire until it is raised.")]
         [Min(0.01f)] public float ReadyTime;
+        [Tooltip("Seconds to look the weapon over.")]
+        [Min(0.1f)] public float InspectTime;
+        [Tooltip("Seconds to press-check the chamber.")]
+        [Min(0.1f)] public float ChamberCheckTime;
 
         [Header("Accuracy (degrees)")]
         [Tooltip("Random cone half-angle when firing from the hip.")]
@@ -67,6 +71,8 @@ namespace Polykov.Weapons
             MagazineInsertPoint = 0.55f,
             AimTime = 0.2f,
             ReadyTime = 0.2f,
+            InspectTime = 3.2f,
+            ChamberCheckTime = 1.3f,
             HipSpread = 1.6f,
             AimSpread = 0.15f,
             VerticalRecoil = 2.6f,

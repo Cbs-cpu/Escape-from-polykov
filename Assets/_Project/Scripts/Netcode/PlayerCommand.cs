@@ -11,7 +11,7 @@ namespace Polykov.Netcode
     /// </summary>
     public readonly struct PlayerCommand
     {
-        public const int SerializedSize = 4 + 1 + 1 + 2 + 2 + 1 + 1;
+        public const int SerializedSize = 4 + 1 + 1 + 2 + 2 + 1 + 1 + 1;
 
         [System.ThreadStatic] private static byte[] _scratch;
 
@@ -52,6 +52,8 @@ namespace Polykov.Netcode
                         | (Weapon.TriggerHeld ? 16 : 0) | (Weapon.TriggerPressed ? 32 : 0) | (Weapon.AimHeld ? 64 : 0)
                         | (Weapon.ReloadPressed ? 128 : 0);
             w.WriteByte((byte)flags);
+            int actions = (Weapon.SafetyToggle ? 1 : 0) | (Weapon.InspectPressed ? 2 : 0) | (Weapon.ChamberCheckPressed ? 4 : 0);
+            w.WriteByte((byte)actions);
         }
 
         public static PlayerCommand Read(ref ByteReader r)
@@ -63,8 +65,10 @@ namespace Polykov.Netcode
             float pitch = r.ReadShort() / 100f;
             float lean = r.ReadSByte() / 127f;
             int f = r.ReadByte();
+            int a = r.ReadByte();
             var movement = new MovementInput(new Vector2(x, y), yaw, (f & 1) != 0, (f & 2) != 0, (f & 4) != 0, lean, (f & 8) != 0);
-            var weapon = new WeaponInput((f & 16) != 0, (f & 32) != 0, (f & 64) != 0, (f & 128) != 0);
+            var weapon = new WeaponInput((f & 16) != 0, (f & 32) != 0, (f & 64) != 0, (f & 128) != 0,
+                (a & 1) != 0, (a & 2) != 0, (a & 4) != 0);
             return new PlayerCommand(tick, movement, weapon, pitch);
         }
 
@@ -73,7 +77,7 @@ namespace Polykov.Netcode
         {
             var movement = new MovementInput(Movement.Move, Movement.Yaw, Movement.Sprint, Movement.Walk, false, Movement.Lean,
                 Movement.Crouch);
-            var weapon = new WeaponInput(Weapon.TriggerHeld, false, Weapon.AimHeld, false);
+            var weapon = new WeaponInput(Weapon.TriggerHeld, false, Weapon.AimHeld, false, false, false, false);
             return new PlayerCommand(tick, movement, weapon, Pitch);
         }
 

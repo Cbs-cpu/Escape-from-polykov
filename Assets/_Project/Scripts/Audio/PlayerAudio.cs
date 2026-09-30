@@ -55,6 +55,9 @@ namespace Polykov.Audio
             weapon.ReloadStarted += OnReloadStarted;
             weapon.MagazineInserted += OnMagazineInserted;
             weapon.ReloadFinished += OnReloadFinished;
+            weapon.SafetyToggled += OnSafetyToggled;
+            weapon.ActionStarted += OnActionStarted;
+            weapon.ActionCompleted += OnActionCompleted;
         }
 
         private void OnDisable()
@@ -67,6 +70,9 @@ namespace Polykov.Audio
             weapon.ReloadStarted -= OnReloadStarted;
             weapon.MagazineInserted -= OnMagazineInserted;
             weapon.ReloadFinished -= OnReloadFinished;
+            weapon.SafetyToggled -= OnSafetyToggled;
+            weapon.ActionStarted -= OnActionStarted;
+            weapon.ActionCompleted -= OnActionCompleted;
         }
 
         private void Update()
@@ -107,6 +113,18 @@ namespace Polykov.Audio
         private void OnReloadFinished(bool empty)
         {
             if (empty) Play(ProceduralSounds.SlideRelease, handlingVolume, 1f);
+        }
+
+        private void OnSafetyToggled(bool on) => Play(ProceduralSounds.DryClick, handlingVolume * 0.6f, on ? 1.5f : 1.35f);
+
+        private void OnActionStarted(WeaponAction action)
+        {
+            if (action == WeaponAction.ChamberCheck) Play(ProceduralSounds.MagazineOut, handlingVolume * 0.7f, 1.3f);
+        }
+
+        private void OnActionCompleted(WeaponAction action, WeaponState state)
+        {
+            if (action == WeaponAction.ChamberCheck) Play(ProceduralSounds.MagazineIn, handlingVolume * 0.8f, 1.25f);
         }
 
         private void OnJumped() => Play(ProceduralSounds.Footstep(_stepIndex++), footstepVolume, 0.85f);

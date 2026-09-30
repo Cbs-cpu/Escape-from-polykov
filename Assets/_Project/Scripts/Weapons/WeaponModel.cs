@@ -19,6 +19,7 @@ namespace Polykov.Weapons
         public const string SightName = "SightLine";
         public const string GripCenterName = "GripCenter";
         public const string MagazineGrabName = "MagazineGrab";
+        public const string SafetyName = "Safety";
 
         /// <summary>Grip rake of the M1911 frame (degrees): the magazine slides along this axis.</summary>
         public const float GripRake = 18f;
@@ -38,6 +39,8 @@ namespace Polykov.Weapons
         public Transform GripCenter;
         /// <summary>Where the support hand grabs the magazine during a reload (wrist, hand frame).</summary>
         public Transform MagazineGrab;
+        /// <summary>Thumb safety lever (moves up when engaged).</summary>
+        public Transform Safety;
 
         /// <summary>IK targets, created at runtime and posed from the weapon definition.</summary>
         public Transform RightHand { get; private set; }
@@ -51,6 +54,8 @@ namespace Polykov.Weapons
         private Vector3 _hammerAxis;
         private Quaternion _triggerRest;
         private Vector3 _triggerAxis;
+        private Vector3 _safetyRest;
+        private Vector3 _safetyUp;
 
         public void Initialize()
         {
@@ -62,6 +67,7 @@ namespace Polykov.Weapons
             Sight = Sight != null ? Sight : Find(SightName);
             GripCenter = GripCenter != null ? GripCenter : Find(GripCenterName);
             MagazineGrab = MagazineGrab != null ? MagazineGrab : Find(MagazineGrabName);
+            Safety = Safety != null ? Safety : Find(SafetyName);
 
             RightHand = new GameObject("RightHandIK").transform;
             RightHand.SetParent(transform, false);
@@ -88,6 +94,17 @@ namespace Polykov.Weapons
                 _triggerRest = Trigger.localRotation;
                 _triggerAxis = Quaternion.Inverse(Trigger.rotation) * transform.right;
             }
+            if (Safety != null)
+            {
+                _safetyRest = Safety.localPosition;
+                _safetyUp = ToParentSpace(Safety, Vector3.up);
+            }
+        }
+
+        /// <summary>Thumb safety: 0 = off (fire), 1 = on (safe, lever up).</summary>
+        public void PoseSafety(float engaged)
+        {
+            if (Safety != null) Safety.localPosition = _safetyRest + _safetyUp * (0.0035f * engaged);
         }
 
         /// <param name="slideBack">0 = in battery, 1 = fully back (locked or cycling).</param>

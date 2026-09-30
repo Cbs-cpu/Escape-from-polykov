@@ -26,7 +26,13 @@ namespace Polykov.Input
         private InputAction _fire;
         private InputAction _aim;
         private InputAction _reload;
+        private InputAction _safety;
+        private InputAction _inspect;
+        private InputAction _chamberCheck;
         private bool _jumpLatched;
+        private bool _safetyLatched;
+        private bool _inspectLatched;
+        private bool _chamberCheckLatched;
         private bool _fireLatched;
         private bool _reloadLatched;
         private bool _crouchToggled;
@@ -64,6 +70,15 @@ namespace Polykov.Input
             return pressed;
         }
 
+        /// <summary>Weapon manipulation presses since the last tick (each true once).</summary>
+        public void ConsumeWeaponActions(out bool safety, out bool inspect, out bool chamberCheck)
+        {
+            safety = _safetyLatched;
+            inspect = _inspectLatched;
+            chamberCheck = _chamberCheckLatched;
+            _safetyLatched = _inspectLatched = _chamberCheckLatched = false;
+        }
+
         public bool Crouch => !Blocked && (UserSettings.ToggleCrouch ? _crouchToggled : _crouch.IsPressed());
 
         /// <summary>
@@ -91,6 +106,10 @@ namespace Polykov.Input
             _fire = _map.FindAction("Fire", true);
             _aim = _map.FindAction("Aim", true);
             _reload = _map.FindAction("Reload", true);
+            // Optional actions: older copies of the input asset may not have them yet.
+            _safety = _map.FindAction("Safety");
+            _inspect = _map.FindAction("Inspect");
+            _chamberCheck = _map.FindAction("ChamberCheck");
         }
 
         private void Update()
@@ -99,6 +118,9 @@ namespace Polykov.Input
             if (_jump.WasPressedThisFrame()) _jumpLatched = true;
             if (_fire.WasPressedThisFrame()) _fireLatched = true;
             if (_reload.WasPressedThisFrame()) _reloadLatched = true;
+            if (_safety != null && _safety.WasPressedThisFrame()) _safetyLatched = true;
+            if (_inspect != null && _inspect.WasPressedThisFrame()) _inspectLatched = true;
+            if (_chamberCheck != null && _chamberCheck.WasPressedThisFrame()) _chamberCheckLatched = true;
             if (_crouch.WasPressedThisFrame()) _crouchToggled = !_crouchToggled;
             if (_sprint.WasPressedThisFrame() || _jump.WasPressedThisFrame()) _crouchToggled = false;
         }

@@ -9,13 +9,28 @@ namespace Polykov.Weapons
         public readonly bool AimHeld;
         /// <summary>Reload was pressed since the previous tick (edge).</summary>
         public readonly bool ReloadPressed;
+        /// <summary>Flip the manual safety (edge).</summary>
+        public readonly bool SafetyToggle;
+        /// <summary>Start (or cancel) inspecting the weapon (edge).</summary>
+        public readonly bool InspectPressed;
+        /// <summary>Start a press check of the chamber (edge).</summary>
+        public readonly bool ChamberCheckPressed;
 
         public WeaponInput(bool triggerHeld, bool triggerPressed, bool aimHeld, bool reloadPressed)
+            : this(triggerHeld, triggerPressed, aimHeld, reloadPressed, false, false, false)
+        {
+        }
+
+        public WeaponInput(bool triggerHeld, bool triggerPressed, bool aimHeld, bool reloadPressed, bool safetyToggle,
+            bool inspectPressed, bool chamberCheckPressed)
         {
             TriggerHeld = triggerHeld;
             TriggerPressed = triggerPressed;
             AimHeld = aimHeld;
             ReloadPressed = reloadPressed;
+            SafetyToggle = safetyToggle;
+            InspectPressed = inspectPressed;
+            ChamberCheckPressed = chamberCheckPressed;
         }
     }
 

@@ -35,6 +35,22 @@ namespace Polykov.Weapons
         public Vector3 ReloadPosition = new Vector3(0.04f, -0.16f, 0.33f);
         public Vector3 ReloadEuler = new Vector3(-12f, -28f, 38f);
 
+        [Header("Inspect (camera space keyframes: left side, then right side)")]
+        public Vector3 InspectLeftPosition = new Vector3(0.03f, -0.1f, 0.32f);
+        public Vector3 InspectLeftEuler = new Vector3(-10f, -55f, 20f);
+        public Vector3 InspectRightPosition = new Vector3(0.05f, -0.11f, 0.31f);
+        public Vector3 InspectRightEuler = new Vector3(-5f, 40f, -35f);
+
+        [Header("Chamber check")]
+        public Vector3 ChamberCheckPosition = new Vector3(0.04f, -0.1f, 0.33f);
+        public Vector3 ChamberCheckEuler = new Vector3(-10f, -25f, 50f);
+        [Tooltip("Front press check: support hand pinching the slide under the dust cover (weapon space; wrist + hand frame).")]
+        public Vector3 SlideGrabPosition = new Vector3(-0.035f, -0.035f, 0.07f);
+        public Vector3 SlideGrabForward = new Vector3(0.35f, 0.85f, 0.2f);
+        public Vector3 SlideGrabUp = new Vector3(0f, -0.1f, 1f);
+        [Tooltip("How far the slide is pulled back during a press check (0..1 of full travel).")]
+        [Range(0f, 1f)] public float ChamberCheckSlide = 0.35f;
+
         [Header("Hands (weapon space; wrist position + wrist->knuckles / little->index directions)")]
         [Tooltip("Verified on the Operator rig with ArtSource/Tools/grip_preview.py (same IK math).")]
         public Vector3 RightHandPosition = new Vector3(0.032f, -0.056f, -0.118f);
@@ -83,5 +99,6 @@ namespace Polykov.Weapons
         public Quaternion RightHandRotation => Quaternion.LookRotation(RightHandForward, RightHandUp);
         public Quaternion LeftHandRotation => Quaternion.LookRotation(LeftHandForward, LeftHandUp);
         public Quaternion MagazineGrabRotation => Quaternion.LookRotation(MagazineGrabForward, MagazineGrabUp);
+        public Quaternion SlideGrabRotation => Quaternion.LookRotation(SlideGrabForward, SlideGrabUp);
     }
 }

@@ -9,7 +9,7 @@ namespace Polykov.Netcode.Tests
     {
         private static PlayerCommand Sample(uint tick = 1234567u) => new PlayerCommand(tick,
             new MovementInput(new Vector2(0.31f, -0.87f), 271.3f, true, false, true, -0.42f, true),
-            new WeaponInput(true, false, true, true), 37.25f);
+            new WeaponInput(true, false, true, true, true, false, true), 37.25f);
 
         [Test]
         public void RoundTrip_PreservesIntent_WithinQuantization()
@@ -35,6 +35,9 @@ namespace Polykov.Netcode.Tests
             Assert.IsFalse(c.Weapon.TriggerPressed);
             Assert.IsTrue(c.Weapon.AimHeld);
             Assert.IsTrue(c.Weapon.ReloadPressed);
+            Assert.IsTrue(c.Weapon.SafetyToggle);
+            Assert.IsFalse(c.Weapon.InspectPressed);
+            Assert.IsTrue(c.Weapon.ChamberCheckPressed);
         }
 
         [Test]
@@ -64,6 +67,8 @@ namespace Polykov.Netcode.Tests
             Assert.IsFalse(repeat.Movement.Jump);
             Assert.IsFalse(repeat.Weapon.ReloadPressed);
             Assert.IsFalse(repeat.Weapon.TriggerPressed);
+            Assert.IsFalse(repeat.Weapon.SafetyToggle, "toggles must never repeat");
+            Assert.IsFalse(repeat.Weapon.ChamberCheckPressed);
             Assert.IsTrue(repeat.Movement.Sprint, "held intent is kept");
             Assert.IsTrue(repeat.Weapon.TriggerHeld);
         }

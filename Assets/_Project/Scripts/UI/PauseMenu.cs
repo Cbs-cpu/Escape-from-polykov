@@ -98,7 +98,7 @@ namespace Polykov.UI
 
             GUILayout.Space(12f);
             GUILayout.Label("WASD mover · Shift esprintar · Alt andar · Espacio saltar · C agacharse · Q/E inclinarse\n" +
-                            "Clic izq. disparar · Clic der. apuntar · R recargar · Esc pausa\n" +
+                            "Clic izq. disparar · Clic der. apuntar · R recargar · B seguro · L inspeccionar · T recámara · Esc pausa\n" +
                             "F1 debug · F2 perfil · F3 dianas · F4 munición · F6 simular red (F7 empujar, F8 marcador)", _small);
 
             GUILayout.FlexibleSpace();

@@ -27,6 +27,10 @@ GRIP = {
     "right_thumb": (0.0, -0.05, 1.0), "left_thumb": (0.0, -0.15, 1.0),
     "reload_position": (0.04, -0.16, 0.33), "reload_euler": (-12.0, -28.0, 38.0),
     "mag_grab_fwd": (0.5, 0.67, 0.53), "mag_grab_up": (0.0, -0.02, 1.0), "reload_mag_out": 0.6,
+    "inspect_left_position": (0.03, -0.1, 0.32), "inspect_left_euler": (-10.0, -55.0, 20.0),
+    "inspect_right_position": (0.05, -0.11, 0.31), "inspect_right_euler": (-5.0, 40.0, -35.0),
+    "check_position": (0.04, -0.1, 0.33), "check_euler": (-10.0, -25.0, 50.0),
+    "slide_grab_pos": (-0.035, -0.035, 0.07), "slide_grab_fwd": (0.35, 0.85, 0.2), "slide_grab_up": (0.0, -0.1, 1.0),
     "head_eye_offset": (0.105, 0.07),  # CameraSettings.HeadBoneEyeOffset (up, forward)
 }
 GRIP.update(globals().get("GRIP_OVERRIDES", {}))
@@ -180,6 +184,9 @@ def pose(kind):
     elif kind == "reload":
         gun_pos = eye + cam_rot @ U(GRIP["reload_position"])
         gun_rot = cam_rot @ unity_euler(GRIP["reload_euler"])
+    elif kind in ("inspect_left", "inspect_right", "check"):
+        gun_pos = eye + cam_rot @ U(GRIP[f"{kind}_position"])
+        gun_rot = cam_rot @ unity_euler(GRIP[f"{kind}_euler"])
     else:
         gun_rot = cam_rot.copy()
         gun_pos = eye + cam_rot @ U((0.0, 0.0, GRIP["ads_sight_distance"])) - gun_rot @ U(SIGHT)
@@ -204,6 +211,11 @@ def pose(kind):
         if kind == "reload" and side == "Left":
             target = bpy.data.objects["MagazineGrab"].matrix_world.translation.copy()
             t_frame = look_basis(gun_rot @ U(GRIP["mag_grab_fwd"]), gun_rot @ U(GRIP["mag_grab_up"]))
+        if kind == "check" and side == "Left":
+            target = gun_pos + gun_rot @ U(GRIP["slide_grab_pos"])
+            t_frame = look_basis(gun_rot @ U(GRIP["slide_grab_fwd"]), gun_rot @ U(GRIP["slide_grab_up"]))
+        if kind.startswith("inspect") and side == "Left":
+            continue  # one-handed: the support arm is left to the animation
         hint = head(f"{side}UpperArm") + U(GRIP[hint_key])
         two_bone(f"{side}UpperArm", f"{side}LowerArm", f"{side}Hand", target, hint)
         frame_l = right_frame_l if side == "Right" else left_frame_l
@@ -213,10 +225,11 @@ def pose(kind):
 
     g = GRIP
     aim_thumb("Right", gun_rot @ U(g["right_thumb"]))
-    if kind != "reload":
+    if kind in ("hip", "ads"):
         aim_thumb("Left", gun_rot @ U(g["left_thumb"]))
     curl("Right", center, (g["trigger_curl"], g["grip_curl"], g["grip_curl"], g["grip_curl"], g["thumb_curl"]))
-    curl("Left", center, (g["support_curl"],) * 4 + (g["thumb_curl"],))
+    if not kind.startswith("inspect"):
+        curl("Left", center, (g["support_curl"],) * 4 + (g["thumb_curl"],))
     return eye
 
 
