@@ -183,7 +183,7 @@ Todo lo demás (UI, reacción física, sangre, ragdoll, IA en escena) se valida 
 | 8. Sangre y decals | HECHO | Weapons/BloodEffects.cs, WoundDecals, prefabs FX_Blood_* |
 | 9. Ragdoll | HECHO | Combat/Ragdoll.cs, RagdollProfile, máx. 6 simultáneos |
 | 10. Desmembramiento visual | HECHO | Combat/Dismemberment.cs + Simulation/MeshSplit.cs (corte de malla en runtime, sin tocar modelos). F10 = modo prueba |
-| 11. IA básica + spawner | PENDIENTE | NavMesh, estados puros |
+| 11. IA básica + spawner | HECHO (sin probar en Unity) | NavMesh, estados puros |
 | 12. Ajuste de gore y rendimiento | PENDIENTE | |
 
 Conocido: NullReferenceException intermitente en ApplyBuild al alternar F7 (no reproducido).

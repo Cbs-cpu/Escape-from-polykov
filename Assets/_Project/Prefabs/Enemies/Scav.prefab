@@ -935,6 +935,7 @@ GameObject:
   - component: {fileID: 6178772453348112046}
   - component: {fileID: 309904030042883438}
   - component: {fileID: 7493133899960128195}
+  - component: {fileID: 4938564432345562524}
   m_Layer: 10
   m_Name: Scav
   m_TagString: Untagged
@@ -1534,3 +1535,39 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c91cf4a2e5d6d18449bd4d6e2ff59a8a, type: 3}
   m_PrefabInstance: {fileID: 8754190141647507910}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &4938564432345562524
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7301886641589544651}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f81b6035086e43bcbaec4f31df6061bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.ScavAI
+  tuning:
+    SightRange: 30
+    FovHalfAngle: 65
+    HearRange: 55
+    AttackRange: 2
+    WanderSpeed: 1.2
+    InvestigateSpeed: 2
+    ChaseSpeed: 4.2
+    IdleTime: 3
+    WanderTime: 6
+    SuspicionRise: 1.2
+    SuspicionDecay: 0.25
+    SuspicionToChase: 1
+    LoseTargetTime: 5
+    HurtTime: 0.5
+    AttackInterval: 1.2
+    OneLegSpeed: 0.5
+    NoLegsSpeed: 0.18
+  eyeHeight: 1.6
+  wanderRadius: 12
+  sightMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  turnSpeed: 240

@@ -30,3 +30,6 @@ Marca cada punto con `[x]` al terminarlo.
       (predicción, reconciliación, cola de inputs, interpolación, codec) ya está hecha y testeada en `Scripts/Netcode`.
 - [ ] **Lobby** (Unity): abrir `Scenes/Lobby.unity`, Play; comprobar referencias del `LobbyController` (arma, materiales, Operator),
       encuadre de cámara y que Build Settings tenga Lobby (0) + MovementTestArena. Reimportar `Scav.fbx` (readable) para el desmembramiento.
+- [ ] **IA** (Unity): hornear NavMesh en `MovementTestArena` (AI Navigation → NavMeshSurface) y añadir `NavMeshAgent` al `Scav.prefab`
+      (sin él funciona en línea recta). Ajustar `ScavAI.tuning` a gusto; comprobar animación de andar (VelX/VelZ del controlador Operator).
+- [ ] **Daño al jugador**: `ScavAI.Attacked` no hace daño aún (el jugador no tiene salud).

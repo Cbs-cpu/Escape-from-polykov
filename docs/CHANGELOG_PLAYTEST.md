@@ -166,3 +166,11 @@ cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el comm
   lista de piezas con avisos "monta también / quita", RESTABLECER. Se guarda solo (PlayerPrefs) y la partida aplica el montaje.
 - Qué revisar: que el personaje y el arma salgan bien encuadrados y el silenciador aparezca al elegirlo; Esc vuelve al menú principal.
   Si la escena sale vacía, dime el error de consola (la escena se regenera con `python3 Tools/make_lobby_scene.py`).
+
+## IA del Vagabundo (paso 11)
+- Los scavs de la arena ahora piensan (`ScavAI` en `Scav.prefab`, cerebro puro `ScavBrain` con 13 tests): Idle → Wander → Sospecha → Persecución → Ataque, con reacción al daño.
+- Te ven en un cono (65°, 30 m, con línea de visión) y **oyen tus disparos** (el silenciador reduce el alcance). Un solo disparo cercano les hace investigar; dos, perseguir.
+- Sin piernas cojean (×0.5) o se arrastran (×0.18); sin ambos brazos no pueden atacar. Al morir se apagan.
+- Sin NavMesh caminan en línea recta pegados al suelo; si horneas un NavMesh en la arena y añades `NavMeshAgent` usan pathfinding.
+- `ScavSpawner` (opcional) mantiene N scavs vivos y los repone tras un retardo.
+- Qué revisar: que se acerquen al oírte, que el ataque dispare el evento (aún no quita vida al jugador: llega con la salud del jugador en Fase 2).
