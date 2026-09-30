@@ -57,11 +57,7 @@ namespace Polykov.Weapons
             go.SetActive(true);
             body.position = position;
             body.rotation = rotation;
-#if POLYKOV_COMPILE_CHECK
-            body.velocity = velocity; // offline check uses Unity 2021.3 reference DLLs (no linearVelocity yet)
-#else
             body.linearVelocity = velocity;
-#endif
             body.angularVelocity = angularVelocity;
             return body;
         }

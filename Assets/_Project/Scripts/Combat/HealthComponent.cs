@@ -26,8 +26,6 @@ namespace Polykov.Combat
         /// <summary>The bullet that landed last (for ragdoll impulse and effects).</summary>
         public ShotHit LastHit { get; private set; }
         public BodyPart LastHitPart { get; private set; }
-        /// <summary>Bone of the collider that was hit (null for hits without a bone).</summary>
-        public Transform LastHitBone { get; private set; }
 
         /// <summary>Every hit on a living body, after damage was applied.</summary>
         public event System.Action<BodyPart, DamageResult, ShotHit> Damaged;
@@ -40,6 +38,8 @@ namespace Polykov.Combat
 
         /// <summary>The hitbox of the last bullet received (valid inside <see cref="Damaged"/>/<see cref="Died"/>).</summary>
         public Hitbox LastHitbox { get; private set; }
+        /// <summary>Bone of the last hitbox that was hit (null for hits without one).</summary>
+        public Transform LastHitBone => LastHitbox != null ? LastHitbox.Bone : null;
 
         private void Awake() => ResetHealth();
 
@@ -50,7 +50,6 @@ namespace Polykov.Combat
             _hitCounter = 0;
         }
 
-<<<<<<< HEAD
         /// <summary>Entry point for hitboxes: applies damage and then notifies presentation listeners.</summary>
         public void Receive(Hitbox hitbox, in ShotHit hit)
         {
@@ -60,13 +59,9 @@ namespace Polykov.Combat
         }
 
         public void TakeHit(BodyPart part, in ShotHit hit)
-=======
-        public void TakeHit(BodyPart part, in ShotHit hit, Transform bone = null)
->>>>>>> 0c260b25b241536a1c414610faff92f989e73203
         {
             if (!_state.Alive) return;
             LastHit = hit;
-            LastHitBone = bone;
             LastHitPart = part;
             _state = HealthModel.ApplyDamage(_state, part, hit.Damage, tuning, out DamageResult result);
 

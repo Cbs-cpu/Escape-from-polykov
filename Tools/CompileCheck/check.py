@@ -23,6 +23,18 @@ KNOWN_FALSE_POSITIVES = [
     "'AnimatorControllerParameter.name' cannot be assigned to",
 ]
 
+# Unity 6 renamed some APIs; the offline check compiles against 2021.3 reference DLLs, so the sources are
+# translated (whole-word, line for line) into a temporary copy. Add entries here when a new Unity 6 name shows up.
+UNITY6_TO_2021 = {
+    "linearVelocity": "velocity",
+    "linearDamping": "drag",
+    "angularDamping": "angularDrag",
+    "PhysicsMaterialCombine": "PhysicMaterialCombine",
+    "PhysicsMaterial": "PhysicMaterial",
+    "FindFirstObjectByType": "FindObjectOfType",
+    "FindAnyObjectByType": "FindObjectOfType",
+}
+
 ROOT = pathlib.Path(__file__).resolve().parents[2]
 HERE = pathlib.Path(__file__).resolve().parent
 GEN = HERE / ".gen"
@@ -57,6 +69,18 @@ def sources_for(folder, all_folders):
         if any(n in cs.parents for n in nested):
             continue
         yield cs
+
+
+def translated(cs, assembly):
+    """Copy of a source file with Unity 6 API names mapped to their 2021.3 equivalents (returns the copy's path)."""
+    import re
+    text = cs.read_text(encoding="utf-8-sig")
+    for new, old in UNITY6_TO_2021.items():
+        text = re.sub(rf"\b{new}\b", old, text)
+    out = GEN / assembly / "src" / cs.relative_to(ROOT)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(text, encoding="utf-8")
+    return out
 
 
 def dll_ref(folder, assembly):
@@ -104,7 +128,7 @@ def project_xml(name, data, folder, all_folders, names):
             print(f"warning: {name} references unknown assembly '{ref}'", file=sys.stderr)
     if "nunit.framework.dll" in data.get("precompiledReferences", []) and NUNIT_PKG not in packages:
         packages.append(NUNIT_PKG)
-    compiles = "\n    ".join(f'<Compile Include="{cs}" />' for cs in sources_for(folder, all_folders))
+    compiles = "\n    ".join(f'<Compile Include="{translated(cs, name)}" />' for cs in sources_for(folder, all_folders))
     return f"""<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net472</TargetFramework>
@@ -175,7 +199,7 @@ def main():
             failed.append(proj.stem)
             seen = set()
             for l in real or r.stdout.splitlines()[-20:]:
-                l = l.split(" [", 1)[0].replace(str(ROOT) + "/", "")
+                l = l.split(" [", 1)[0].replace(str(ROOT) + "/", "").replace(f"Tools/CompileCheck/.gen/{proj.stem}/src/", "")
                 if l not in seen:
                     seen.add(l)
                     print("      " + l)
