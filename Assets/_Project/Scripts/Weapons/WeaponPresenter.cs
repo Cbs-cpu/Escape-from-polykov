@@ -83,9 +83,10 @@ namespace Polykov.Weapons
 
             if (_model.Muzzle != null)
             {
+                // Placed with weapon-space axes: imported empties can carry an axis conversion in their rotation.
                 var go = new GameObject("MuzzleFlash");
-                go.transform.SetParent(_model.Muzzle, false);
-                go.transform.localPosition = new Vector3(0f, 0f, 0.03f);
+                go.transform.position = _model.Muzzle.position + _model.transform.forward * 0.03f;
+                go.transform.SetParent(_model.Muzzle, true);
                 _flash = go.AddComponent<Light>();
                 _flash.type = LightType.Point;
                 _flash.color = new Color(1f, 0.78f, 0.45f);
@@ -181,14 +182,17 @@ namespace Polykov.Weapons
             }
         }
 
-        /// <summary>Weapon-root pose (camera space) that puts the rear sight on the eye's line of sight.</summary>
+        /// <summary>
+        /// Weapon-root pose (camera space) that puts the rear sight on the eye's line of sight. The line of sight is
+        /// parallel to the weapon's +Z (sights of equal height); only the sight's position is used, never its
+        /// rotation, because imported empties can carry an axis conversion.
+        /// </summary>
         private Vector3 AdsPosition(WeaponDefinition def, out Quaternion rotation)
         {
             Transform sight = _model.Sight;
             Vector3 sightLocal = sight != null ? _model.transform.InverseTransformPoint(sight.position) : Vector3.up * 0.04f;
-            Quaternion sightRotation = sight != null ? Quaternion.Inverse(_model.transform.rotation) * sight.rotation : Quaternion.identity;
-            rotation = Quaternion.Inverse(sightRotation);
-            return new Vector3(0f, 0f, def.AdsSightDistance) - rotation * sightLocal;
+            rotation = Quaternion.identity;
+            return new Vector3(0f, 0f, def.AdsSightDistance) - sightLocal;
         }
 
         private void AnimateParts(WeaponDefinition def, WeaponState state, float dt)
@@ -229,10 +233,12 @@ namespace Polykov.Weapons
             _leftToMagazine = Damp(_leftToMagazine, toMagazine ? 1f : 0f, 12f, dt);
             if (_leftToMagazine > 0.001f)
             {
+                // Position from the magazine point (it moves with the magazine); orientation in weapon space.
                 Transform grab = _model.MagazineGrab;
+                Quaternion grabRotation = _model.transform.rotation * def.MagazineGrabRotation;
                 _model.LeftHand.SetPositionAndRotation(
                     Vector3.Lerp(_model.LeftHand.position, grab.position, _leftToMagazine),
-                    Quaternion.Slerp(_model.LeftHand.rotation, grab.rotation, _leftToMagazine));
+                    Quaternion.Slerp(_model.LeftHand.rotation, grabRotation, _leftToMagazine));
             }
 
             // Sprinting with a pistol: one hand, the other arm swings with the animation.

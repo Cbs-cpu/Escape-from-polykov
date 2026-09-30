@@ -32,7 +32,7 @@ namespace Polykov.Weapons
         public Vector3 ObstructedPosition = new Vector3(0.1f, -0.13f, 0.2f);
         public Vector3 ObstructedEuler = new Vector3(-55f, -10f, 0f);
         [Tooltip("Reloading: weapon brought in and canted to show the magazine well.")]
-        public Vector3 ReloadPosition = new Vector3(0.05f, -0.23f, 0.3f);
+        public Vector3 ReloadPosition = new Vector3(0.04f, -0.16f, 0.33f);
         public Vector3 ReloadEuler = new Vector3(-12f, -28f, 38f);
 
         [Header("Hands (weapon space; wrist position + wrist->knuckles / little->index directions)")]
@@ -43,6 +43,9 @@ namespace Polykov.Weapons
         public Vector3 LeftHandPosition = new Vector3(-0.036f, -0.08f, -0.07f);
         public Vector3 LeftHandForward = new Vector3(0.45f, 0.3f, 1f);
         public Vector3 LeftHandUp = new Vector3(0.1f, 1f, 0.25f);
+        [Tooltip("Support hand holding the magazine base during a reload (wrist->knuckles / little->index, weapon space).")]
+        public Vector3 MagazineGrabForward = new Vector3(0.5f, 0.67f, 0.53f);
+        public Vector3 MagazineGrabUp = new Vector3(0f, -0.02f, 1f);
         [Tooltip("Thumbs-forward grip: direction each thumb points along (weapon space).")]
         public Vector3 RightThumbForward = new Vector3(0f, -0.05f, 1f);
         public Vector3 LeftThumbForward = new Vector3(0f, -0.15f, 1f);
@@ -79,5 +82,6 @@ namespace Polykov.Weapons
 
         public Quaternion RightHandRotation => Quaternion.LookRotation(RightHandForward, RightHandUp);
         public Quaternion LeftHandRotation => Quaternion.LookRotation(LeftHandForward, LeftHandUp);
+        public Quaternion MagazineGrabRotation => Quaternion.LookRotation(MagazineGrabForward, MagazineGrabUp);
     }
 }

@@ -3,6 +3,13 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Correcciones del arma con el modelo importado
+- **Apuntado**: ya no usa la rotación del punto `SightLine` del FBX (traía la conversión de ejes de Blender y habría
+  girado la pistola al apuntar). La línea de mira es el eje del arma.
+- **Recarga**: la mano izquierda coge la base del cargador con una orientación verificada en Blender
+  (`docs/screenshots/grip_reload_*.png`); la pose de recarga se ha subido para que se vea en pantalla.
+- **Fogonazo**: colocado delante de la boca con los ejes del arma.
+
 ## Animaciones de agacharse + inclinación corregida al correr
 - 5 clips nuevos en el Operator: `Crouch_Idle`, `Crouch_F/B/L/R` (zancada a 1.5 m/s, pies apoyados: tobillos a ±2 cm del
   suelo medido en Blender). Hoja: `docs/screenshots/anim_crouch_and_lean_sheet.png`.

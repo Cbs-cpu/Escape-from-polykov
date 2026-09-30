@@ -25,6 +25,8 @@ GRIP = {
     "right_elbow_hint": (0.45, -0.5, -0.2), "left_elbow_hint": (-0.45, -0.5, -0.2),
     "grip_curl": 72.0, "trigger_curl": 28.0, "support_curl": 62.0, "thumb_curl": 8.0,
     "right_thumb": (0.0, -0.05, 1.0), "left_thumb": (0.0, -0.15, 1.0),
+    "reload_position": (0.04, -0.16, 0.33), "reload_euler": (-12.0, -28.0, 38.0),
+    "mag_grab_fwd": (0.5, 0.67, 0.53), "mag_grab_up": (0.0, -0.02, 1.0), "reload_mag_out": 0.6,
     "head_eye_offset": (0.105, 0.07),  # CameraSettings.HeadBoneEyeOffset (up, forward)
 }
 GRIP.update(globals().get("GRIP_OVERRIDES", {}))
@@ -35,6 +37,12 @@ SIGHT = (0.0, 0.0395, -0.0525)  # SightLine in weapon space
 def U(v):
     """Unity (camera/weapon/character) space -> Blender (right=-X, up=+Z, forward=-Y)."""
     return Vector((-v[0], -v[2], v[1]))
+
+
+def unity_euler_vec(e, v):
+    """Rotate a Unity-space vector by a Unity Euler (ZXY) in Unity space."""
+    m = Euler([math.radians(a) for a in e], "ZXY").to_matrix()
+    return tuple(m @ Vector(v))
 
 
 def unity_euler(e):
@@ -169,20 +177,35 @@ def pose(kind):
     if kind == "hip":
         gun_pos = eye + cam_rot @ U(GRIP["hip_position"])
         gun_rot = cam_rot @ unity_euler(GRIP["hip_euler"])
+    elif kind == "reload":
+        gun_pos = eye + cam_rot @ U(GRIP["reload_position"])
+        gun_rot = cam_rot @ unity_euler(GRIP["reload_euler"])
     else:
         gun_rot = cam_rot.copy()
         gun_pos = eye + cam_rot @ U((0.0, 0.0, GRIP["ads_sight_distance"])) - gun_rot @ U(SIGHT)
 
     gun = bpy.data.objects["M1911"]
     gun.matrix_world = Matrix.LocRotScale(gun_pos, gun_rot.to_quaternion(), None)
+    mag = bpy.data.objects["Magazine"]
+    if "rest" not in mag:
+        mag["rest"] = list(mag.location)
+    mag.location = Vector(mag["rest"])
     bpy.context.view_layer.update()
+    if kind == "reload":
+        # WeaponModel.Pose: magazine slides 0.16 m along the raked grip.
+        down = gun_rot @ U(unity_euler_vec((18.0, 0.0, 0.0), (0.0, -1.0, 0.0)))
+        mag.matrix_world = Matrix.Translation(down * 0.16 * GRIP["reload_mag_out"]) @ mag.matrix_world
+        bpy.context.view_layer.update()
     center = bpy.data.objects["GripCenter"].matrix_world.translation
 
     for side, key, hint_key in (("Right", "right", "right_elbow_hint"), ("Left", "left", "left_elbow_hint")):
         target = gun_pos + gun_rot @ U(GRIP[f"{key}_pos"])
+        t_frame = look_basis(gun_rot @ U(GRIP[f"{key}_fwd"]), gun_rot @ U(GRIP[f"{key}_up"]))
+        if kind == "reload" and side == "Left":
+            target = bpy.data.objects["MagazineGrab"].matrix_world.translation.copy()
+            t_frame = look_basis(gun_rot @ U(GRIP["mag_grab_fwd"]), gun_rot @ U(GRIP["mag_grab_up"]))
         hint = head(f"{side}UpperArm") + U(GRIP[hint_key])
         two_bone(f"{side}UpperArm", f"{side}LowerArm", f"{side}Hand", target, hint)
-        t_frame = look_basis(gun_rot @ U(GRIP[f"{key}_fwd"]), gun_rot @ U(GRIP[f"{key}_up"]))
         frame_l = right_frame_l if side == "Right" else left_frame_l
         set_world_rot(f"{side}Hand", (t_frame @ frame_l.inverted()).to_quaternion())
         err = (head(f"{side}Hand") - target).length
@@ -190,7 +213,8 @@ def pose(kind):
 
     g = GRIP
     aim_thumb("Right", gun_rot @ U(g["right_thumb"]))
-    aim_thumb("Left", gun_rot @ U(g["left_thumb"]))
+    if kind != "reload":
+        aim_thumb("Left", gun_rot @ U(g["left_thumb"]))
     curl("Right", center, (g["trigger_curl"], g["grip_curl"], g["grip_curl"], g["grip_curl"], g["thumb_curl"]))
     curl("Left", center, (g["support_curl"],) * 4 + (g["thumb_curl"],))
     return eye
