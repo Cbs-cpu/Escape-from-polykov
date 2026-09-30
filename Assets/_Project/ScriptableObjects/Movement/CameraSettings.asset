@@ -17,10 +17,10 @@ MonoBehaviour:
   HeadBoneEyeOffset: {x: 0.105, y: 0.07}
   AnimatedBobAmount: 0.45
   HeadFollowSharpness: 22
-  BaseFov: 78
-  SprintFovBoost: 4
-  FovSharpness: 6
-  NearClip: 0.05
+  SprintFovBoost: 3
+  FovSharpness: 10
+  NearClip: 0.025
+  AimBobReduction: 0.6
   Intensity: 1
   StrideLength: 0.75
   VerticalAmplitude: 0.018

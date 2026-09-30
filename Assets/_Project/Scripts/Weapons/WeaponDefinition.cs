@@ -22,13 +22,13 @@ namespace Polykov.Weapons
         [Min(0f)] public float Damage = 62f;
 
         [Header("Poses (camera space)")]
-        public Vector3 HipPosition = new Vector3(0.12f, -0.19f, 0.36f);
-        public Vector3 HipEuler = new Vector3(0f, -2f, 0f);
+        public Vector3 HipPosition = new Vector3(0.135f, -0.085f, 0.38f);
+        public Vector3 HipEuler = new Vector3(3f, -5f, 0f);
         [Tooltip("Distance from the eye to the rear sight when aiming down sights.")]
         [Range(0.15f, 0.7f)] public float AdsSightDistance = 0.4f;
         [Tooltip("Sprinting: weapon lowered and turned in.")]
-        public Vector3 LoweredPosition = new Vector3(0.1f, -0.36f, 0.26f);
-        public Vector3 LoweredEuler = new Vector3(45f, -25f, -10f);
+        public Vector3 LoweredPosition = new Vector3(0.12f, -0.18f, 0.34f);
+        public Vector3 LoweredEuler = new Vector3(34f, -20f, -8f);
         [Tooltip("Muzzle blocked by a wall: weapon pulled back, muzzle up.")]
         public Vector3 ObstructedPosition = new Vector3(0.1f, -0.13f, 0.2f);
         public Vector3 ObstructedEuler = new Vector3(-55f, -10f, 0f);
@@ -69,11 +69,20 @@ namespace Polykov.Weapons
 
         [Header("Feel")]
         [Tooltip("Weapon rotation lag per degree of camera turn.")]
-        [Range(0f, 1f)] public float SwayAmount = 0.35f;
+        [Range(0f, 1f)] public float SwayAmount = 0.5f;
         [Range(0f, 15f)] public float MaxSway = 6f;
         [Min(1f)] public float SwaySharpness = 10f;
+        [Tooltip("Spring that carries the sway: the weapon lags a camera turn, then catches up with a slight overshoot.")]
+        [Min(1f)] public float SwayStiffness = 150f;
+        [Range(0.1f, 1.5f)] public float SwayDamping = 0.45f;
+        [Tooltip("Weapon lag (m) per m/s^2 of body acceleration: it trails when starting or stopping.")]
+        [Range(0f, 0.005f)] public float InertiaAmount = 0.0009f;
+        [Range(0f, 0.08f)] public float MaxInertia = 0.035f;
+        [Tooltip("Idle breathing: vertical travel (m) and rate (Hz).")]
+        [Range(0f, 0.01f)] public float BreathAmplitude = 0.0016f;
+        [Range(0.05f, 1f)] public float BreathRate = 0.27f;
         [Tooltip("Positional bob while moving (m at run speed).")]
-        [Range(0f, 0.05f)] public float BobAmount = 0.012f;
+        [Range(0f, 0.05f)] public float BobAmount = 0.010f;
         [Tooltip("Sway and bob kept while aiming down sights.")]
         [Range(0f, 1f)] public float AdsSwayMultiplier = 0.25f;
         [Tooltip("Obstruction probe length from the eye (m).")]
@@ -81,13 +90,13 @@ namespace Polykov.Weapons
 
         [Header("Recoil (presentation)")]
         [Tooltip("Weapon kick back per shot (m/s impulse).")]
-        [Range(0f, 3f)] public float KickBack = 1.1f;
+        [Range(0f, 3f)] public float KickBack = 0.9f;
         [Tooltip("Weapon muzzle rise per shot (deg/s impulse).")]
-        [Range(0f, 900f)] public float KickRotation = 420f;
-        [Min(1f)] public float KickSpring = 260f;
-        [Range(0.1f, 1.5f)] public float KickDamping = 0.8f;
+        [Range(0f, 900f)] public float KickRotation = 340f;
+        [Min(1f)] public float KickSpring = 320f;
+        [Range(0.1f, 1.5f)] public float KickDamping = 0.7f;
         [Tooltip("Fraction of the camera recoil that returns to the point of aim.")]
-        [Range(0f, 1f)] public float CameraRecoilReturn = 0.7f;
+        [Range(0f, 1f)] public float CameraRecoilReturn = 0.8f;
         [Tooltip("Seconds for the camera kick to be applied.")]
         [Range(0.01f, 0.2f)] public float CameraKickTime = 0.05f;
         [Tooltip("Speed of the camera return (1/s).")]

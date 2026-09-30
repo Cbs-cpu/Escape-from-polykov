@@ -21,9 +21,12 @@ namespace Polykov.CameraSystem
         [Min(1f)] public float HeadFollowSharpness = 22f;
 
         [Header("Field of view (base FOV is a player preference: UserSettings.Fov)")]
-        [Range(0f, 15f)] public float SprintFovBoost = 4f;
-        [Min(0.1f)] public float FovSharpness = 6f;
-        [Range(0.01f, 0.3f)] public float NearClip = 0.05f;
+        [Range(0f, 15f)] public float SprintFovBoost = 3f;
+        [Min(0.1f)] public float FovSharpness = 10f;
+        [Tooltip("Small so the rear of the held weapon never gets cut by the near plane.")]
+        [Range(0.01f, 0.3f)] public float NearClip = 0.025f;
+        [Tooltip("Head bob and strafe tilt removed while aiming down sights (0 = none, 1 = all).")]
+        [Range(0f, 1f)] public float AimBobReduction = 0.6f;
 
         [Header("Procedural head bob (no body fallback)")]
         [Tooltip("Designer multiplier for bob and tilt; the player's comfort slider (UserSettings.HeadBob) multiplies it.")]

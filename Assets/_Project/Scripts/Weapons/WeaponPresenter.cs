@@ -40,6 +40,11 @@ namespace Polykov.Weapons
         private float _triggerPull;
 
         private Vector2 _sway;
+        private Vector2 _swayVelocity;
+        private Vector2 _inertia;
+        private Vector2 _inertiaVelocity;
+        private Vector3 _smoothVelocity;
+        private float _breathPhase;
         private float _lastYaw;
         private float _lastPitch;
         private float _bobPhase;
@@ -168,7 +173,9 @@ namespace Polykov.Weapons
             _lastPitch = look.Pitch;
             var swayTarget = new Vector2(-pitchRate, -yawRate) * (def.SwayAmount * 0.02f * steadiness);
             swayTarget = Vector2.ClampMagnitude(swayTarget, def.MaxSway);
-            _sway = Vector2.Lerp(_sway, swayTarget, 1f - Mathf.Exp(-def.SwaySharpness * dt));
+            // Underdamped spring: lags the turn, then overshoots a little. The clamp keeps it on screen.
+            StepSpring(ref _sway, ref _swayVelocity, swayTarget, def.SwayStiffness, def.SwayDamping, dt);
+            _sway = Vector2.ClampMagnitude(_sway, def.MaxSway * 1.3f);
 
             // Bob while walking.
             MovementState move = motor.State;
@@ -182,11 +189,24 @@ namespace Polykov.Weapons
             Spring(ref _dip, ref _dipVelocity, 90f, 0.55f, dt);
             position.y += _dip * steadiness;
 
+            // Inertia: the weapon trails body acceleration (starting, stopping, strafing).
+            Vector3 lastSmooth = _smoothVelocity;
+            _smoothVelocity = Vector3.Lerp(_smoothVelocity, move.PlanarVelocity, 1f - Mathf.Exp(-25f * dt));
+            Vector3 accel = Quaternion.Euler(0f, -look.Yaw, 0f) * ((_smoothVelocity - lastSmooth) / dt);
+            Vector2 inertiaTarget = Vector2.ClampMagnitude(new Vector2(-accel.x, -accel.z) * def.InertiaAmount, def.MaxInertia);
+            StepSpring(ref _inertia, ref _inertiaVelocity, inertiaTarget, 90f, 0.6f, dt);
+            position += new Vector3(_inertia.x, 0f, _inertia.y) * steadiness;
+
+            // Breathing: slow, subtle rise and fall.
+            _breathPhase = Mathf.Repeat(_breathPhase + dt * def.BreathRate * Mathf.PI * 2f, Mathf.PI * 2f);
+            float breath = Mathf.Sin(_breathPhase);
+            position.y += breath * def.BreathAmplitude * steadiness;
+
             // Recoil spring (critically-damped-ish).
             Spring(ref _kickPos, ref _kickPosVelocity, def.KickSpring, def.KickDamping, dt);
             Spring(ref _kickRot, ref _kickRotVelocity, def.KickSpring, def.KickDamping, dt);
             position += rotation * new Vector3(0f, 0f, _kickPos);
-            rotation *= Quaternion.Euler(_kickRot + _sway.x, _sway.y, _sway.y * 0.6f);
+            rotation *= Quaternion.Euler(_kickRot + _sway.x + breath * 0.12f * steadiness, _sway.y, _sway.y * 0.6f);
 
             _model.transform.SetPositionAndRotation(_eye.position + _eye.rotation * position, _eye.rotation * rotation);
 
@@ -194,6 +214,7 @@ namespace Polykov.Weapons
             PlaceHands(def, state, dt);
 
             cameraRig.ZoomFov = def.AdsFovReduction * aim;
+            cameraRig.AimAmount = aim;
             look.SensitivityScale = Mathf.Lerp(1f, def.AdsSensitivity, aim);
 
             if (_flash != null)
@@ -324,6 +345,19 @@ namespace Polykov.Weapons
             for (int i = 0; i < steps; i++)
             {
                 v += (-stiffness * x - c * v) * h;
+                x += v * h;
+            }
+        }
+
+        /// <summary>Spring toward a target (per-axis), sub-stepped for stability at any frame rate.</summary>
+        private static void StepSpring(ref Vector2 x, ref Vector2 v, Vector2 target, float stiffness, float damping, float dt)
+        {
+            float c = 2f * Mathf.Sqrt(stiffness) * damping;
+            int steps = Mathf.CeilToInt(dt / 0.004f);
+            float h = dt / Mathf.Max(steps, 1);
+            for (int i = 0; i < steps; i++)
+            {
+                v += ((target - x) * stiffness - c * v) * h;
                 x += v * h;
             }
         }

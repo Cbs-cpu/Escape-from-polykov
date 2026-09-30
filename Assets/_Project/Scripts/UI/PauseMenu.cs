@@ -80,7 +80,7 @@ namespace Polykov.UI
             GUILayout.Space(8f);
 
             UserSettings.MouseSensitivity = Slider("Sensibilidad ratón", UserSettings.MouseSensitivity, 0.01f, 0.3f, "0.000");
-            UserSettings.Fov = Slider("Campo de visión (FOV)", UserSettings.Fov, 60f, 110f, "0");
+            UserSettings.Fov = Slider("Campo de visión (FOV)", UserSettings.Fov, 50f, 90f, "0");
             UserSettings.HeadBob = Slider("Balanceo de cámara", UserSettings.HeadBob, 0f, 1f, "0%");
             UserSettings.CameraShake = Slider("Sacudidas de cámara", UserSettings.CameraShake, 0f, 1f, "0%");
             UserSettings.MasterVolume = Slider("Volumen", UserSettings.MasterVolume, 0f, 1f, "0%");

@@ -45,6 +45,9 @@ namespace Polykov.CameraSystem
         /// <summary>Degrees subtracted from the FOV (aim-down-sights zoom). Set by the weapon every frame.</summary>
         public float ZoomFov { get; set; }
 
+        /// <summary>0..1 aim-down-sights blend. Set by the weapon every frame; damps head bob and tilt.</summary>
+        public float AimAmount { get; set; }
+
         private void OnEnable() => motor.Landed += OnLanded;
         private void OnDisable() => motor.Landed -= OnLanded;
 
@@ -71,7 +74,7 @@ namespace Polykov.CameraSystem
 
             // Strafe tilt: lean slightly against lateral velocity.
             float localLateral = Vector3.Dot(state.PlanarVelocity, yawRotation * Vector3.right);
-            float comfort = settings.Intensity * UserSettings.HeadBob;
+            float comfort = settings.Intensity * UserSettings.HeadBob * (1f - settings.AimBobReduction * AimAmount);
             float targetTilt = -localLateral / runSpeed * settings.StrafeTilt * comfort;
             _tilt = Damp(_tilt, targetTilt, settings.TiltSharpness, dt);
 
@@ -95,7 +98,8 @@ namespace Polykov.CameraSystem
                 // Slow-moving baseline keeps posture changes; fast bob is attenuated.
                 _headBaseY = Damp(_headBaseY, _headLocal.y, 3f, dt);
                 Vector3 filtered = _headLocal;
-                filtered.y = _headBaseY + (_headLocal.y - _headBaseY) * settings.AnimatedBobAmount * UserSettings.HeadBob;
+                filtered.y = _headBaseY + (_headLocal.y - _headBaseY) * settings.AnimatedBobAmount * UserSettings.HeadBob
+                                                              * (1f - settings.AimBobReduction * AimAmount);
                 eye = motor.InterpolatedPosition + filtered
                       + viewRotation * new Vector3(0f, settings.HeadBoneEyeOffset.x, settings.HeadBoneEyeOffset.y);
                 roll = _tilt + leanRoll;

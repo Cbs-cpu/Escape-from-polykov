@@ -10,7 +10,7 @@ namespace Polykov.Core
     public static class UserSettings
     {
         public const float DefaultMouseSensitivity = 0.08f;
-        public const float DefaultFov = 78f;
+        public const float DefaultFov = 62f;
 
         private const string Prefix = "polykov.settings.";
 
@@ -37,7 +37,7 @@ namespace Polykov.Core
         public static float Fov
         {
             get { EnsureLoaded(); return _fov; }
-            set => Set(ref _fov, Mathf.Clamp(value, 60f, 110f), "fov");
+            set => Set(ref _fov, Mathf.Clamp(value, 50f, 90f), "fovTarkov");
         }
 
         /// <summary>Head bob and strafe tilt multiplier (accessibility). 0 = off.</summary>
@@ -93,7 +93,7 @@ namespace Polykov.Core
             if (_loaded) return;
             _loaded = true;
             _mouseSensitivity = PlayerPrefs.GetFloat(Prefix + "mouseSensitivity", DefaultMouseSensitivity);
-            _fov = PlayerPrefs.GetFloat(Prefix + "fov", DefaultFov);
+            _fov = Mathf.Clamp(PlayerPrefs.GetFloat(Prefix + "fovTarkov", DefaultFov), 50f, 90f);
             _headBob = PlayerPrefs.GetFloat(Prefix + "headBob", 1f);
             _cameraShake = PlayerPrefs.GetFloat(Prefix + "cameraShake", 1f);
             _invertY = PlayerPrefs.GetInt(Prefix + "invertY", 0) != 0;
