@@ -54,12 +54,18 @@ búfer del servidor (objetivo de `TickRateAdjuster`) debe ser ≥ redundancia �
 - REPLICATED: posición, yaw, pitch, `MovementState` (locomoción, crouch, lean, stamina), `WeaponState` (munición, recarga, apuntado).
 - SERVER ONLY: validación, daño, loot, extracción.
 
+## Probar sin red: simulador F6
+
+`Scripts/Netcode/Unity/LatencySimulator.cs` ejecuta el camino real de la Fase 2 en un solo proceso: cliente con
+predicción + servidor con su propio `CharacterBody` (colisiones reales) + enlace falso con latencia/jitter/pérdida.
+`BodySimulator` es el `IPlayerSimulator` real (re-simula con el `CharacterController`), que NGO reutilizará tal cual.
+
 ## Siguiente (necesita Unity)
 
 1. Añadir paquetes `com.unity.netcode.gameobjects` y `com.unity.transport`.
 2. `NetworkPlayer` (NetworkBehaviour): en el propietario, `PlayerMotor` + `PlayerWeapon` generan `PlayerCommand` y se
    envían por `CustomMessagingManager` (no fiable); en el servidor, cola + simulación; en remotos, `SnapshotBuffer`
    → posición/animación (el `PlayerAnimator` ya usa solo estado replicable).
-3. `UnityPlayerSimulator : IPlayerSimulator` que haga `CharacterController.Move` para re-simular en la reconciliación.
+3. ~~`UnityPlayerSimulator`~~ hecho: `BodySimulator` + `CharacterBody` (re-simulación con colisiones).
 4. Overlay MULTIPLAYER DEBUG (role, tick, ping, error de posición, correcciones/s, búfer, interpolación).
 5. Build de servidor dedicado (Linux headless) y prueba con latencia simulada (Unity Transport Simulator).

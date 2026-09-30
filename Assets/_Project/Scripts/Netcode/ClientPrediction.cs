@@ -105,12 +105,13 @@ namespace Polykov.Netcode
     {
         public Vector3 Offset;
 
-        /// <param name="previousRendered">Where the player was drawn before the correction.</param>
+        /// <param name="previousRendered">Where the player was drawn before the correction (without offset).</param>
         /// <param name="correctedPosition">Simulation position after the correction.</param>
         public void OnCorrection(Vector3 previousRendered, Vector3 correctedPosition, float snapDistance = 1.5f)
         {
-            Vector3 delta = previousRendered - correctedPosition;
-            Offset = delta.magnitude > snapDistance ? Vector3.zero : delta;
+            // Accumulate: a second correction while the first is still fading keeps the drawn position continuous.
+            Vector3 offset = Offset + (previousRendered - correctedPosition);
+            Offset = offset.magnitude > snapDistance ? Vector3.zero : offset;
         }
 
         /// <param name="rate">Decay speed (1/s); 12-20 hides typical corrections in ~0.1-0.2 s.</param>

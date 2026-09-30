@@ -3,6 +3,18 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Simulador de red dentro del juego (F6) — Fase 2 sin red
+- **F6** activa un "servidor" invisible: tus comandos le llegan con **100 ms ±10**, **5 % de pérdida** y redundancia x4;
+  él te simula con colisiones reales y te devuelve el estado; tu personaje **predice** y **reconcilia** como en multijugador.
+  Arriba a la derecha: correcciones, error en mm, comandos perdidos.
+- Lo esperado: moverte, saltar, agacharte y chocar con paredes **sin notar nada** (0 correcciones o casi): el motor es
+  determinista y el input se cuantiza igual en ambos lados.
+- **F7** empuja al servidor 60 cm a un lado (algo que tú no podías predecir): deberías ver una corrección **suave** (no un
+  teletransporte) de ~0.15 s. **F8** muestra una bolita donde el servidor cree que estás.
+- Parámetros en el componente `LatencySimulator` del Player (latencia, jitter, pérdida, redundancia, búfer).
+- Por dentro: la física de un tick se ha extraído a `CharacterBody` (re-ejecutable). El movimiento normal debería sentirse
+  **exactamente igual** que antes; si notas cualquier diferencia sin F6 activo, dímelo.
+
 ## Correcciones del arma con el modelo importado
 - **Apuntado**: ya no usa la rotación del punto `SightLine` del FBX (traía la conversión de ejes de Blender y habría
   girado la pistola al apuntar). La línea de mira es el eje del arma.

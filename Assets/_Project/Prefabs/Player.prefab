@@ -289,6 +289,7 @@ GameObject:
   - component: {fileID: 4836029443205171434}
   - component: {fileID: 4243366258866668146}
   - component: {fileID: 8218634897002200831}
+  - component: {fileID: 2805363465361043963}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -979,3 +980,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: Polykov.UI::Polykov.UI.StaminaBar
   motor: {fileID: 8327803297820930270}
   size: {x: 220, y: 5}
+--- !u!114 &2805363465361043963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d42507146c94814bbf113d8c56e0d0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Netcode.Unity::Polykov.Netcode.LatencySimulator
+  motor: {fileID: 8327803297820930270}
+  look: {fileID: 4148688137752740380}
+  markerMaterial: {fileID: 2100000, guid: 5240a2027d1b89148afd3f5d73e0c8c1, type: 2}
+  latencyMs: 100
+  jitterMs: 10
+  packetLoss: 0.05
+  redundancy: 4
+  serverBufferTicks: 3
