@@ -15,6 +15,9 @@ namespace Polykov.Combat
     {
         private const int MaxLimbsAlive = 8;
         private const float LimbLifetime = 45f;
+        // Reduced gore: fewer, shorter-lived limbs (performance and taste).
+        private static int LimbCap => Polykov.Core.UserSettings.Gore == Polykov.Core.GoreLevel.Full ? MaxLimbsAlive : 3;
+        private static float LimbSeconds => Polykov.Core.UserSettings.Gore == Polykov.Core.GoreLevel.Full ? LimbLifetime : 15f;
 
         private static readonly Queue<GameObject> AliveLimbs = new Queue<GameObject>();
 
@@ -330,12 +333,12 @@ namespace Polykov.Combat
             AddLimbPhysics(part, clonedRoot, hit, limbDirection);
 
             AliveLimbs.Enqueue(limbObject);
-            while (AliveLimbs.Count > MaxLimbsAlive)
+            while (AliveLimbs.Count > LimbCap)
             {
                 GameObject oldest = AliveLimbs.Dequeue();
                 if (oldest != null) Destroy(oldest);
             }
-            Destroy(limbObject, LimbLifetime);
+            Destroy(limbObject, LimbSeconds);
         }
 
         private static Transform CloneChain(Transform source, Transform parent, Dictionary<Transform, Transform> map)

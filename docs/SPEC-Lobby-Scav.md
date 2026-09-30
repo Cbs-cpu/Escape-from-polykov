@@ -184,6 +184,6 @@ Todo lo demás (UI, reacción física, sangre, ragdoll, IA en escena) se valida 
 | 9. Ragdoll | HECHO | Combat/Ragdoll.cs, RagdollProfile, máx. 6 simultáneos |
 | 10. Desmembramiento visual | HECHO | Combat/Dismemberment.cs + Simulation/MeshSplit.cs (corte de malla en runtime, sin tocar modelos). F10 = modo prueba |
 | 11. IA básica + spawner | HECHO (sin probar en Unity) | NavMesh, estados puros |
-| 12. Ajuste de gore y rendimiento | PENDIENTE | |
+| 12. Ajuste de gore y rendimiento | HECHO (sin probar en Unity) | Sangre completa/reducida/off; off también desactiva desmembramiento; reducida: máx. 3 miembros 15 s (completa 8 · 45 s); ragdolls máx. 6 |
 
 Conocido: NullReferenceException intermitente en ApplyBuild al alternar F7 (no reproducido).

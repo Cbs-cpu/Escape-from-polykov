@@ -174,3 +174,8 @@ cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el comm
 - Sin NavMesh caminan en línea recta pegados al suelo; si horneas un NavMesh en la arena y añades `NavMeshAgent` usan pathfinding.
 - `ScavSpawner` (opcional) mantiene N scavs vivos y los repone tras un retardo.
 - Qué revisar: que se acerquen al oírte, que el ataque dispare el evento (aún no quita vida al jugador: llega con la salud del jugador en Fase 2).
+
+## Gore y rendimiento (paso 12)
+- Ajuste **Sangre** (pausa): *completa* (todo), *reducida* (menos partículas, máx. 3 miembros sueltos durante 15 s), *desactivada* (sin sangre ni desmembramiento).
+- Límites: 8 miembros sueltos (45 s) en completa, 6 ragdolls simultáneos, efectos de sangre en pools sin allocations.
+- Qué revisar: F10 para provocar desmembramientos y cambiar el nivel de sangre desde la pausa; notar los FPS con varios cadáveres.
