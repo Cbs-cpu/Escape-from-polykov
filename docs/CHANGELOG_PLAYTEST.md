@@ -3,6 +3,15 @@
 Registro de cambios pensado para probar en el editor. Lo más nuevo arriba. Cada entrada dice **qué ha cambiado,
 cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el commit.
 
+## Agarre de la pistola verificado con el esqueleto real
+- Las manos se han ajustado **viendo al Operator en Blender** con el mismo IK que usa Unity
+  (`ArtSource/Tools/grip_preview.py`). Mira `docs/screenshots/grip_*.png`: cadera y apuntado, en primera y tercera persona.
+- Mano derecha más atrás (antes los nudillos quedaban delante de la empuñadura); la izquierda envuelve los dedos de la derecha.
+- **Pulgares hacia delante** por el lado izquierdo del armazón (nuevo en `HandIK` + `WD_M1911` → `RightThumbForward` /
+  `LeftThumbForward`). Durante la recarga el pulgar izquierdo se suelta.
+- Qué revisar: compara lo que ves en Unity con esas capturas. Si difiere mucho, el problema está en la importación del
+  esqueleto o del FBX (no en los valores), y me lo dices.
+
 ## M1911 modelada en Blender
 - La pistola ya no es de cajas: modelo low-poly de la M1911A1 (~1.500 tris) hecho en Blender con
   `ArtSource/Tools/build_m1911.py` (corredera con estrías, miras, ventana de expulsión, casquillo, guardamonte, martillo,

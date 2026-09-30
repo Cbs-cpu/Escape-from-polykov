@@ -240,6 +240,10 @@ namespace Polykov.Weapons
             hands.LeftWeight = 1f - sprintOneHanded;
             hands.Weight = 1f;
             hands.TriggerPull = _triggerPull;
+            Transform weaponRoot = _model.transform;
+            hands.RightThumbDirection = weaponRoot.TransformDirection(def.RightThumbForward);
+            // While the support hand holds the magazine its thumb is left to the curl.
+            hands.LeftThumbDirection = weaponRoot.TransformDirection(def.LeftThumbForward) * (1f - _leftToMagazine);
         }
 
         private static void Spring(ref float x, ref float v, float stiffness, float damping, float dt)

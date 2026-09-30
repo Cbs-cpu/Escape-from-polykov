@@ -873,7 +873,7 @@ MonoBehaviour:
   gripCurl: 72
   triggerFingerCurl: 28
   supportCurl: 62
-  thumbCurl: 22
+  thumbCurl: 8
 --- !u!114 &7618172566341199421
 MonoBehaviour:
   m_ObjectHideFlags: 0

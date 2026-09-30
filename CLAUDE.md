@@ -25,3 +25,9 @@ Ver `Tools/README.md`. Todo test nuevo de simulación va en `Assets/_Project/Tes
   añadir `- component: {fileID: N}` al GameObject y el bloque `--- !u!114 &N` MonoBehaviour con `m_Script` = GUID del `.meta`.
 - Binarios (fbx, blend, png) van por Git LFS.
 - Arte: scripts de Blender en `ArtSource/Tools` (procedurales, se ejecutan dentro de Blender 5.2 vía MCP).
+
+## Arte y verificación visual sin Unity
+- Blender 5.2 headless puede ejecutar los scripts de `ArtSource/Tools` (`blender -b [archivo.blend] -P script.py`); los
+  scripts leen `POLYKOV_ROOT` para las rutas. Los `.blend`/`.fbx` son LFS: `git lfs pull` antes.
+- `grip_preview.py` replica el IK de manos de Unity sobre el rig real y renderiza el agarre: úsalo para cualquier cambio
+  de valores de manos/poses del arma antes de subirlo.

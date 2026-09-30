@@ -23,7 +23,7 @@ namespace Polykov.Animation
         [SerializeField, Range(0f, 110f)] private float gripCurl = 72f;
         [SerializeField, Range(0f, 110f)] private float triggerFingerCurl = 28f;
         [SerializeField, Range(0f, 110f)] private float supportCurl = 62f;
-        [SerializeField, Range(0f, 90f)] private float thumbCurl = 22f;
+        [SerializeField, Range(0f, 90f)] private float thumbCurl = 8f;
 
         private Arm _right;
         private Arm _left;
@@ -40,6 +40,9 @@ namespace Polykov.Animation
         public float LeftWeight { get; set; } = 1f;
         /// <summary>Trigger finger curl override 0..1 (1 = pulling the trigger).</summary>
         public float TriggerPull { get; set; }
+        /// <summary>World direction the right thumb points along (zero = leave the thumb to the curl).</summary>
+        public Vector3 RightThumbDirection { get; set; }
+        public Vector3 LeftThumbDirection { get; set; }
 
         private void Awake()
         {
@@ -54,12 +57,14 @@ namespace Polykov.Animation
             if (RightTarget != null && _right.Valid)
             {
                 _right.Solve(RightTarget, body.TransformDirection(rightElbowHint), Weight);
+                _right.AimThumb(RightThumbDirection, Weight);
                 _right.CurlFingers(GripCenter, Weight, gripCurl, Mathf.Lerp(triggerFingerCurl, triggerFingerCurl + 25f, TriggerPull), thumbCurl);
             }
             float left = Weight * LeftWeight;
             if (LeftTarget != null && _left.Valid && left > 0f)
             {
                 _left.Solve(LeftTarget, body.TransformDirection(leftElbowHint), left);
+                _left.AimThumb(LeftThumbDirection, left);
                 _left.CurlFingers(GripCenter, left, supportCurl, supportCurl, thumbCurl);
             }
         }
@@ -126,6 +131,21 @@ namespace Polykov.Animation
                 _lower.rotation = Quaternion.Slerp(_lower.rotation, lower, weight);
                 if (_hasFrame)
                     _hand.rotation = Quaternion.Slerp(_hand.rotation, target.rotation * _handFrameInverse, weight);
+            }
+
+            /// <summary>Points the thumb along a direction (thumbs-forward pistol grip).</summary>
+            public void AimThumb(Vector3 direction, float weight)
+            {
+                Transform[] thumb = _fingers[4];
+                if (direction.sqrMagnitude < 1e-6f || thumb[0] == null || thumb[1] == null) return;
+                AimSegment(thumb[0], thumb[1], direction, weight);
+                if (thumb[2] != null) AimSegment(thumb[1], thumb[2], direction, weight * 0.7f);
+            }
+
+            private static void AimSegment(Transform bone, Transform child, Vector3 direction, float weight)
+            {
+                Quaternion q = Quaternion.FromToRotation(child.position - bone.position, direction);
+                bone.rotation = Quaternion.Slerp(Quaternion.identity, q, weight) * bone.rotation;
             }
 
             public void CurlFingers(Transform center, float weight, float curl, float indexCurl, float thumb)

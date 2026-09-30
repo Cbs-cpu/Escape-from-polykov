@@ -36,12 +36,16 @@ namespace Polykov.Weapons
         public Vector3 ReloadEuler = new Vector3(-12f, -28f, 38f);
 
         [Header("Hands (weapon space; wrist position + wrist->knuckles / little->index directions)")]
-        public Vector3 RightHandPosition = new Vector3(0.03f, -0.058f, -0.085f);
+        [Tooltip("Verified on the Operator rig with ArtSource/Tools/grip_preview.py (same IK math).")]
+        public Vector3 RightHandPosition = new Vector3(0.032f, -0.056f, -0.118f);
         public Vector3 RightHandForward = new Vector3(-0.12f, 0.05f, 1f);
         public Vector3 RightHandUp = new Vector3(0f, 0.95f, 0.31f);
-        public Vector3 LeftHandPosition = new Vector3(-0.036f, -0.085f, -0.045f);
+        public Vector3 LeftHandPosition = new Vector3(-0.036f, -0.08f, -0.07f);
         public Vector3 LeftHandForward = new Vector3(0.45f, 0.3f, 1f);
         public Vector3 LeftHandUp = new Vector3(0.1f, 1f, 0.25f);
+        [Tooltip("Thumbs-forward grip: direction each thumb points along (weapon space).")]
+        public Vector3 RightThumbForward = new Vector3(0f, -0.05f, 1f);
+        public Vector3 LeftThumbForward = new Vector3(0f, -0.15f, 1f);
 
         [Header("Feel")]
         [Tooltip("Weapon rotation lag per degree of camera turn.")]
