@@ -70,7 +70,11 @@ namespace Polykov.UI
 
         private void DrawMenu(float screenW, float screenH)
         {
+<<<<<<< HEAD
             float height = 640f;
+=======
+            float height = 660f;
+>>>>>>> 0c260b25b241536a1c414610faff92f989e73203
             var area = new Rect((screenW - Width) * 0.5f, (screenH - height) * 0.5f, Width, height);
             GUI.Box(area, GUIContent.none);
             GUI.Box(area, GUIContent.none);
@@ -86,6 +90,12 @@ namespace Polykov.UI
             UserSettings.MasterVolume = Slider("Volumen", UserSettings.MasterVolume, 0f, 1f, "0%");
             UserSettings.InvertY = GUILayout.Toggle(UserSettings.InvertY, " Invertir eje Y");
             UserSettings.ToggleCrouch = GUILayout.Toggle(UserSettings.ToggleCrouch, " Agacharse alterna (en vez de mantener)");
+            UserSettings.Dismemberment = GUILayout.Toggle(UserSettings.Dismemberment, " Desmembramiento");
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Sangre", _label, GUILayout.Width(190f));
+            string[] bloodNames = { "Sin sangre", "Reducida", "Completa" };
+            UserSettings.Blood = GUILayout.Toolbar(UserSettings.Blood, bloodNames);
+            GUILayout.EndHorizontal();
 
             if (GUILayout.Button("Sangre: " + GoreLabel(UserSettings.Gore) + " (clic para cambiar)", GUILayout.Height(26f)))
                 UserSettings.Gore = UserSettings.Gore == GoreLevel.Full ? GoreLevel.Reduced
@@ -103,7 +113,7 @@ namespace Polykov.UI
             GUILayout.Space(12f);
             GUILayout.Label("WASD mover · Shift esprintar · Alt andar · Espacio saltar · C agacharse · Q/E inclinarse\n" +
                             "Clic izq. disparar · Clic der. apuntar · R recargar · B seguro · L inspeccionar · T recámara · Esc pausa\n" +
-                            "F1 debug · F2 perfil · F3 dianas · F4 munición · F6 simular red (F7 empujar, F8 marcador)", _small);
+                            "F1 debug · F2 perfil · F3 dianas · F4 munición · F6 simular red (F7 empujar, F8 marcador) · F9 silenciador", _small);
 
             GUILayout.FlexibleSpace();
             GUILayout.BeginHorizontal();

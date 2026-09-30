@@ -250,7 +250,9 @@ namespace Polykov.Weapons
         public Transform MountAttachments(System.Collections.Generic.IReadOnlyList<AttachmentDefinition> ordered, int layer,
             Material outlineMaterial)
         {
-            if (_attachmentRoot != null) Destroy(_attachmentRoot.gameObject);
+            // Immediate: a deferred Destroy would leave the old device alive for the rest of the frame, so two
+            // devices (and two muzzle sockets) would coexist while the new one is being mounted.
+            if (_attachmentRoot != null) DestroyImmediate(_attachmentRoot.gameObject);
             _attachmentRoot = null;
             EffectiveMuzzle = Muzzle;
             if (Muzzle == null || ordered == null) return EffectiveMuzzle;

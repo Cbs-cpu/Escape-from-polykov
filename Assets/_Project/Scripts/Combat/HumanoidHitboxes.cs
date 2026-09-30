@@ -66,6 +66,7 @@ namespace Polykov.Combat
             var hitbox = go.AddComponent<Hitbox>();
             hitbox.Part = part;
             hitbox.Owner = owner;
+            hitbox.Bone = bone;
             return 1;
         }
     }

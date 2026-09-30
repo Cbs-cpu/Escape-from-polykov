@@ -124,6 +124,7 @@ namespace Polykov.Weapons
         /// </summary>
         public void ApplyBuild(WeaponBuild build, bool persist = true)
         {
+            if (_model == null || _catalog == null || definition == null) return;
             if (!LoadoutRules.Validate(build, _catalog).IsValid) build = definition.DefaultBuild;
             _build = build;
             _effective = LoadoutRules.EffectiveStats(definition.Stats, build, _catalog);
@@ -154,8 +155,8 @@ namespace Polykov.Weapons
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
         private void Update()
         {
-            // Temporary debug (until the lobby armory exists): F7 toggles the suppressor.
-            if (Keyboard.current == null || !Keyboard.current.f7Key.wasPressedThisFrame) return;
+            // Debug shortcut: F9 toggles the suppressor (the lobby armory is the real UI).
+            if (Keyboard.current == null || !Keyboard.current.f9Key.wasPressedThisFrame) return;
             ToggleSuppressor();
         }
 #endif
@@ -229,7 +230,8 @@ namespace Polykov.Weapons
                 hit.rigidbody.AddForceAtPosition(direction * definition.ImpactForce, hit.point, ForceMode.Impulse);
 
             var receiver = hit.collider.GetComponentInParent<IShotReceiver>();
-            receiver?.OnShot(new ShotHit(hit.point, hit.normal, direction, definition.Damage));
+            receiver?.OnShot(new ShotHit(hit.point, hit.normal, direction, definition.Damage, definition.ImpactForce,
+                definition.CalibreMultiplier, eye.position));
             if (SimpleImpactMarkers) ImpactEffects.Spawn(hit.point, hit.normal);
             HitSurface?.Invoke(hit, direction);
         }
