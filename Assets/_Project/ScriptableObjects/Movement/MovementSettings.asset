@@ -28,4 +28,11 @@ MonoBehaviour:
     Gravity: 20
     TerminalFallSpeed: 50
     GroundStickSpeed: 2
+    JumpHeight: 0.5
+    JumpBufferTime: 0.12
+    CoyoteTime: 0.1
+    LandingMomentum: 0.8
+    HardLandingSpeed: 5
+    LeanTime: 0.18
+    LeanMoveMultiplier: 0.7
     IdleSpeedThreshold: 0.15

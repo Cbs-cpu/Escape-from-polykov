@@ -1,0 +1,17 @@
+{
+    "name": "Polykov.Animation",
+    "rootNamespace": "Polykov.Animation",
+    "references": [
+        "Polykov.Movement",
+        "Polykov.Player"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -14,13 +14,24 @@ namespace Polykov.Movement
         public readonly float Yaw;
         public readonly bool Sprint;
         public readonly bool Walk;
+        /// <summary>Jump was pressed since the previous tick (edge, not held).</summary>
+        public readonly bool Jump;
+        /// <summary>Desired lean, -1 = full left, +1 = full right.</summary>
+        public readonly float Lean;
 
         public MovementInput(Vector2 move, float yaw, bool sprint, bool walk)
+            : this(move, yaw, sprint, walk, false, 0f)
+        {
+        }
+
+        public MovementInput(Vector2 move, float yaw, bool sprint, bool walk, bool jump, float lean)
         {
             Move = move;
             Yaw = yaw;
             Sprint = sprint;
             Walk = walk;
+            Jump = jump;
+            Lean = lean;
         }
     }
 }

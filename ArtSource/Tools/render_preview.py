@@ -42,21 +42,25 @@ VIEWS = {
     "left": (90.0, "ORTHO"),
     "back": (180.0, "ORTHO"),
     "three_quarter": (-35.0, "PERSP"),
+    "face": (-25.0, "FACE"),
 }
 # yaw measured around Z; 0 = camera in front of the character (character faces -Y).
 views = globals().get("PREVIEW_VIEWS", list(VIEWS.keys()))
 paths = []
 for name in views:
     yaw, kind = VIEWS[name]
-    cam_data.type = kind
-    dist = 6.0 if kind == "ORTHO" else 3.4
+    face = kind == "FACE"
+    cam_data.type = "PERSP" if face else kind
+    dist = 0.75 if face else (6.0 if kind == "ORTHO" else 3.4)
+    tgt = Vector((0, -0.02, 1.70)) if face else target
     a = math.radians(yaw)
-    pos = target + Vector((math.sin(a) * dist, -math.cos(a) * dist, 0.15 if kind == "PERSP" else 0.0))
+    pos = tgt + Vector((math.sin(a) * dist, -math.cos(a) * dist, 0.02 if face else (0.15 if kind == "PERSP" else 0.0)))
     cam.location = pos
-    direction = target - pos
+    direction = tgt - pos
     cam.rotation_euler = direction.to_track_quat("-Z", "Y").to_euler()
-    if kind == "PERSP":
+    if kind in ("PERSP", "FACE"):
         cam_data.lens = 50
+    scene.render.resolution_x, scene.render.resolution_y = (800, 800) if face else (700, 1000)
     path = os.path.join(OUT, f"operator_{name}.png")
     scene.render.filepath = path
     bpy.ops.render.render(write_still=True)

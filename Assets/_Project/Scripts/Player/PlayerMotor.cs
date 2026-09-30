@@ -36,6 +36,11 @@ namespace Polykov.Player
         private Vector3 _previousPosition;
         private Vector3 _currentPosition;
 
+        /// <summary>Raised on the tick the character jumps (presentation hooks: animation, audio later).</summary>
+        public event System.Action Jumped;
+        /// <summary>Raised on the tick the character lands; argument is the downward impact speed (m/s).</summary>
+        public event System.Action<float> Landed;
+
         public MovementState State => _state;
         public GroundInfo Ground => _ground;
         public MovementTuning Tuning => settings.Tuning;
@@ -72,11 +77,18 @@ namespace Polykov.Player
             _previousPosition = transform.position;
             bool wasGrounded = _ground.Grounded;
 
-            var tickInput = new MovementInput(input.Move, look.Yaw, input.SprintHeld, input.WalkHeld);
+            var tickInput = new MovementInput(input.Move, look.Yaw, input.SprintHeld, input.WalkHeld,
+                input.ConsumeJump(), input.Lean);
             _state = MovementMotor.Step(_state, tickInput, _ground, settings.Tuning, dt);
+            if (_state.JustJumped) Jumped?.Invoke();
+            if (_state.JustLanded) Landed?.Invoke(_state.LandingImpact);
 
             CollisionFlags flags = _controller.Move(_state.Velocity * dt);
             _ground = ProbeGround();
+
+            // Bumping a ceiling kills upward speed.
+            if ((flags & CollisionFlags.Above) != 0 && _state.VerticalSpeed > 0f)
+                _state.VerticalSpeed = 0f;
 
             if (wasGrounded && !_ground.Grounded && _state.VerticalSpeed <= 0f)
                 TrySnapToGround();

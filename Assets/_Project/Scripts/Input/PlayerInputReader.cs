@@ -19,6 +19,9 @@ namespace Polykov.Input
         private InputAction _sprint;
         private InputAction _walk;
         private InputAction _pause;
+        private InputAction _jump;
+        private InputAction _lean;
+        private bool _jumpLatched;
 
         /// <summary>When true, gameplay input reads as neutral (e.g. cursor unlocked, menus open).</summary>
         public bool Blocked { get; set; }
@@ -26,7 +29,20 @@ namespace Polykov.Input
         public Vector2 Move => Blocked ? Vector2.zero : _move.ReadValue<Vector2>();
         public bool SprintHeld => !Blocked && _sprint.IsPressed();
         public bool WalkHeld => !Blocked && _walk.IsPressed();
+        /// <summary>-1 = lean left (Q), +1 = lean right (E).</summary>
+        public float Lean => Blocked ? 0f : Mathf.Clamp(_lean.ReadValue<float>(), -1f, 1f);
         public bool PausePressedThisFrame => _pause.WasPressedThisFrame();
+
+        /// <summary>
+        /// Returns true once per jump press. Presses are latched between simulation ticks so none are lost
+        /// when the frame rate is higher than the tick rate.
+        /// </summary>
+        public bool ConsumeJump()
+        {
+            bool pressed = _jumpLatched;
+            _jumpLatched = false;
+            return pressed;
+        }
 
         private void Awake()
         {
@@ -36,6 +52,13 @@ namespace Polykov.Input
             _sprint = _map.FindAction("Sprint", true);
             _walk = _map.FindAction("Walk", true);
             _pause = _map.FindAction("Pause", true);
+            _jump = _map.FindAction("Jump", true);
+            _lean = _map.FindAction("Lean", true);
+        }
+
+        private void Update()
+        {
+            if (!Blocked && _jump.WasPressedThisFrame()) _jumpLatched = true;
         }
 
         private void OnEnable() => _map?.Enable();

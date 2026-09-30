@@ -14,13 +14,20 @@ namespace Polykov.Movement
         public static MovementState Step(in MovementState state, in MovementInput input, in GroundInfo ground,
             in MovementTuning tuning, float deltaTime)
         {
+            // While rising (just jumped) the probe may still see the floor: ignore it until we fall back.
+            bool grounded = ground.Grounded && state.VerticalSpeed <= 0f;
+
             Vector2 move = Vector2.ClampMagnitude(input.Move, 1f);
             float magnitude = move.magnitude;
             bool hasInput = magnitude > InputDeadzone;
             Vector2 direction = hasInput ? move / magnitude : Vector2.zero;
 
-            bool sprinting = hasInput && input.Sprint && !input.Walk && ground.Grounded
+            bool sprinting = hasInput && input.Sprint && !input.Walk && grounded
                              && direction.y >= Mathf.Cos(tuning.SprintMaxAngle * Mathf.Deg2Rad);
+
+            // Lean: sprinting cancels it; leaning slows you down.
+            float leanTarget = sprinting ? 0f : Mathf.Clamp(input.Lean, -1f, 1f);
+            float lean = Mathf.MoveTowards(state.Lean, leanTarget, deltaTime / tuning.LeanTime);
 
             float baseSpeed = sprinting ? tuning.SprintSpeed : input.Walk ? tuning.WalkSpeed : tuning.RunSpeed;
             Quaternion yaw = Quaternion.Euler(0f, input.Yaw, 0f);
@@ -28,18 +35,40 @@ namespace Polykov.Movement
 
             float targetSpeed = hasInput
                 ? baseSpeed * DirectionalFactor(direction, tuning) * magnitude * SlopeFactor(worldDirection, ground, tuning)
+                  * Mathf.Lerp(1f, tuning.LeanMoveMultiplier, Mathf.Abs(lean))
                 : 0f;
             Vector3 targetVelocity = worldDirection * targetSpeed;
 
             Vector3 planar = state.PlanarVelocity;
             planar.y = 0f;
+
+            bool landed = grounded && !state.Grounded;
+            float landingImpact = state.LandingImpact;
+            if (landed)
+            {
+                landingImpact = Mathf.Max(0f, -state.VerticalSpeed);
+                if (landingImpact > tuning.HardLandingSpeed) planar *= tuning.LandingMomentum;
+            }
+
             float rate = AccelerationRate(planar, targetVelocity, targetSpeed, tuning);
-            if (!ground.Grounded) rate *= tuning.AirControl;
+            if (!grounded) rate *= tuning.AirControl;
             planar = Vector3.MoveTowards(planar, targetVelocity, rate * deltaTime);
+
+            float jumpBuffer = input.Jump ? tuning.JumpBufferTime : Mathf.Max(0f, state.JumpBuffer - deltaTime);
+            float coyote = grounded ? tuning.CoyoteTime : Mathf.Max(0f, state.CoyoteTime - deltaTime);
+            bool jump = jumpBuffer > 0f && (grounded || coyote > 0f) && state.VerticalSpeed <= 0f && tuning.JumpHeight > 0f;
 
             float vertical;
             Vector3 velocity;
-            if (ground.Grounded)
+            if (jump)
+            {
+                vertical = Mathf.Sqrt(2f * tuning.Gravity * tuning.JumpHeight);
+                velocity = planar + Vector3.up * vertical;
+                grounded = false;
+                jumpBuffer = 0f;
+                coyote = 0f;
+            }
+            else if (grounded)
             {
                 vertical = -tuning.GroundStickSpeed;
                 velocity = AlignToGround(planar, ground.Normal) + Vector3.up * vertical;
@@ -55,8 +84,14 @@ namespace Polykov.Movement
                 PlanarVelocity = planar,
                 VerticalSpeed = vertical,
                 Velocity = velocity,
-                Grounded = ground.Grounded,
+                Grounded = grounded,
                 Locomotion = ResolveLocomotion(state.Locomotion, hasInput, sprinting, targetSpeed, planar.magnitude, tuning),
+                Lean = lean,
+                JumpBuffer = jumpBuffer,
+                CoyoteTime = coyote,
+                JustJumped = jump,
+                JustLanded = landed,
+                LandingImpact = landingImpact,
             };
         }
 

@@ -41,6 +41,24 @@ namespace Polykov.Movement
         [Tooltip("Small downward speed while grounded to keep contact.")]
         [Min(0f)] public float GroundStickSpeed;
 
+        [Header("Jump")]
+        [Tooltip("Apex height of a standing jump (meters).")]
+        [Min(0f)] public float JumpHeight;
+        [Tooltip("A jump pressed this long before landing still triggers.")]
+        [Min(0f)] public float JumpBufferTime;
+        [Tooltip("A jump is still allowed this long after walking off a ledge.")]
+        [Min(0f)] public float CoyoteTime;
+        [Tooltip("Planar speed kept when landing from a real fall.")]
+        [Range(0f, 1f)] public float LandingMomentum;
+        [Tooltip("Falls slower than this (m/s) don't cost momentum.")]
+        [Min(0f)] public float HardLandingSpeed;
+
+        [Header("Lean (peek)")]
+        [Tooltip("Seconds to go from upright to full lean.")]
+        [Min(0.01f)] public float LeanTime;
+        [Tooltip("Speed multiplier at full lean.")]
+        [Range(0f, 1f)] public float LeanMoveMultiplier;
+
         [Header("State")]
         [Min(0f)] public float IdleSpeedThreshold;
 
@@ -61,6 +79,14 @@ namespace Polykov.Movement
             Gravity = 20f,
             TerminalFallSpeed = 50f,
             GroundStickSpeed = 2f,
+            JumpHeight = 0.5f,
+            JumpBufferTime = 0.12f,
+            CoyoteTime = 0.1f,
+            LandingMomentum = 0.8f,
+            // Above a standing jump's landing speed (~4.5 m/s): only real drops cost momentum.
+            HardLandingSpeed = 5f,
+            LeanTime = 0.18f,
+            LeanMoveMultiplier = 0.7f,
             IdleSpeedThreshold = 0.15f,
         };
     }
