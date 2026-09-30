@@ -8,10 +8,12 @@ namespace Polykov.Combat
     {
         public BodyPart Part;
         public HealthComponent Owner;
+        /// <summary>The skeleton bone this collider rides on (reactions and ragdoll impulses go here).</summary>
+        public Transform Bone;
 
         public void OnShot(in ShotHit hit)
         {
-            if (Owner != null) Owner.TakeHit(Part, hit);
+            if (Owner != null) Owner.TakeHit(Part, hit, Bone);
         }
     }
 }

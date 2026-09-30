@@ -22,6 +22,8 @@ namespace Polykov.Core
         private static bool _invertY;
         private static bool _toggleCrouch;
         private static float _masterVolume;
+        private static int _blood;
+        private static bool _dismemberment;
 
         /// <summary>Raised after any value changes.</summary>
         public static event Action Changed;
@@ -74,6 +76,28 @@ namespace Polykov.Core
             set => Set(ref _masterVolume, Mathf.Clamp01(value), "masterVolume");
         }
 
+        /// <summary>Blood amount: 0 = none, 1 = reduced, 2 = full.</summary>
+        public static int Blood
+        {
+            get { EnsureLoaded(); return _blood; }
+            set
+            {
+                value = Mathf.Clamp(value, 0, 2);
+                if (_blood == value) { EnsureLoaded(); if (_blood == value) return; }
+                EnsureLoaded();
+                _blood = value;
+                PlayerPrefs.SetInt(Prefix + "blood", value);
+                Changed?.Invoke();
+            }
+        }
+
+        /// <summary>Limbs can be severed (and the head, very rarely).</summary>
+        public static bool Dismemberment
+        {
+            get { EnsureLoaded(); return _dismemberment; }
+            set => Set(ref _dismemberment, value, "dismemberment");
+        }
+
         public static void ResetToDefaults()
         {
             _mouseSensitivity = DefaultMouseSensitivity;
@@ -83,6 +107,8 @@ namespace Polykov.Core
             _invertY = false;
             _toggleCrouch = false;
             _masterVolume = 0.8f;
+            _blood = 2;
+            _dismemberment = true;
             _loaded = true;
             Save();
             Changed?.Invoke();
@@ -99,6 +125,8 @@ namespace Polykov.Core
             _invertY = PlayerPrefs.GetInt(Prefix + "invertY", 0) != 0;
             _toggleCrouch = PlayerPrefs.GetInt(Prefix + "toggleCrouch", 0) != 0;
             _masterVolume = PlayerPrefs.GetFloat(Prefix + "masterVolume", 0.8f);
+            _blood = PlayerPrefs.GetInt(Prefix + "blood", 2);
+            _dismemberment = PlayerPrefs.GetInt(Prefix + "dismemberment", 1) != 0;
         }
 
         private static void Set(ref float field, float value, string key)
@@ -128,6 +156,8 @@ namespace Polykov.Core
             PlayerPrefs.SetInt(Prefix + "invertY", _invertY ? 1 : 0);
             PlayerPrefs.SetInt(Prefix + "toggleCrouch", _toggleCrouch ? 1 : 0);
             PlayerPrefs.SetFloat(Prefix + "masterVolume", _masterVolume);
+            PlayerPrefs.SetInt(Prefix + "blood", _blood);
+            PlayerPrefs.SetInt(Prefix + "dismemberment", _dismemberment ? 1 : 0);
         }
 
         /// <summary>Writes pending values to disk (call when closing the menu).</summary>

@@ -227,7 +227,8 @@ namespace Polykov.Weapons
                 hit.rigidbody.AddForceAtPosition(direction * definition.ImpactForce, hit.point, ForceMode.Impulse);
 
             var receiver = hit.collider.GetComponentInParent<IShotReceiver>();
-            receiver?.OnShot(new ShotHit(hit.point, hit.normal, direction, definition.Damage));
+            receiver?.OnShot(new ShotHit(hit.point, hit.normal, direction, definition.Damage, definition.ImpactForce,
+                definition.CalibreMultiplier, eye.position));
             if (SimpleImpactMarkers) ImpactEffects.Spawn(hit.point, hit.normal);
             HitSurface?.Invoke(hit, direction);
         }

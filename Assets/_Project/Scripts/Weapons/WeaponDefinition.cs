@@ -22,7 +22,9 @@ namespace Polykov.Weapons
 
         [Header("Hit")]
         [Min(1f)] public float Range = 150f;
-        [Tooltip("Impulse applied to rigidbodies that are hit.")]
+        [Tooltip("Scales dismemberment odds (WoundModel). 1 = .45 ACP FMJ.")]
+        [Min(0f)] public float CalibreMultiplier = 1f;
+        [Tooltip("Momentum handed to what is hit (N·s): rigidbody impulse, hit reactions, ragdoll.")]
         [Min(0f)] public float ImpactForce = 4f;
         [Tooltip(".45 ACP FMJ: two thorax hits or one headshot kill (HealthTuning.Default).")]
         [Min(0f)] public float Damage = 62f;

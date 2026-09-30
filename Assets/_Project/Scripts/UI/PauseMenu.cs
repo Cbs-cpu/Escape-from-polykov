@@ -70,7 +70,7 @@ namespace Polykov.UI
 
         private void DrawMenu(float screenW, float screenH)
         {
-            float height = 600f;
+            float height = 660f;
             var area = new Rect((screenW - Width) * 0.5f, (screenH - height) * 0.5f, Width, height);
             GUI.Box(area, GUIContent.none);
             GUI.Box(area, GUIContent.none);
@@ -86,6 +86,12 @@ namespace Polykov.UI
             UserSettings.MasterVolume = Slider("Volumen", UserSettings.MasterVolume, 0f, 1f, "0%");
             UserSettings.InvertY = GUILayout.Toggle(UserSettings.InvertY, " Invertir eje Y");
             UserSettings.ToggleCrouch = GUILayout.Toggle(UserSettings.ToggleCrouch, " Agacharse alterna (en vez de mantener)");
+            UserSettings.Dismemberment = GUILayout.Toggle(UserSettings.Dismemberment, " Desmembramiento");
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Sangre", _label, GUILayout.Width(190f));
+            string[] bloodNames = { "Sin sangre", "Reducida", "Completa" };
+            UserSettings.Blood = GUILayout.Toolbar(UserSettings.Blood, bloodNames);
+            GUILayout.EndHorizontal();
 
             GUILayout.Space(12f);
             GUILayout.Label("Perfil de movimiento (F2 para alternar jugando)", _label);

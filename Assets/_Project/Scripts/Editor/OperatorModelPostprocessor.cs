@@ -10,6 +10,8 @@ namespace Polykov.EditorTools
     public sealed class OperatorModelPostprocessor : AssetPostprocessor
     {
         public const string ModelPath = "Assets/_Project/Art/Characters/Operator/Operator.fbx";
+        /// <summary>Same 52-bone skeleton: humanoid avatar, animated with the Operator's clips (retargeted).</summary>
+        public const string ScavModelPath = "Assets/_Project/Art/Characters/Scav/Scav.fbx";
         private const string PalettePath = "Assets/_Project/Art/Characters/Operator/T_Operator_Palette.png";
 
         private static readonly HashSet<string> Looping = new HashSet<string>
@@ -21,7 +23,8 @@ namespace Polykov.EditorTools
 
         private void OnPreprocessModel()
         {
-            if (assetPath != ModelPath) return;
+            bool scav = assetPath == ScavModelPath;
+            if (assetPath != ModelPath && !scav) return;
             var importer = (ModelImporter)assetImporter;
             importer.globalScale = 1f;
             importer.useFileScale = true;
@@ -37,7 +40,8 @@ namespace Polykov.EditorTools
             importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
             // Bones stay as transforms: the camera anchors to the head and the body is posed procedurally.
             importer.optimizeGameObjects = false;
-            importer.importAnimation = true;
+            // The Scav's own copies of the clips are not needed: it plays the Operator's through the humanoid avatar.
+            importer.importAnimation = !scav;
         }
 
         private void OnPreprocessAnimation()
