@@ -21,6 +21,7 @@
     <Compile Include="../../Assets/_Project/Scripts/Weapons/Simulation/**/*.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Animation/IK/TwoBoneIKSolver.cs" />
     <Compile Include="../../Assets/_Project/Scripts/Audio/SoundSynth.cs" />
+    <Compile Include="../../Assets/_Project/Scripts/Netcode/**/*.cs" />
     <Compile Include="../../Assets/_Project/Tests/EditMode/**/*.cs" />
   </ItemGroup>
 

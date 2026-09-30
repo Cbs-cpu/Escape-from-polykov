@@ -26,3 +26,6 @@ Marca cada punto con `[x]` al terminarlo.
       superficie) y fuentes 3D para jugadores remotos.
 - [ ] **Decisión pendiente (usuario)**: ¿volver a añadir mando (gamepad)? El SPEC lo pide (historias 12 y 28) pero un commit
       anterior dejó el input solo en teclado+ratón. El código (`PlayerInputReader.ReadLookDelta`) ya soporta sticks.
+- [ ] **Fase 2 — integrar transporte** siguiendo `docs/NETWORKING.md` → "Siguiente": paquetes NGO + Transport,
+      `NetworkPlayer`, `UnityPlayerSimulator`, overlay MULTIPLAYER DEBUG, build de servidor dedicado. La lógica pura
+      (predicción, reconciliación, cola de inputs, interpolación, codec) ya está hecha y testeada en `Scripts/Netcode`.
