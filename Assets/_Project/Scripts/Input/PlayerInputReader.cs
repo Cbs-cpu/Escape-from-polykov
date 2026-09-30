@@ -22,6 +22,12 @@ namespace Polykov.Input
         private InputAction _jump;
         private InputAction _lean;
         private bool _jumpLatched;
+        private InputAction _fire;
+        private InputAction _aim;
+        private InputAction _reload;
+        private InputAction _toggleWeapon;
+        private bool _reloadLatched;
+        private bool _toggleWeaponLatched;
 
         /// <summary>When true, gameplay input reads as neutral (e.g. cursor unlocked, menus open).</summary>
         public bool Blocked { get; set; }
@@ -32,6 +38,24 @@ namespace Polykov.Input
         /// <summary>-1 = lean left (Q), +1 = lean right (E).</summary>
         public float Lean => Blocked ? 0f : Mathf.Clamp(_lean.ReadValue<float>(), -1f, 1f);
         public bool PausePressedThisFrame => _pause.WasPressedThisFrame();
+        public bool FireHeld => !Blocked && _fire.IsPressed();
+        public bool AimHeld => !Blocked && _aim.IsPressed();
+
+        /// <summary>True once per reload press.</summary>
+        public bool ConsumeReload()
+        {
+            bool pressed = _reloadLatched;
+            _reloadLatched = false;
+            return pressed;
+        }
+
+        /// <summary>True once per equip/holster press.</summary>
+        public bool ConsumeToggleWeapon()
+        {
+            bool pressed = _toggleWeaponLatched;
+            _toggleWeaponLatched = false;
+            return pressed;
+        }
 
         /// <summary>
         /// Returns true once per jump press. Presses are latched between simulation ticks so none are lost
@@ -54,11 +78,18 @@ namespace Polykov.Input
             _pause = _map.FindAction("Pause", true);
             _jump = _map.FindAction("Jump", true);
             _lean = _map.FindAction("Lean", true);
+            _fire = _map.FindAction("Fire", true);
+            _aim = _map.FindAction("Aim", true);
+            _reload = _map.FindAction("Reload", true);
+            _toggleWeapon = _map.FindAction("ToggleWeapon", true);
         }
 
         private void Update()
         {
-            if (!Blocked && _jump.WasPressedThisFrame()) _jumpLatched = true;
+            if (Blocked) return;
+            if (_jump.WasPressedThisFrame()) _jumpLatched = true;
+            if (_reload.WasPressedThisFrame()) _reloadLatched = true;
+            if (_toggleWeapon.WasPressedThisFrame()) _toggleWeaponLatched = true;
         }
 
         private void OnEnable() => _map?.Enable();

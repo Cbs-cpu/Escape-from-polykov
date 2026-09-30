@@ -18,6 +18,8 @@ namespace Polykov.Movement
         public readonly bool Jump;
         /// <summary>Desired lean, -1 = full left, +1 = full right.</summary>
         public readonly float Lean;
+        /// <summary>Aiming down sights: slower, no sprint.</summary>
+        public readonly bool Aim;
 
         public MovementInput(Vector2 move, float yaw, bool sprint, bool walk)
             : this(move, yaw, sprint, walk, false, 0f)
@@ -25,7 +27,13 @@ namespace Polykov.Movement
         }
 
         public MovementInput(Vector2 move, float yaw, bool sprint, bool walk, bool jump, float lean)
+            : this(move, yaw, sprint, walk, jump, lean, false)
         {
+        }
+
+        public MovementInput(Vector2 move, float yaw, bool sprint, bool walk, bool jump, float lean, bool aim)
+        {
+            Aim = aim;
             Move = move;
             Yaw = yaw;
             Sprint = sprint;

@@ -1,0 +1,53 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5f19f46bd229bc409bd01d31963ef77, type: 3}
+  m_Name: WD_M1911
+  m_EditorClassIdentifier: Polykov.Weapons.Core::Polykov.Weapons.WeaponData
+  Id: m1911
+  DisplayName: M1911
+  Tuning:
+    FireMode: 0
+    RoundsPerMinute: 450
+    Damage: 55
+    Range: 150
+    MagazineCapacity: 7
+    StartingReserve: 35
+    EquipTime: 0.5
+    HolsterTime: 0.35
+    AimTime: 0.16
+    SprintToFireTime: 0.18
+    TacticalReloadTime: 1.75
+    EmptyReloadTime: 2.2
+    HipSpread: 1.6
+    AimSpread: 0.15
+    MovementSpread: 1.4
+    AirborneSpread: 5
+    ShotBloom: 0.6
+    MaxBloom: 2.4
+    BloomRecovery: 4
+  Recoil:
+    CameraPitch: 2.6
+    CameraPitchVariance: 0.5
+    CameraYaw: 0.7
+    CameraRoll: 1.2
+    PermanentFraction: 0.3
+    AimMultiplier: 0.75
+    CameraStiffness: 220
+    CameraDamping: 0.7
+    FovPunch: 1.4
+    KickBack: 0.045
+    KickUp: 0.012
+    KickPitch: 11
+    KickYaw: 2.5
+    KickRoll: 5
+    WeaponStiffness: 420
+    WeaponDamping: 0.55

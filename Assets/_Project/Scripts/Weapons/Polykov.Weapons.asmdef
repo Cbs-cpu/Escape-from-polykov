@@ -1,0 +1,21 @@
+{
+    "name": "Polykov.Weapons",
+    "rootNamespace": "Polykov.Weapons",
+    "references": [
+        "Polykov.Weapons.Core",
+        "Polykov.Movement",
+        "Polykov.Player",
+        "Polykov.Input",
+        "Polykov.Camera",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

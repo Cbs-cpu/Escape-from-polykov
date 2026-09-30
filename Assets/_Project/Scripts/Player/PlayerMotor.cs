@@ -41,6 +41,11 @@ namespace Polykov.Player
         /// <summary>Raised on the tick the character lands; argument is the downward impact speed (m/s).</summary>
         public event System.Action<float> Landed;
 
+        /// <summary>Set by the weapon system: aiming down sights slows movement and blocks sprint.</summary>
+        public bool Aiming { get; set; }
+        /// <summary>Set by the weapon system while firing/reloading: sprint input is ignored.</summary>
+        public bool SprintBlocked { get; set; }
+
         public MovementState State => _state;
         public GroundInfo Ground => _ground;
         public MovementTuning Tuning => settings.Tuning;
@@ -77,8 +82,8 @@ namespace Polykov.Player
             _previousPosition = transform.position;
             bool wasGrounded = _ground.Grounded;
 
-            var tickInput = new MovementInput(input.Move, look.Yaw, input.SprintHeld, input.WalkHeld,
-                input.ConsumeJump(), input.Lean);
+            var tickInput = new MovementInput(input.Move, look.Yaw, input.SprintHeld && !SprintBlocked, input.WalkHeld,
+                input.ConsumeJump(), input.Lean, Aiming);
             _state = MovementMotor.Step(_state, tickInput, _ground, settings.Tuning, dt);
             if (_state.JustJumped) Jumped?.Invoke();
             if (_state.JustLanded) Landed?.Invoke(_state.LandingImpact);

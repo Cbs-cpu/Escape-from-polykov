@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 984b291ac6a5b9242b2bda60cce85d5b, type: 3}
+  m_Name: VD_M1911
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponViewData
+  HipPosition: {x: 0.1, y: -0.125, z: 0.33}
+  HipEuler: {x: 0, y: -2, z: 0}
+  AimDistance: 0.36
+  AimFov: 64
+  SprintPosition: {x: 0.05, y: -0.2, z: 0.22}
+  SprintEuler: {x: 38, y: -28, z: 12}
+  EquipPosition: {x: 0.1, y: -0.42, z: 0.14}
+  EquipEuler: {x: 70, y: -10, z: 20}
+  ReloadOffset: {x: -0.025, y: 0.035, z: -0.07}
+  ReloadEuler: {x: -10, y: 12, z: -32}
+  BlockedPosition: {x: 0.07, y: -0.16, z: 0.14}
+  BlockedEuler: {x: -12, y: -35, z: 8}
+  SwayRotation: 1.4
+  SwayMaxDegrees: 6
+  SwayPosition: 0.0018
+  SwayStiffness: 110
+  SwayDamping: 0.62
+  AimSwayMultiplier: 0.35
+  StrideLength: 0.75
+  BobPosition: {x: 0.007, y: 0.006}
+  BobRoll: 1.4
+  AimBobMultiplier: 0.22
+  SprintBobMultiplier: 1.8
+  BreathAmplitude: 0.0012
+  BreathRate: 0.28
+  SprintBlendSharpness: 9
+  BlockedBlendSharpness: 14
+  BlockCheckDistance: 0.6
+  SlideTravel: 0.034
+  SlideBackTime: 0.018
+  SlideReturnTime: 0.055
+  BarrelTravelRatio: 0.3
+  HammerFallDegrees: 55
+  TriggerTravel: 0.0045
+  SlideStopLockedDegrees: 9
+  MagazineInsertDistance: 0.09
+  MagazineInsertTime: 0.12
+  RightWristOffset: {x: 0.012, y: 0.018, z: -0.058}
+  RightFingersDirection: {x: -0.25, y: -0.3, z: 0.92}
+  RightPalmNormal: {x: -0.95, y: 0.1, z: -0.1}
+  LeftWristOffset: {x: -0.045, y: -0.022, z: -0.032}
+  LeftFingersDirection: {x: 0.45, y: -0.35, z: 0.82}
+  LeftPalmNormal: {x: 0.8, y: 0.45, z: 0.1}
+  RightGripCurl: {x: 70, y: 85, z: 55}
+  RightIndexCurl: {x: 30, y: 45, z: 30}
+  LeftGripCurl: {x: 60, y: 70, z: 45}
+  ThumbCurl: {x: 10, y: 15, z: 10}
+  RightElbowHint: {x: 0.3, y: -0.35, z: -0.1}
+  LeftElbowHint: {x: -0.3, y: -0.4, z: -0.1}
+  MuzzleFlash: {fileID: 480065016112083514, guid: b52766b49388b4b4cb29e4e068d536b3, type: 3}
+  ImpactConcrete: {fileID: 7888321454570931276, guid: 07271d2c4ed9f0d4dabdd039eaf47e2c, type: 3}
+  ImpactMetal: {fileID: 3231177600203104036, guid: da07646752afdc949ba5a5b028c18b61, type: 3}
+  BulletHole: {fileID: 4099009938296315923, guid: f5a956ee41ca3c74e9fb475972ebb380, type: 3}
+  BulletHoleSize: 0.035
+  HitForce: 6
+  EjectVelocity: {x: 1.9, y: 1.6, z: -0.35}
+  EjectRandomness: 0.35
+  EjectSpin: 30

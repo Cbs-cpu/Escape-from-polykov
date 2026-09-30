@@ -1,5 +1,52 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3018156975832933003
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4093793567373370769}
+  - component: {fileID: 8890664395430948404}
+  m_Layer: 0
+  m_Name: MagazinePool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4093793567373370769
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3018156975832933003}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5108166473531641101}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8890664395430948404
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3018156975832933003}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d1d216bec969bb4590dfe8170aea1ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.DebrisPool
+  prefab: {fileID: 3392027894695469421, guid: 1d54731799ada7842ae6300f8177f1a7, type: 3}
+  capacity: 4
+  lifetime: 25
 --- !u!1 &3203346778575321563
 GameObject:
   m_ObjectHideFlags: 0
@@ -30,7 +77,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 7043879484900701137}
   m_Father: {fileID: 4246404925504654557}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &5235265192510000218
@@ -92,6 +140,53 @@ AudioListener:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3203346778575321563}
   m_Enabled: 1
+--- !u!1 &3523134508762395009
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1133046353342504606}
+  - component: {fileID: 2952255777584334747}
+  m_Layer: 0
+  m_Name: CasingPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1133046353342504606
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3523134508762395009}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5108166473531641101}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2952255777584334747
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3523134508762395009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4d1d216bec969bb4590dfe8170aea1ca, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.DebrisPool
+  prefab: {fileID: 3619478467975940818, guid: 83fdc3b3c93f5c84a9803e1805ae3015, type: 3}
+  capacity: 24
+  lifetime: 10
 --- !u!1 &3536482764503424874
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,6 +197,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4246404925504654557}
   - component: {fileID: 1498527156555506878}
+  - component: {fileID: 669317796742098214}
   m_Layer: 8
   m_Name: CameraRig
   m_TagString: Untagged
@@ -142,6 +238,22 @@ MonoBehaviour:
   targetCamera: {fileID: 5235265192510000218}
   settings: {fileID: 11400000, guid: 33bb80d2d316cd44096725803504937a, type: 2}
   body: {fileID: 4253433745837285474}
+--- !u!114 &669317796742098214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3536482764503424874}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4813bb9057855147815af409278a963, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponCameraEffects
+  rig: {fileID: 1498527156555506878}
+  weapon: {fileID: 8957051064277317784}
+  look: {fileID: 4148688137752740380}
+  aimFovSharpness: 14
 --- !u!1 &4972692238172451893
 GameObject:
   m_ObjectHideFlags: 0
@@ -232,6 +344,40 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &6173063485945477679
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5108166473531641101}
+  m_Layer: 0
+  m_Name: Pools
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5108166473531641101
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6173063485945477679}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 3480342419095882332}
+  - {fileID: 1133046353342504606}
+  - {fileID: 4093793567373370769}
+  m_Father: {fileID: 852422872364167089}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &6925332804725554064
 GameObject:
   m_ObjectHideFlags: 0
@@ -265,6 +411,51 @@ Transform:
   - {fileID: 8650067904279367565}
   m_Father: {fileID: 852422872364167089}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6938392709202048716
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3480342419095882332}
+  - component: {fileID: 2481191160370620193}
+  m_Layer: 0
+  m_Name: EffectPool
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &3480342419095882332
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6938392709202048716}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5108166473531641101}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2481191160370620193
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6938392709202048716}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01f7fc3fa0f780147aaa754749b4c6fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.EffectPool
+  prewarmPerPrefab: 6
 --- !u!1 &7368656362624362212
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,6 +471,8 @@ GameObject:
   - component: {fileID: 8327803297820930270}
   - component: {fileID: 3173978429965695727}
   - component: {fileID: 3156753763776002293}
+  - component: {fileID: 8957051064277317784}
+  - component: {fileID: 992090857838701806}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -302,6 +495,7 @@ Transform:
   m_Children:
   - {fileID: 2507580270827215620}
   - {fileID: 4246404925504654557}
+  - {fileID: 5108166473531641101}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!143 &8849927920700410294
@@ -412,6 +606,316 @@ MonoBehaviour:
   look: {fileID: 4148688137752740380}
   visible: 1
   refreshRate: 10
+--- !u!114 &8957051064277317784
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8686dc8da1f25de418c91abefbbbe540, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.PlayerWeaponController
+  data: {fileID: 11400000, guid: e231d4bfb9b79a548834fc6659654ca7, type: 2}
+  view: {fileID: 11400000, guid: 43d7e36d772f24e478739061c139ab3d, type: 2}
+  input: {fileID: 4144601793569417081}
+  motor: {fileID: 8327803297820930270}
+  look: {fileID: 4148688137752740380}
+  eye: {fileID: 534249625826917619}
+  cameraEffects: {fileID: 669317796742098214}
+  effects: {fileID: 2481191160370620193}
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294966523
+  startEquipped: 1
+  fireBufferTime: 0.25
+--- !u!114 &992090857838701806
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d4fb1533fcfd9b143a957606b8cfc7f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponDebugOverlay
+  weapon: {fileID: 8957051064277317784}
+  visible: 1
+--- !u!1 &9037967028868650254
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7043879484900701137}
+  - component: {fileID: 6749103617049534373}
+  m_Layer: 0
+  m_Name: WeaponHolder
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7043879484900701137
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9037967028868650254}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 8334776506702520223}
+  m_Father: {fileID: 534249625826917619}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6749103617049534373
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9037967028868650254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f74d2ea7d0862f34f89c37610e987661, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponPose
+  weapon: {fileID: 8957051064277317784}
+  motor: {fileID: 8327803297820930270}
+  look: {fileID: 4148688137752740380}
+  model: {fileID: 8334776506702520223}
+  cameraTransform: {fileID: 534249625826917619}
+  blockMask:
+    serializedVersion: 2
+    m_Bits: 4294966523
+--- !u!1001 &8368156979486210164
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 7043879484900701137}
+    m_Modifications:
+    - target: {fileID: -9116970755999089178, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: -8868943726624301657, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -8708297200705330336, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8148750409958144669, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: -7271917012754515738, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -6731831376067318047, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -6524698544975565167, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -5646078761840677981, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: -5038149823554690678, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -3516739219963542463, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -3084168862278467026, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: -2876392246849284294, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: -2413606879244543781, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -2313219348664235792, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: -1678858320020683933, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: -1528070243275788891, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -1469079693012844069, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: -763551807170131762, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 164724285585397848, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 379979370628787800, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Name
+      value: M1911
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 1810284415814739675, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2071566125926284042, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: 2413932639625514697, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 2719084593911434976, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: 3767175184331120295, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    - target: {fileID: 3786238181980908438, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5971398263650953251, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6532593104984673185, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7339812137660157133, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7468371122375075483, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8334398284786941405, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6355761140581922745}
+  m_SourcePrefab: {fileID: 100100000, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+--- !u!4 &8334776506702520223 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+  m_PrefabInstance: {fileID: 8368156979486210164}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8710176901738923301 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
+  m_PrefabInstance: {fileID: 8368156979486210164}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6355761140581922745
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8710176901738923301}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 908ae5536d0dfbd498e14d0527d1df15, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponMechanics
+  weapon: {fileID: 8957051064277317784}
+  pose: {fileID: 6749103617049534373}
+  motor: {fileID: 8327803297820930270}
+  effects: {fileID: 2481191160370620193}
+  casings: {fileID: 2952255777584334747}
+  droppedMagazines: {fileID: 8890664395430948404}
+  hammerDirection: 1
+  slideStopDirection: -1
 --- !u!1001 &9187782566456404070
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -729,6 +1233,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2cef109dc5c60fb4ca34168a9182a1f8, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4253433745837285474}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 2cef109dc5c60fb4ca34168a9182a1f8, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 7822677133667291673}
   m_SourcePrefab: {fileID: 100100000, guid: 2cef109dc5c60fb4ca34168a9182a1f8, type: 3}
 --- !u!95 &3380824778610415095 stripped
 Animator:
@@ -793,7 +1300,8 @@ MonoBehaviour:
   animator: {fileID: 3380824778610415095}
   motor: {fileID: 8327803297820930270}
   look: {fileID: 4148688137752740380}
-  spinePitchShare: 0.5
+  spinePitchShareDown: 0.2
+  spinePitchShareUp: 0.45
   leanAngle: 18
   leanReach: 0.34
   headRadius: 0.14
@@ -801,6 +1309,23 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4294967039
   clearanceSharpness: 18
+--- !u!114 &7822677133667291673
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8304890881180439863}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77a5847b17513ca4b92e9b0394ccbc99, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.ArmIK
+  animator: {fileID: 3380824778610415095}
+  pose: {fileID: 6749103617049534373}
+  weapon: {fileID: 8957051064277317784}
+  cameraTransform: {fileID: 534249625826917619}
+  pouchPosition: {x: -0.16, y: -0.5, z: 0.05}
 --- !u!4 &8650067904279367565 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2cef109dc5c60fb4ca34168a9182a1f8, type: 3}

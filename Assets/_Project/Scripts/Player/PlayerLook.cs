@@ -27,6 +27,15 @@ namespace Polykov.Player
         public float Yaw { get; private set; }
         /// <summary>Pitch in degrees, positive looks down (Unity convention).</summary>
         public float Pitch { get; private set; }
+        /// <summary>Look rotation applied this frame (degrees, x = yaw, y = pitch up). Drives weapon sway.</summary>
+        public Vector2 LastDelta { get; private set; }
+
+        /// <summary>Permanent aim change from recoil (degrees; positive pitchUp raises the view).</summary>
+        public void AddRecoil(float pitchUp, float yaw)
+        {
+            Pitch = Mathf.Clamp(Pitch - pitchUp, minPitch, maxPitch);
+            Yaw = Mathf.Repeat(Yaw + yaw, 360f);
+        }
 
         private void Awake()
         {
@@ -36,6 +45,7 @@ namespace Polykov.Player
         private void Update()
         {
             Vector2 delta = input.ReadLookDelta(mouseSensitivity, stickSensitivity, Time.deltaTime);
+            LastDelta = delta;
             Yaw = Mathf.Repeat(Yaw + delta.x, 360f);
             Pitch = Mathf.Clamp(Pitch - delta.y * (invertY ? -1f : 1f), minPitch, maxPitch);
             transform.rotation = Quaternion.Euler(0f, Yaw, 0f);
