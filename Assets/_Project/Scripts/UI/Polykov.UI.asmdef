@@ -1,10 +1,10 @@
 {
-    "name": "Polykov.Player",
-    "rootNamespace": "Polykov.Player",
+    "name": "Polykov.UI",
+    "rootNamespace": "Polykov.UI",
     "references": [
         "Polykov.Core",
         "Polykov.Movement",
-        "Polykov.Input",
+        "Polykov.Player",
         "Unity.InputSystem"
     ],
     "includePlatforms": [],

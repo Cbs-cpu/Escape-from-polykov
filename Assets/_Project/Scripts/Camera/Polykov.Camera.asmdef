@@ -2,6 +2,7 @@
     "name": "Polykov.Camera",
     "rootNamespace": "Polykov.CameraSystem",
     "references": [
+        "Polykov.Core",
         "Polykov.Movement",
         "Polykov.Player",
         "Polykov.Animation"

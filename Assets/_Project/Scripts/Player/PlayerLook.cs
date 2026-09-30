@@ -1,3 +1,4 @@
+using Polykov.Core;
 using Polykov.Input;
 using UnityEngine;
 
@@ -13,11 +14,9 @@ namespace Polykov.Player
         [SerializeField] private PlayerInputReader input;
 
         [Header("Sensitivity")]
-        [Tooltip("Degrees per mouse pixel.")]
-        [SerializeField, Range(0.005f, 0.5f)] private float mouseSensitivity = 0.08f;
-        [Tooltip("Degrees per second at full stick deflection (x = yaw, y = pitch).")]
+        [Tooltip("Degrees per second at full stick deflection (x = yaw, y = pitch). Mouse sensitivity and " +
+                 "invert Y are player preferences (UserSettings, pause menu).")]
         [SerializeField] private Vector2 stickSensitivity = new Vector2(220f, 150f);
-        [SerializeField] private bool invertY;
 
         [Header("Limits")]
         [SerializeField, Range(-89f, 0f)] private float minPitch = -85f;
@@ -28,6 +27,16 @@ namespace Polykov.Player
         /// <summary>Pitch in degrees, positive looks down (Unity convention).</summary>
         public float Pitch { get; private set; }
 
+        /// <summary>Multiplier applied to look input (e.g. lower while aiming down sights). Set by other systems.</summary>
+        public float SensitivityScale { get; set; } = 1f;
+
+        /// <summary>Adds rotation not caused by input (recoil). Positive pitch looks down.</summary>
+        public void AddRotation(float yawDegrees, float pitchDegrees)
+        {
+            Yaw = Mathf.Repeat(Yaw + yawDegrees, 360f);
+            Pitch = Mathf.Clamp(Pitch + pitchDegrees, minPitch, maxPitch);
+        }
+
         private void Awake()
         {
             Yaw = transform.eulerAngles.y;
@@ -35,9 +44,10 @@ namespace Polykov.Player
 
         private void Update()
         {
-            Vector2 delta = input.ReadLookDelta(mouseSensitivity, stickSensitivity, Time.deltaTime);
+            Vector2 delta = input.ReadLookDelta(UserSettings.MouseSensitivity, stickSensitivity, Time.deltaTime)
+                            * SensitivityScale;
             Yaw = Mathf.Repeat(Yaw + delta.x, 360f);
-            Pitch = Mathf.Clamp(Pitch - delta.y * (invertY ? -1f : 1f), minPitch, maxPitch);
+            Pitch = Mathf.Clamp(Pitch - delta.y * (UserSettings.InvertY ? -1f : 1f), minPitch, maxPitch);
             transform.rotation = Quaternion.Euler(0f, Yaw, 0f);
         }
     }

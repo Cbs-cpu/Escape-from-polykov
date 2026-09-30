@@ -35,6 +35,8 @@ namespace Polykov.Player
         private float _accumulator;
         private Vector3 _previousPosition;
         private Vector3 _currentPosition;
+        private MovementTuning _tuningOverride;
+        private bool _hasTuningOverride;
 
         /// <summary>Raised on the tick the character jumps (presentation hooks: animation, audio later).</summary>
         public event System.Action Jumped;
@@ -43,7 +45,25 @@ namespace Polykov.Player
 
         public MovementState State => _state;
         public GroundInfo Ground => _ground;
-        public MovementTuning Tuning => settings.Tuning;
+        /// <summary>Active tuning: the settings asset, unless a runtime override (preset) is set.</summary>
+        public MovementTuning Tuning => _hasTuningOverride ? _tuningOverride : settings.Tuning;
+        public bool HasTuningOverride => _hasTuningOverride;
+        /// <summary>Name of the active tuning, for debug UI.</summary>
+        public string TuningLabel { get; private set; } = "Asset";
+
+        /// <summary>Runs the motor with this tuning instead of the asset (does not modify the asset).</summary>
+        public void SetTuningOverride(in MovementTuning tuning, string label)
+        {
+            _tuningOverride = tuning;
+            _hasTuningOverride = true;
+            TuningLabel = label;
+        }
+
+        public void ClearTuningOverride()
+        {
+            _hasTuningOverride = false;
+            TuningLabel = "Asset";
+        }
         public uint Tick { get; private set; }
         public float TickInterval => 1f / tickRate;
         /// <summary>Smooth position for presentation (camera, visuals), between the last two ticks.</summary>
@@ -79,7 +99,7 @@ namespace Polykov.Player
 
             var tickInput = new MovementInput(input.Move, look.Yaw, input.SprintHeld, input.WalkHeld,
                 input.ConsumeJump(), input.Lean);
-            _state = MovementMotor.Step(_state, tickInput, _ground, settings.Tuning, dt);
+            _state = MovementMotor.Step(_state, tickInput, _ground, Tuning, dt);
             if (_state.JustJumped) Jumped?.Invoke();
             if (_state.JustLanded) Landed?.Invoke(_state.LandingImpact);
 
