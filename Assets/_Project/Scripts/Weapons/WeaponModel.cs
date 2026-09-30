@@ -232,7 +232,84 @@ namespace Polykov.Weapons
             }
             var model = root.AddComponent<WeaponModel>();
             model.Initialize();
+            model.EffectiveMuzzle = model.Muzzle;
             return model;
+        }
+
+
+        // ---- Attachments ----
+        private Transform _attachmentRoot;
+        /// <summary>Where shots visibly leave the gun: the suppressor's front socket when mounted, else the muzzle.</summary>
+        public Transform EffectiveMuzzle { get; private set; }
+
+        /// <summary>
+        /// Rebuilds the mounted attachments (barrel parts first, then muzzle devices). Each prefab sits at
+        /// Socket_Muzzle, aligned to weapon space; a muzzle device goes on the barrel's tip socket
+        /// ("Socket_BarrelTip") when the barrel exposes one. Returns the effective muzzle.
+        /// </summary>
+        public Transform MountAttachments(System.Collections.Generic.IReadOnlyList<AttachmentDefinition> ordered, int layer,
+            Material outlineMaterial)
+        {
+            if (_attachmentRoot != null) Destroy(_attachmentRoot.gameObject);
+            _attachmentRoot = null;
+            EffectiveMuzzle = Muzzle;
+            if (Muzzle == null || ordered == null) return EffectiveMuzzle;
+
+            // Weapon-space aligned holder that follows whatever the muzzle socket follows (slide/barrel).
+            _attachmentRoot = new GameObject("Attachments") { layer = layer }.transform;
+            _attachmentRoot.SetParent(Muzzle, false);
+            _attachmentRoot.SetPositionAndRotation(Muzzle.position, transform.rotation);
+            Transform mountPoint = null;
+            foreach (AttachmentDefinition def in ordered)
+            {
+                if (def == null || def.Prefab == null) continue;
+                Vector3 position = Muzzle.position;
+                if (def.Slot == AttachmentSlot.Muzzle && mountPoint != null) position = mountPoint.position;
+                GameObject go = Instantiate(def.Prefab, _attachmentRoot, false);
+                go.name = def.Id;
+                go.transform.position = position;
+                foreach (Transform t in go.GetComponentsInChildren<Transform>(true)) t.gameObject.layer = layer;
+                foreach (Renderer renderer in go.GetComponentsInChildren<Renderer>(true))
+                {
+                    Material[] slots = renderer.sharedMaterials;
+                    for (int i = 0; i < slots.Length; i++)
+                    {
+                        bool outline = slots[i] != null && slots[i].name.Contains("Outline");
+                        if (outline) { if (outlineMaterial != null) slots[i] = outlineMaterial; }
+                        else if (def.BodyMaterial != null) slots[i] = def.BodyMaterial;
+                    }
+                    renderer.sharedMaterials = slots;
+                }
+                if (def.Slot == AttachmentSlot.Barrel)
+                {
+                    Transform tip = FindIn(go.transform, "Socket_BarrelTip");
+                    if (tip != null) mountPoint = tip;
+                }
+                if (def.Slot == AttachmentSlot.Muzzle)
+                    EffectiveMuzzle = FindMuzzleSocket(go.transform, def.MuzzleSocketName, position);
+            }
+            return EffectiveMuzzle;
+        }
+
+        /// <summary>The device's own muzzle socket, or a point at the front of its mesh along the bore.</summary>
+        private Transform FindMuzzleSocket(Transform device, string socketName, Vector3 origin)
+        {
+            Transform socket = string.IsNullOrEmpty(socketName) ? FindIn(device, "Socket_SuppressorMuzzle") : FindIn(device, socketName);
+            if (socket != null) return socket;
+            Vector3 forward = transform.forward;
+            float front = 0f;
+            foreach (Renderer r in device.GetComponentsInChildren<Renderer>(true))
+            {
+                Bounds b = r.bounds;
+                Vector3 ex = b.extents;
+                float reach = Vector3.Dot(b.center - origin, forward)
+                              + ex.x * Mathf.Abs(forward.x) + ex.y * Mathf.Abs(forward.y) + ex.z * Mathf.Abs(forward.z);
+                front = Mathf.Max(front, reach);
+            }
+            var go = new GameObject("Socket_DeviceMuzzle") { layer = device.gameObject.layer };
+            go.transform.SetParent(device, true);
+            go.transform.SetPositionAndRotation(origin + forward * front, transform.rotation);
+            return go.transform;
         }
 
         private static Transform FindIn(Transform root, string childName)

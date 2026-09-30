@@ -74,8 +74,12 @@ namespace Polykov.Weapons
         {
             WeaponModel model = weapon.Model;
             Transform root = model.transform;
-            if (view != null && view.MuzzleFlash != null && model.Muzzle != null)
-                _effects.Spawn(view.MuzzleFlash, model.Muzzle.position, root.rotation, model.Muzzle);
+            Transform muzzle = weapon.MuzzlePoint;
+            if (view != null && view.MuzzleFlash != null && muzzle != null)
+            {
+                PooledEffect flash = _effects.Spawn(view.MuzzleFlash, muzzle.position, root.rotation, root);
+                if (flash != null) ConfigureFlash(flash, weapon.Effective.MuzzleFlash);
+            }
 
             if (_casings != null)
             {
@@ -89,6 +93,30 @@ namespace Polykov.Weapons
                 _casings.Launch(port.position, root.rotation * Quaternion.Euler(0f, 90f, 0f), velocity,
                     Random.insideUnitSphere * spin);
             }
+        }
+
+        /// <summary>
+        /// Full flash at 1; below that only a small smoke puff survives (petals/sparks off, root flash hidden, scaled down).
+        /// </summary>
+        private static void ConfigureFlash(PooledEffect flash, float amount)
+        {
+            bool reduced = amount < 0.999f;
+            Transform root = flash.transform;
+            root.localScale = Vector3.one * (reduced ? Mathf.Lerp(0.3f, 1f, amount) : 1f);
+            var rootRenderer = flash.GetComponent<ParticleSystemRenderer>();
+            if (rootRenderer != null) rootRenderer.enabled = !reduced;
+            bool restarted = false;
+            foreach (ParticleSystem ps in flash.GetComponentsInChildren<ParticleSystem>(true))
+            {
+                if (ps.transform == root) continue;
+                bool keep = !reduced || ps.name.Contains("Smoke");
+                if (ps.gameObject.activeSelf != keep)
+                {
+                    ps.gameObject.SetActive(keep);
+                    restarted |= keep;
+                }
+            }
+            if (restarted) flash.Play();
         }
 
         private void OnHitSurface(RaycastHit hit, Vector3 direction)

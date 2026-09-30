@@ -30,6 +30,7 @@ namespace Polykov.Weapons
         private WeaponModel _model;
         private Light _flash;
         private float _flashTimer;
+        private const float FlashIntensity = 4f;
 
         private float _aim;
         private float _lowered;
@@ -101,16 +102,33 @@ namespace Polykov.Weapons
                 _flash.type = LightType.Point;
                 _flash.color = new Color(1f, 0.78f, 0.45f);
                 _flash.range = 5f;
-                _flash.intensity = 4f;
+                _flash.intensity = FlashIntensity;
                 _flash.shadows = LightShadows.None;
                 _flash.enabled = false;
+                weapon.BuildChanged += OnBuildChanged;
+                OnBuildChanged(weapon.Build);
             }
+        }
+
+        private void OnDestroy()
+        {
+            if (weapon != null) weapon.BuildChanged -= OnBuildChanged;
+        }
+
+        // The flash light follows the effective muzzle (suppressor front) and dims with the build's flash multiplier.
+        private void OnBuildChanged(WeaponBuild build)
+        {
+            if (_flash == null) return;
+            Transform muzzle = weapon.MuzzlePoint;
+            _flash.transform.SetParent(muzzle, true);
+            _flash.transform.position = muzzle.position + _model.transform.forward * 0.03f;
+            _flash.intensity = FlashIntensity * weapon.Effective.MuzzleFlash;
         }
 
         private void OnFired(WeaponState state)
         {
             WeaponDefinition def = weapon.Definition;
-            float aimed = 1f - 0.4f * _aim;
+            float aimed = (1f - 0.4f * _aim) * weapon.RecoilMultiplier;
             _kickPosVelocity -= def.KickBack * aimed;
             _kickRotVelocity -= def.KickRotation * aimed;
             _slideKick = 1f;

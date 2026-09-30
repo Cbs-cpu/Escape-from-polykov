@@ -25,4 +25,5 @@ MonoBehaviour:
     LoudnessMultiplier: 0.25
     MuzzleFlashMultiplier: 0.15
   Prefab: {fileID: 919132149155446097, guid: 59414952285714549a5b2d1922bc47cb, type: 3}
-  MuzzleSocketName: 
+  MuzzleSocketName: Socket_SuppressorMuzzle
+  BodyMaterial: {fileID: 2100000, guid: 3ec30842db88bd44b85cfe367a93caf8, type: 2}

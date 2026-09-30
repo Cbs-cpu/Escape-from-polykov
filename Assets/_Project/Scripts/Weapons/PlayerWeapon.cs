@@ -1,7 +1,9 @@
 using Polykov.Input;
 using Polykov.Movement;
 using Polykov.Player;
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace Polykov.Weapons
 {
@@ -35,6 +37,40 @@ namespace Polykov.Weapons
         private bool _obstructed;
         private bool _lastReloadWasEmpty;
         private WeaponAction _lastAction;
+
+        private WeaponBuild _build;
+        private EffectiveWeaponStats _effective;
+        private WeaponStats _stats;
+        private AttachmentCatalog _catalog;
+        private float _lengthExtra;
+        private Transform _muzzle;
+
+        /// <summary>The mounted build (attachment ids per slot).</summary>
+        public WeaponBuild Build => _build;
+        /// <summary>Stats with the build's modifiers applied (recoil, ergonomics-driven aim time).</summary>
+        public EffectiveWeaponStats Effective => _effective;
+        public WeaponStats Stats => _stats;
+        /// <summary>Muzzle recoil multiplier of the build (1 = factory).</summary>
+        public float RecoilMultiplier { get; private set; } = 1f;
+        /// <summary>Flash / shot origin transform: the suppressor's front socket when one is mounted.</summary>
+        public Transform MuzzlePoint => _muzzle != null ? _muzzle : _model.Muzzle;
+        public bool Suppressed => _effective.MuzzleFlash < 0.999f;
+        /// <summary>1 = unsuppressed gunshot. Hook for suppressed audio.</summary>
+        public float Loudness => _effective.Loudness;
+        /// <summary>Raised after attachments are rebuilt (presentation rebinds flash light / muzzle).</summary>
+        public event System.Action<WeaponBuild> BuildChanged;
+        /// <summary>Raised on every shot with its loudness (1 = unsuppressed), for audio.</summary>
+        public event System.Action<float> ShotHeard;
+
+        public string BuildPrefsKey
+        {
+            get
+            {
+                string n = definition.name;
+                if (n.StartsWith("WD_")) n = n.Substring(3);
+                return "weaponBuild." + n.ToLowerInvariant();
+            }
+        }
 
         public WeaponDefinition Definition => definition;
         public WeaponState State => _state;
@@ -73,6 +109,59 @@ namespace Polykov.Weapons
             if (modelPrefab != null) _model = WeaponModel.CreateFromModel(modelPrefab, transform, gameObject.layer, materials, modelMaterial, outlineMaterial);
             if (_model == null) _model = M1911Builder.Build(transform, steelMaterial, gripMaterial, gameObject.layer);
             ImpactEffects.Material = steelMaterial;
+
+            _catalog = definition.BuildCatalog();
+            WeaponBuild saved = WeaponBuild.ParseOr(PlayerPrefs.GetString(BuildPrefsKey, null), definition.DefaultBuild);
+            ApplyBuild(saved, false);
+        }
+
+        /// <summary>
+        /// Mounts <paramref name="build"/> (invalid builds fall back to the factory build): rebuilds the attachment
+        /// models, refreshes effective stats and muzzle, and persists the choice. Safe to call at runtime.
+        /// </summary>
+        public void ApplyBuild(WeaponBuild build, bool persist = true)
+        {
+            if (!LoadoutRules.Validate(build, _catalog).IsValid) build = definition.DefaultBuild;
+            _build = build;
+            _effective = LoadoutRules.EffectiveStats(definition.Stats, build, _catalog);
+            _stats = _effective.Stats;
+            float ergonomics = Mathf.Max(_effective.Ergonomics, 10f);
+            _stats.AimTime = definition.Stats.AimTime * WeaponBaseline.M1911.Ergonomics / ergonomics;
+            float baseRecoil = definition.Stats.VerticalRecoil;
+            RecoilMultiplier = baseRecoil > 0f ? _stats.VerticalRecoil / baseRecoil : 1f;
+            _lengthExtra = Mathf.Max(0f, _effective.LengthM - WeaponBaseline.M1911.LengthM);
+
+            var ordered = new List<AttachmentDefinition>();
+            foreach (AttachmentSlot slot in new[] { AttachmentSlot.Barrel, AttachmentSlot.Muzzle, AttachmentSlot.Grips, AttachmentSlot.Magazine })
+            {
+                string id = build.Get(slot);
+                if (id == null || definition.Attachments == null) continue;
+                foreach (AttachmentDefinition a in definition.Attachments)
+                    if (a != null && a.Id == id) { ordered.Add(a); break; }
+            }
+            _muzzle = _model.MountAttachments(ordered, gameObject.layer, outlineMaterial);
+            if (persist)
+            {
+                PlayerPrefs.SetString(BuildPrefsKey, build.Serialize());
+                PlayerPrefs.Save();
+            }
+            BuildChanged?.Invoke(build);
+        }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        private void Update()
+        {
+            // Temporary debug (until the lobby armory exists): F7 toggles the suppressor.
+            if (Keyboard.current == null || !Keyboard.current.f7Key.wasPressedThisFrame) return;
+            ToggleSuppressor();
+        }
+#endif
+
+        public void ToggleSuppressor()
+        {
+            ApplyBuild(_build.Has("suppressor_45")
+                ? LoadoutRules.Remove(_build, AttachmentSlot.Muzzle, _catalog)
+                : LoadoutRules.Equip(_build, "suppressor_45", _catalog));
         }
 
         private void OnEnable() => motor.Ticked += OnTick;
@@ -91,7 +180,7 @@ namespace Polykov.Weapons
             input.ConsumeWeaponActions(out bool safety, out bool inspect, out bool chamberCheck);
             var tickInput = new WeaponInput(input.FireHeld, input.ConsumeFirePressed(), input.AimHeld, input.ConsumeReload(),
                 safety, inspect, chamberCheck);
-            _state = WeaponMotor.Step(_state, tickInput, context, definition.Stats, dt);
+            _state = WeaponMotor.Step(_state, tickInput, context, _stats, dt);
             // Aiming slows the body and blocks sprint (applied by the motor from the next tick).
             motor.Aiming = tickInput.AimHeld && _state.Action == WeaponAction.None;
 
@@ -99,6 +188,7 @@ namespace Polykov.Weapons
             {
                 Shoot(_state.SpreadOffset);
                 Fired?.Invoke(_state);
+                ShotHeard?.Invoke(_effective.Loudness);
             }
             if (_state.JustDryFired) DryFired?.Invoke();
             if (_state.JustStartedReload)
@@ -120,7 +210,7 @@ namespace Polykov.Weapons
         private void ProbeObstruction()
         {
             // Hysteresis so the weapon doesn't flicker at the threshold.
-            float length = definition.Length * (_obstructed ? 1.08f : 1f);
+            float length = (definition.Length + _lengthExtra) * (_obstructed ? 1.08f : 1f);
             _obstructed = Physics.SphereCast(eye.position, 0.045f, eye.forward, out _, length, hitMask,
                 QueryTriggerInteraction.Ignore);
         }

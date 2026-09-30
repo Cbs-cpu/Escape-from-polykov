@@ -78,6 +78,8 @@ def export(ob, filename):
         except RuntimeError:
             pass
     ob.select_set(True)
+    for c in ob.children:
+        c.select_set(True)
     bpy.context.view_layer.objects.active = ob
     bpy.ops.export_scene.fbx(filepath=os.path.join(OUT, filename), use_selection=True, object_types={"MESH", "EMPTY"},
                              apply_scale_options="FBX_SCALE_ALL", axis_forward="-Z", axis_up="Y",

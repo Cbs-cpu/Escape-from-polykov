@@ -10,6 +10,8 @@ namespace Polykov.Weapons
         public GameObject Prefab;
         [Tooltip("Optional child of the prefab whose position is the new muzzle (flash / shot origin). Empty = none.")]
         public string MuzzleSocketName;
+        [Tooltip("Material for the prefab's body slots (outline slots keep the weapon outline material). Empty = keep the model's own.")]
+        public Material BodyMaterial;
 
         public string Id => Rules.Id;
         public AttachmentSlot Slot => Rules.Slot;
