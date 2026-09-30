@@ -224,6 +224,7 @@ def perimeter():
         box("Wall", c, (a + b) / 2 + Vector((0, 0, h / 2)), (0.5, d.length, h), "concrete", yaw)
 
 
+HALL_DOOR_Y = (22.95, 24.35)   # hall-local Y of the east door reached by the admin office walkway
 HALL = dict(x0=-24.0, x1=24.0, y0=0.0, y1=56.0, eave=20.0, ridge=26.5)
 
 
@@ -244,7 +245,12 @@ def production_hall():
     box("S_Top", c, (0, y0, (gh + eave) / 2), (gx1 - gx0, t, eave - gh), "concrete")
     box("N", c, (0, y1, eave / 2), (W, t, eave), "concrete")
     box("W_Wall", c, (x0, (y0 + y1) / 2, eave / 2), (t, L, eave), "concrete")
-    box("E_Wall", c, (x1, (y0 + y1) / 2, eave / 2), (t, L, eave), "concrete")
+    # east wall: door onto the office walkway at gantry height (phase 4 "conexion a la nave principal")
+    dy0, dy1, dz0, dz1 = HALL_DOOR_Y[0], HALL_DOOR_Y[1], 7.5, 9.9
+    box("E_Wall", c, (x1, (y0 + dy0) / 2, eave / 2), (t, dy0 - y0, eave), "concrete")
+    box("E_Wall", c, (x1, (dy1 + y1) / 2, eave / 2), (t, y1 - dy1, eave), "concrete")
+    box("E_Wall", c, (x1, (dy0 + dy1) / 2, dz0 / 2), (t, dy1 - dy0, dz0), "concrete")
+    box("E_Wall", c, (x1, (dy0 + dy1) / 2, (dz1 + eave) / 2), (t, dy1 - dy0, eave - dz1), "concrete")
     for y in (y0, y1):  # gable triangles
         bm = bmesh.new()
         vs = [bm.verts.new(v) for v in ((x0, y - t / 2, eave), (x1, y - t / 2, eave), (0, y - t / 2, ridge),
@@ -520,15 +526,143 @@ def loading_docks():
     windows_x(c, x0 + 1, x1 - 1, y0 - 0.3, 5.8, 7.2, 10)
 
 
+ADMIN = dict(x0=48.0, x1=72.0, y0=31.0, y1=45.0, floor=3.75, floors=3)
+
+
 def admin_block():
+    """
+    Admin block (overview) with the wrecked office of the phase 4 sheet on the top floor: broken industrial window
+    in the south wall, door in the west wall onto a grating walkway that crosses to the production hall's gantry.
+    Absolute coordinates (not moved by LAYOUT) so the walkway lines up with the hall's east door.
+    """
     c = coll("AdminBlock")
-    x0, x1, y0, y1, h = 58, 82, 28, 42, 12
-    box("Admin", c, ((x0 + x1) / 2, (y0 + y1) / 2, h / 2), (x1 - x0, y1 - y0, h), "concrete_light")
-    box("Admin_Roof", c, ((x0 + x1) / 2, (y0 + y1) / 2, h + 0.3), (x1 - x0 + 0.6, y1 - y0 + 0.6, 0.6), "roof")
-    for z0 in (1.5, 5.5, 9.3):
-        windows_x(c, x0 + 1, x1 - 1, y0 - 0.3, z0, z0 + 1.9, 8)
-        windows_y(c, y0 + 1, y1 - 1, x0 - 0.3, z0, z0 + 1.9, 4)
-    box("AdminDoor", c, ((x0 + x1) / 2, y0 - 0.2, 1.3), (2.2, 0.3, 2.6), "door")
+    x0, x1, y0, y1, fh, n = ADMIN["x0"], ADMIN["x1"], ADMIN["y0"], ADMIN["y1"], ADMIN["floor"], ADMIN["floors"]
+    top = fh * n
+    t = 0.35
+    oz = fh * (n - 1)                        # office floor level (= hall gantry, 7.5 m)
+    ox0, ox1, oy0, oy1 = x0, 56.0, y0, 38.0  # office room (south-west corner of the top floor)
+    door_y = (33.0, 34.3)
+    win_x = (49.6, 55.2)
+
+    # --- outer walls (openings: office window in the south wall, office door in the west wall, ground entrance)
+    def wall_x(name, y, xa, xb, openings):
+        """Wall along X at y with openings [(xa, xb, z0, z1)]; built as solid pieces around each opening."""
+        cuts = sorted(openings)
+        xs = xa
+        for (a, b, z0, z1) in cuts:
+            if a > xs:
+                box(name, c, ((xs + a) / 2, y, top / 2), (a - xs, t, top), "concrete_light")
+            box(name, c, ((a + b) / 2, y, z0 / 2), (b - a, t, z0), "concrete_light")
+            box(name, c, ((a + b) / 2, y, (z1 + top) / 2), (b - a, t, top - z1), "concrete_light")
+            xs = b
+        if xb > xs:
+            box(name, c, ((xs + xb) / 2, y, top / 2), (xb - xs, t, top), "concrete_light")
+
+    def wall_y(name, x, ya, yb, openings):
+        cuts = sorted(openings)
+        ys = ya
+        for (a, b, z0, z1) in cuts:
+            if a > ys:
+                box(name, c, (x, (ys + a) / 2, top / 2), (t, a - ys, top), "concrete_light")
+            box(name, c, (x, (a + b) / 2, z0 / 2), (t, b - a, z0), "concrete_light")
+            box(name, c, (x, (a + b) / 2, (z1 + top) / 2), (t, b - a, top - z1), "concrete_light")
+            ys = b
+        if yb > ys:
+            box(name, c, (x, (ys + yb) / 2, top / 2), (t, yb - ys, top), "concrete_light")
+
+    wall_x("Admin_S", y0, x0, x1, [(win_x[0], win_x[1], oz + 1.0, oz + 3.3), (63.0, 65.2, 0.0, 2.6)])
+    wall_x("Admin_N", y1, x0, x1, [])
+    wall_y("Admin_W", x0, y0, y1, [(door_y[0], door_y[1], oz, oz + 2.3)])
+    wall_y("Admin_E", x1, y0, y1, [])
+    for k in range(n + 1):                   # floor slabs + roof, belt courses outside
+        z = k * fh
+        box("Slab", c, ((x0 + x1) / 2, (y0 + y1) / 2, z), (x1 - x0, y1 - y0, 0.25), "concrete")
+        box("Belt", c, ((x0 + x1) / 2, y0 - 0.25, z), (x1 - x0 + 0.4, 0.2, 0.3), "concrete")
+    box("Parapet_S", c, ((x0 + x1) / 2, y0, top + 0.5), (x1 - x0, t, 1.0), "concrete_light")
+    box("Parapet_N", c, ((x0 + x1) / 2, y1, top + 0.5), (x1 - x0, t, 1.0), "concrete_light")
+    box("Parapet_W", c, (x0, (y0 + y1) / 2, top + 0.5), (t, y1 - y0, 1.0), "concrete_light")
+    box("Parapet_E", c, (x1, (y0 + y1) / 2, top + 0.5), (t, y1 - y0, 1.0), "concrete_light")
+    box("RoofVent", c, (66, 40, top + 0.7), (2.2, 1.6, 1.2), "steel")
+
+    # --- facade windows (dark panes) on every floor except the office window
+    for k in range(n):
+        z0 = k * fh + 1.0
+        for i in range(9):
+            wx = x0 + 1.4 + i * 2.55
+            if k == n - 1 and win_x[0] - 1 < wx < win_x[1] + 1:
+                continue
+            if k == 0 and 62 < wx < 66:
+                continue
+            box("Win", c, (wx, y0 - 0.2, z0 + 1.1), (1.7, 0.12, 2.0), "window", outline=False)
+            box("Win", c, (wx, y1 + 0.2, z0 + 1.1), (1.7, 0.12, 2.0), "window", outline=False)
+        for j in range(5):
+            wy = y0 + 1.6 + j * 2.6
+            box("Win", c, (x1 + 0.2, wy, z0 + 1.1), (0.12, 1.7, 2.0), "window", outline=False)
+            if not (k == n - 1 and door_y[0] - 1 < wy < door_y[1] + 1):
+                box("Win", c, (x0 - 0.2, wy, z0 + 1.1), (0.12, 1.7, 2.0), "window", outline=False)
+    box("EntranceDoor", c, (64.1, y0 + 0.05, 1.3), (2.0, 0.12, 2.6), "door")
+    box("EntranceCanopy", c, (64.1, y0 - 1.0, 2.9), (3.4, 2.0, 0.2), "concrete")
+
+    # --- office room: partitions, industrial window grid (some panes broken), door, finishes, fixtures
+    box("Office_N", c, ((ox0 + ox1) / 2, oy1, oz + fh / 2), (ox1 - ox0, 0.2, fh), "concrete")
+    box("Office_E", c, (ox1, (oy0 + oy1) / 2, oz + fh / 2), (0.2, oy1 - oy0, fh), "concrete")
+    wz0, wz1 = oz + 1.0, oz + 3.3
+    for i in range(7):                        # window mullions and transoms
+        xx = win_x[0] + i * (win_x[1] - win_x[0]) / 6
+        box("Mullion", c, (xx, y0, (wz0 + wz1) / 2), (0.07, 0.12, wz1 - wz0), "steel", outline=False)
+    for j in range(5):
+        zz = wz0 + j * (wz1 - wz0) / 4
+        box("Transom", c, ((win_x[0] + win_x[1]) / 2, y0, zz), (win_x[1] - win_x[0], 0.12, 0.07), "steel", outline=False)
+    import random
+    rnd = random.Random(4)
+    for i in range(6):                        # the panes that survived (dirty glass)
+        for j in range(4):
+            if rnd.random() < 0.45:
+                cx = win_x[0] + (i + 0.5) * (win_x[1] - win_x[0]) / 6
+                cz = wz0 + (j + 0.5) * (wz1 - wz0) / 4
+                box("Pane", c, (cx, y0 + 0.02, cz), ((win_x[1] - win_x[0]) / 6 - 0.08, 0.03, (wz1 - wz0) / 4 - 0.08), "window", outline=False)
+    box("OfficeDoorLeaf", c, (x0 + 0.55, door_y[1] + 0.05, oz + 1.12), (1.1, 0.06, 2.2), "door")   # swung open inward
+    box("OfficeDoorFrame", c, (x0, (door_y[0] + door_y[1]) / 2, oz + 2.35), (0.4, door_y[1] - door_y[0] + 0.2, 0.12), "steel")
+    box("Radiator", c, (52.4, y0 + 0.35, oz + 0.55), (1.6, 0.16, 0.8), "tank")
+    for i in range(12):
+        box("RadiatorFin", c, (51.7 + i * 0.13, y0 + 0.35, oz + 0.55), (0.04, 0.2, 0.78), "steel", outline=False)
+    for i, (px, col) in enumerate(((ox1 - 0.12, "helipad"), (ox1 - 0.12, "white"))):
+        box("Poster", c, (px, 35.0 + i * 1.3, oz + 2.0), (0.02, 0.9, 1.25), col, outline=False)
+    box("Poster", c, (51.0, oy1 - 0.12, oz + 2.1), (1.0, 0.02, 1.3), "hazard", outline=False)
+    box("Slogan", c, (53.8, oy1 - 0.12, oz + 3.1), (3.2, 0.02, 0.45), "brick", outline=False)
+    # chair, papers, bulb, ceiling pipes
+    box("ChairSeat", c, (52.9, 35.2, oz + 0.45), (0.45, 0.45, 0.05), "wood")
+    box("ChairBack", c, (52.9, 35.45, oz + 0.75), (0.45, 0.05, 0.55), "wood")
+    for dx in (-0.2, 0.2):
+        for dy in (-0.2, 0.2):
+            beam("ChairLeg", c, (52.9 + dx, 35.2 + dy, oz), (52.9 + dx, 35.2 + dy, oz + 0.45), 0.02, "steel")
+    for i in range(40):
+        box("Paper", c, (ox0 + 0.8 + rnd.random() * (ox1 - ox0 - 1.6), oy0 + 0.8 + rnd.random() * (oy1 - oy0 - 1.6), oz + 0.14),
+            (0.21, 0.29, 0.01), "white", yaw=rnd.uniform(0, 180), outline=False)
+    beam("BulbCord", c, (53, 35, top - 0.1), (53, 35, top - 0.9), 0.01, "steel")
+    cyl("Bulb", c, (53, 35, top - 1.05), 0.06, 0.15, "white", sides=8)
+    pipe_run("CeilingPipe", c, [(x0 + 0.4, 37.4, top - 0.35), (ox1 - 0.3, 37.4, top - 0.35)], 0.07, "steel")
+    pipe_run("CeilingPipe", c, [(x0 + 0.4, 37.1, top - 0.5), (ox1 - 0.3, 37.1, top - 0.5)], 0.05, "rust")
+
+    # prop markers (Tripo models from the phase 4 crops)
+    def marker(kind, x, y, z, yaw):
+        e = bpy.data.objects.new("PROP_%s_%d" % (kind, len([o for o in c.objects if o.name.startswith("PROP_" + kind)])), None)
+        e.empty_display_type = "ARROWS"
+        e.location = (x, y, z)
+        e.rotation_euler.z = math.radians(yaw)
+        c.objects.link(e)
+    marker("Cabinets", ox0 + 0.9, 35.6, oz + 0.12, -90)
+    marker("Shelf", 49.8, oy1 - 0.5, oz + 0.12, 180)
+    marker("Desk", 53.2, 34.4, oz + 0.12, 0)
+
+    # --- the walkway from the office door to the production hall's east door (phase 4: "conexión a la nave")
+    hx = LAYOUT["ProductionHall"][0] + HALL["x1"]
+    hy = LAYOUT["ProductionHall"][1] - (HALL["y0"] + HALL["y1"]) / 2
+    wy = (door_y[0] + door_y[1]) / 2
+    assert abs((hy + sum(HALL_DOOR_Y) / 2) - wy) < 0.01, "office door and hall door must line up"
+    truss("OfficeWalkway", c, (x0 - 0.2, wy, oz), (hx + 0.4, wy, oz), 1.15, 1.8)
+    for xx in (hx + 8, hx + 17, hx + 25):
+        trestle("OfficeWalkwayLeg", c, (xx, wy, oz - 0.15), oz - 0.15)
 
 
 def power_plant():
@@ -642,7 +776,7 @@ def camera_views():
 # (24 mm, from the south looking north). Per landmark: absolute footprint centre (x, y) and scale about it.
 LAYOUT = {
     "ProductionHall": (-4, 38, 1.0), "BoilerHouse": (-40, 34, 1.0), "Walkways": (12, 2, 1.45),
-    "LoadingDocks": (31, -2, 1.2), "WasteStorage": (6, -52, 1.0), "AdminBlock": (60, 38, 1.0), "MainEntry": (-40, -20, 1.0), "Silos": (-44, 18, 1.15),
+    "LoadingDocks": (31, -2, 1.2), "WasteStorage": (6, -52, 1.0), "MainEntry": (-40, -20, 1.0), "Silos": (-44, 18, 1.15),
     "Bunker": (-22, -46, 0.9), "FuelTanks": (-8, -42, 0.8), "Extraction": (40, 60, 1.0),
     "Chimneys": (-46, 62, 1.0), "PowerPlant": (52, -20, 0.8),
 }
