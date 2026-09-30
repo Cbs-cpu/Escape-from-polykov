@@ -22,5 +22,5 @@ MonoBehaviour:
     LengthAddM: 0.01
     LoudnessMultiplier: 1
     MuzzleFlashMultiplier: 1
-  Prefab: {fileID: 100100000, guid: f2ad3f28c9026e64c9073089e9f861bb, type: 3}
+  Prefab: {fileID: 919132149155446097, guid: f2ad3f28c9026e64c9073089e9f861bb, type: 3}
   MuzzleSocketName: 
