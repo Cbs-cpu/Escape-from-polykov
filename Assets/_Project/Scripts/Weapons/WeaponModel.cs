@@ -293,6 +293,30 @@ namespace Polykov.Weapons
             return EffectiveMuzzle;
         }
 
+        /// <summary>World point where the given modding slot sits on the model (armorer connection lines).</summary>
+        public Vector3 AnchorFor(AttachmentSlot slot)
+        {
+            switch (slot)
+            {
+                case AttachmentSlot.Muzzle:
+                    return (EffectiveMuzzle != null ? EffectiveMuzzle : Muzzle != null ? Muzzle : transform).position;
+                case AttachmentSlot.Barrel:
+                {
+                    Transform barrel = FindIn(transform, "M1911_Barrel");
+                    if (barrel != null) return barrel.position;
+                    return (Slide != null ? Slide : transform).position;
+                }
+                case AttachmentSlot.Grips:
+                {
+                    Transform grips = FindIn(transform, "M1911_Grip_R");
+                    if (grips != null) return grips.position;
+                    return (GripCenter != null ? GripCenter : transform).position;
+                }
+                default:
+                    return (Magazine != null ? Magazine : transform).position;
+            }
+        }
+
         /// <summary>The device's own muzzle socket, or a point at the front of its mesh along the bore.</summary>
         private Transform FindMuzzleSocket(Transform device, string socketName, Vector3 origin)
         {

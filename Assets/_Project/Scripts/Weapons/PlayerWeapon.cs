@@ -65,15 +65,7 @@ namespace Polykov.Weapons
         /// <summary>Raised on every shot with its loudness (1 = unsuppressed), for audio.</summary>
         public event System.Action<float> ShotHeard;
 
-        public string BuildPrefsKey
-        {
-            get
-            {
-                string n = definition.name;
-                if (n.StartsWith("WD_")) n = n.Substring(3);
-                return "weaponBuild." + n.ToLowerInvariant();
-            }
-        }
+        public string BuildPrefsKey => WeaponBuildStore.KeyFor(definition);
 
         public WeaponDefinition Definition => definition;
         public WeaponState State => _state;

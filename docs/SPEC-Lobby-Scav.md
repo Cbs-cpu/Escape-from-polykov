@@ -176,7 +176,7 @@ Todo lo demás (UI, reacción física, sangre, ragdoll, IA en escena) se valida 
 | 1. LoadoutRules + datos + tests | HECHO | Weapons/Simulation (AttachmentCatalog, WeaponBuild, LoadoutRules), AD_*.asset |
 | 2. Silenciador + cañón roscado | HECHO | ArtSource/Tools/build_m1911_attachments.py (35x190 mm). Re-exportar para incluir Socket_SuppressorMuzzle (hoy se crea en runtime) |
 | 3. Montaje en partida | HECHO | PlayerWeapon.ApplyBuild, boca efectiva, fogonazo suprimido, F9 debug (antes F7, chocaba con el simulador de red) |
-| 4. Lobby + armero (estilo Tarkov) | PENDIENTE | Menú principal Tarkov, pantalla de modding: arma centrada, slots con líneas, lista de piezas, stats |
+| 4. Lobby + armero (estilo Tarkov) | HECHO (sin probar en Unity) | Menú principal Tarkov, pantalla de modding: arma centrada, slots con líneas, lista de piezas, stats |
 | 5. Modelo del Vagabundo | HECHO | Assets/_Project/Art/Characters/Scav/Scav.fbx (mismo esqueleto, 18 clips). Falta: import humanoide (el postprocesador solo cubre Operator), materiales URP + outline, prefab |
 | 6. WoundModel + tests | HECHO | Combat/Simulation/Wound.cs, DamageResult.Overflow |
 | 7. Reacción física por hueso | HECHO | Combat/HitReactor.cs (versión local, probada en Unity) |

@@ -1,0 +1,18 @@
+{
+    "name": "Polykov.Lobby",
+    "rootNamespace": "Polykov.Lobby",
+    "references": [
+        "Polykov.Core",
+        "Polykov.Weapons",
+        "Polykov.Weapons.Simulation"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

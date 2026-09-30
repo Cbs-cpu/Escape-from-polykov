@@ -158,3 +158,11 @@ cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el comm
   se acerca más a lo que buscas (o qué mezclar). El asset no se modifica.
 - El FOV del asset `CameraSettings` ya no se usa: ahora es un ajuste del jugador.
 
+
+## Lobby + armero (paso 4)
+- Nueva escena `Scenes/Lobby.unity` (primera en Build Settings). Menú **ENTRAR AL JUEGO** (carga `MovementTestArena` con fundido) y **ARMERO**.
+  Menú *Polykov → Play from Lobby* hace que Play arranque siempre en el lobby. En la pausa hay **Volver al lobby**.
+- Armero: arrastra para orbitar, rueda para zoom, cajas por slot con líneas al anclaje, panel de stats con deltas verde/rojo,
+  lista de piezas con avisos "monta también / quita", RESTABLECER. Se guarda solo (PlayerPrefs) y la partida aplica el montaje.
+- Qué revisar: que el personaje y el arma salgan bien encuadrados y el silenciador aparezca al elegirlo; Esc vuelve al menú principal.
+  Si la escena sale vacía, dime el error de consola (la escena se regenera con `python3 Tools/make_lobby_scene.py`).

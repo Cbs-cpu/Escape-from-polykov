@@ -27,6 +27,8 @@ namespace Polykov.UI
         private GUIStyle _small;
         private float _scale = 1f;
 
+        private const string LobbySceneName = "Lobby";
+
         private void OnEnable() => cursor.ClickToResume = false;
         private void OnDisable() => cursor.ClickToResume = true;
 
@@ -106,6 +108,11 @@ namespace Polykov.UI
                             "F1 debug · F2 perfil · F3 dianas · F4 munición · F6 simular red (F7 empujar, F8 marcador) · F9 silenciador · F10 desmembrar (pruebas)", _small);
 
             GUILayout.FlexibleSpace();
+            if (Application.CanStreamedLevelBeLoaded(LobbySceneName) && GUILayout.Button("Volver al lobby", GUILayout.Height(30f)))
+            {
+                UserSettings.Flush();
+                UnityEngine.SceneManagement.SceneManager.LoadScene(LobbySceneName);
+            }
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Restablecer ajustes", GUILayout.Height(30f))) UserSettings.ResetToDefaults();
             if (GUILayout.Button("Reanudar", GUILayout.Height(30f)))

@@ -28,3 +28,5 @@ Marca cada punto con `[x]` al terminarlo.
 - [ ] **Fase 2 — integrar transporte** siguiendo `docs/NETWORKING.md` → "Siguiente": paquetes NGO + Transport,
       `NetworkPlayer`, `UnityPlayerSimulator`, overlay MULTIPLAYER DEBUG, build de servidor dedicado. La lógica pura
       (predicción, reconciliación, cola de inputs, interpolación, codec) ya está hecha y testeada en `Scripts/Netcode`.
+- [ ] **Lobby** (Unity): abrir `Scenes/Lobby.unity`, Play; comprobar referencias del `LobbyController` (arma, materiales, Operator),
+      encuadre de cámara y que Build Settings tenga Lobby (0) + MovementTestArena. Reimportar `Scav.fbx` (readable) para el desmembramiento.
