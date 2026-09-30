@@ -309,12 +309,26 @@ namespace Polykov.Weapons
                 case AttachmentSlot.Grips:
                 {
                     Transform grips = FindIn(transform, "M1911_Grip_R");
-                    if (grips != null) return grips.position;
+                    if (grips != null) return CenterOf(grips);
                     return (GripCenter != null ? GripCenter : transform).position;
                 }
                 default:
-                    return (Magazine != null ? Magazine : transform).position;
+                {
+                    // The base plate: the magazine's centre hides inside the grip, next to the grips anchor.
+                    if (Magazine == null) return transform.position;
+                    Renderer renderer = Magazine.GetComponent<Renderer>();
+                    if (renderer == null) return Magazine.position;
+                    Bounds b = renderer.bounds;
+                    return new Vector3(b.center.x, b.min.y + 0.008f, b.center.z);
+                }
             }
+        }
+
+        /// <summary>Centre of the part's mesh (its pivot can sit at an edge, e.g. the magazine's at the top of the well).</summary>
+        private static Vector3 CenterOf(Transform part)
+        {
+            Renderer renderer = part.GetComponent<Renderer>();
+            return renderer != null ? renderer.bounds.center : part.position;
         }
 
         /// <summary>The device's own muzzle socket, or a point at the front of its mesh along the bore.</summary>

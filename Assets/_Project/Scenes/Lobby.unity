@@ -14,12 +14,12 @@ OcclusionCullingSettings:
 RenderSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 10
-  m_Fog: 0
-  m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}
-  m_FogMode: 3
+  m_Fog: 1
+  m_FogColor: {r: 0.035, g: 0.038, b: 0.04, a: 1}
+  m_FogMode: 1
   m_FogDensity: 0.01
-  m_LinearFogStart: 0
-  m_LinearFogEnd: 300
+  m_LinearFogStart: 6
+  m_LinearFogEnd: 13
   m_AmbientSkyColor: {r: 0.43529412, g: 0.46666667, b: 0.5019608, a: 1}
   m_AmbientEquatorColor: {r: 0.3019608, g: 0.3254902, b: 0.34509805, a: 1}
   m_AmbientGroundColor: {r: 0.17254902, g: 0.18039216, b: 0.1882353, a: 1}

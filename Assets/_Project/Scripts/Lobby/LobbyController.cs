@@ -35,7 +35,11 @@ namespace Polykov.Lobby
         private bool _slotChosen;
 
         // Camera
-        private float _yaw = -90f, _pitch = 8f, _distance = 0.75f;
+        private float _yaw = -90f, _pitch = 8f, _zoom = 1f;
+        // Share of the screen width the weapon fills at zoom 1 (the orbit area between the panels is ~58 %; the rest
+        // is room for the slot callouts).
+        private const float WeaponScreenShare = 0.36f;
+        private const float ArmorerFov = 28f;
         private float _characterYaw = 165f;
         private Vector3 _cameraPosition, _lookAt;
         private float _fov = 30f;
@@ -48,8 +52,9 @@ namespace Polykov.Lobby
         private float _messageUntil;
         private float _savedFlash;
 
-        private static readonly Vector3 MainCameraPosition = new Vector3(0f, 1.32f, -3.55f);
-        private static readonly Vector3 MainLookAt = new Vector3(0f, 0.98f, 0f);
+        // Full body in frame (feet on the stand), character centred between the two equipment columns.
+        private static readonly Vector3 MainCameraPosition = new Vector3(0f, 1.15f, -4.7f);
+        private static readonly Vector3 MainLookAt = new Vector3(0f, 0.9f, 0f);
 
         private void Awake()
         {
@@ -66,6 +71,8 @@ namespace Polykov.Lobby
 
             _stage = new LobbyStage(definition, weaponModelPrefab, weaponMaterial, outlineMaterial, characterModel,
                 characterController, characterMaterial);
+            _stage.BuildFloor(characterMaterial, LobbyTheme.Background);
+            _stage.BuildBackdrop(characterMaterial);
             _factory = definition.DefaultBuild;
             _build = WeaponBuildStore.Load(definition);
             if (!LoadoutRules.Validate(_build, _stage.Catalog).IsValid) _build = _factory;
@@ -82,13 +89,16 @@ namespace Polykov.Lobby
         private void BuildLights()
         {
             // A warm key from above-front and a cool rim from behind, on top of the scene's directional light.
-            AddLight("KeyLight", LightType.Spot, new Vector3(-1.4f, 3.2f, -2.2f), new Vector3(58f, 24f, 0f), new Color(1f, 0.93f, 0.8f), 5.5f, 9f, 55f);
+            Light key = AddLight("KeyLight", LightType.Spot, new Vector3(-1.4f, 3.2f, -2.2f), new Vector3(58f, 24f, 0f), new Color(1f, 0.93f, 0.8f), 5.5f, 9f, 55f);
+            // The key light grounds the character with a soft shadow on the stand.
+            key.shadows = LightShadows.Soft;
+            key.shadowStrength = 0.75f;
             AddLight("RimLight", LightType.Spot, new Vector3(1.6f, 2.4f, 2.4f), new Vector3(35f, 220f, 0f), new Color(0.55f, 0.7f, 1f), 3.2f, 8f, 60f);
             AddLight("WeaponKey", LightType.Spot, LobbyStage.WeaponOrigin + new Vector3(0.9f, 1.4f, -1.0f), new Vector3(50f, -40f, 0f), new Color(1f, 0.94f, 0.82f), 4.5f, 6f, 60f);
             AddLight("WeaponFill", LightType.Point, LobbyStage.WeaponOrigin + new Vector3(-0.9f, 0.4f, -0.8f), Vector3.zero, new Color(0.6f, 0.7f, 0.9f), 1.2f, 4f, 0f);
         }
 
-        private void AddLight(string name, LightType type, Vector3 position, Vector3 euler, Color color, float intensity, float range, float angle)
+        private Light AddLight(string name, LightType type, Vector3 position, Vector3 euler, Color color, float intensity, float range, float angle)
         {
             var go = new GameObject(name);
             go.transform.SetParent(transform, false);
@@ -100,6 +110,7 @@ namespace Polykov.Lobby
             light.range = range;
             if (type == LightType.Spot) light.spotAngle = angle;
             light.shadows = LightShadows.None;
+            return light;
         }
 
         // ------------------------------------------------------------------------------------------------ camera
@@ -117,12 +128,21 @@ namespace Polykov.Lobby
             }
             else
             {
+                // Framed on the CURRENT build: a suppressor moves the pivot forward and the camera back so it all fits.
                 Vector3 pivot = _stage.WeaponPivot;
                 _lookAt = pivot;
-                _cameraPosition = pivot + Quaternion.Euler(_pitch, _yaw, 0f) * new Vector3(0f, 0f, -_distance);
-                _fov = 28f;
+                _cameraPosition = pivot + Quaternion.Euler(_pitch, _yaw, 0f) * new Vector3(0f, 0f, -FitDistance() * _zoom);
+                _fov = ArmorerFov;
             }
             ApplyCamera(1f - Mathf.Exp(-9f * Time.unscaledDeltaTime));
+            _stage.PlaceBackdrop(stageCamera.transform.position);
+        }
+
+        /// <summary>Camera distance at which the weapon's longest side fills <see cref="WeaponScreenShare"/> of the width.</summary>
+        private float FitDistance()
+        {
+            float halfWidth = Mathf.Tan(ArmorerFov * 0.5f * Mathf.Deg2Rad) * Mathf.Max(stageCamera.aspect, 1f);
+            return _stage.WeaponSize / (2f * halfWidth * WeaponScreenShare);
         }
 
         private void ApplyCamera(float t)
@@ -196,28 +216,36 @@ namespace Polykov.Lobby
 
         private void DrawEquipment(float w, float h)
         {
-            // Slots around the character (the character itself is rendered by the 3D camera in the middle).
-            string[] left = { "CABEZA", "CASCO", "CARA", "TORSO" };
-            string[] right = { "CHALECO", "MOCHILA", "ARMA PRINCIPAL", "CUERPO A CUERPO" };
+            // Slots around the character (the character itself is rendered by the 3D camera in the middle), like the
+            // Tarkov character screen: gear on the left, weapons on the right. Only the holster holds something today.
+            string[] left = { "CASCO", "CARA", "CHALECO", "MOCHILA" };
+            string[] right = { "ARMA PRINCIPAL", "ARMA SECUNDARIA", "PISTOLERA", "CUERPO A CUERPO" };
             float top = 150f, sh = 86f, gap = 14f, sw = 210f;
-            for (int i = 0; i < left.Length; i++) Slot(new Rect(w * 0.5f - 420f, top + i * (sh + gap), sw, sh), left[i], null);
-            for (int i = 0; i < right.Length; i++) Slot(new Rect(w * 0.5f + 210f, top + i * (sh + gap), sw, sh), right[i], null);
-            // The pistol is the one slot with something in it.
-            string label = definition.DisplayName + (_build.Muzzle != null ? "  +  silenciador" : string.Empty);
-            var pistol = new Rect(w * 0.5f - 105f, h - 190f, 210f, sh + 20f);
-            Slot(pistol, "PISTOLA", label);
-            if (pistol.Contains(Event.current.mousePosition) && GUI.Button(pistol, GUIContent.none, GUIStyle.none)) _screen = Screen.Armorer;
+            for (int i = 0; i < left.Length; i++) Slot(new Rect(w * 0.5f - 440f, top + i * (sh + gap), sw, sh), left[i], null);
+            for (int i = 0; i < right.Length; i++)
+            {
+                var r = new Rect(w * 0.5f + 230f, top + i * (sh + gap), sw, sh);
+                if (i != HolsterSlot) { Slot(r, right[i], null); continue; }
+                string label = definition.DisplayName + (_build.Muzzle != null ? "  +  silenciador" : string.Empty);
+                bool hover = r.Contains(Event.current.mousePosition);
+                Slot(r, right[i], label, hover);
+                if (hover && GUI.Button(r, GUIContent.none, GUIStyle.none)) _screen = Screen.Armorer;
+            }
         }
 
-        private static void Slot(Rect r, string name, string content)
+        private const int HolsterSlot = 2;
+
+        private static void Slot(Rect r, string name, string content, bool hover = false)
         {
-            LobbyTheme.Fill(r, new Color(0.07f, 0.075f, 0.08f, 0.82f));
+            LobbyTheme.Fill(r, hover ? new Color(0.13f, 0.12f, 0.085f, 0.9f) : new Color(0.07f, 0.075f, 0.08f, 0.82f));
             LobbyTheme.Frame(r, content == null ? new Color(0.2f, 0.21f, 0.215f) : LobbyTheme.Accent);
             LobbyTheme.Text_(new Rect(r.x + 10f, r.y + 6f, r.width - 20f, 20f), name, LobbyTheme.Small, LobbyTheme.TextDim);
             if (content != null)
                 LobbyTheme.Text_(new Rect(r.x + 10f, r.y + r.height * 0.4f, r.width - 20f, 40f), content, LobbyTheme.Label, LobbyTheme.Text);
             else
                 LobbyTheme.Text_(new Rect(r.x + 10f, r.y + r.height * 0.5f, r.width - 20f, 24f), "vacío · bloqueado", LobbyTheme.Small, new Color(0.33f, 0.33f, 0.32f));
+            if (content != null)
+                LobbyTheme.Text_(new Rect(r.x + 10f, r.yMax - 22f, r.width - 20f, 18f), "clic: armero", LobbyTheme.Small, LobbyTheme.TextDim);
         }
 
         // ------------------------------------------------------------------------------------------------ armorer
@@ -253,8 +281,7 @@ namespace Polykov.Lobby
             }
             else if (e.type == EventType.ScrollWheel)
             {
-                float min = _stage.WeaponSize * 0.9f, max = _stage.WeaponSize * 3.2f;
-                _distance = Mathf.Clamp(_distance + e.delta.y * 0.04f * _stage.WeaponSize, min, max);
+                _zoom = Mathf.Clamp(_zoom + e.delta.y * 0.04f, 0.55f, 2f);
                 e.Use();
             }
         }
@@ -262,24 +289,17 @@ namespace Polykov.Lobby
         private void DrawSlotsAndLines(float w, float h, float scale)
         {
             AttachmentSlot[] slots = { AttachmentSlot.Muzzle, AttachmentSlot.Barrel, AttachmentSlot.Grips, AttachmentSlot.Magazine };
-            // Fixed places around the weapon: muzzle top right, barrel top left, grips bottom left, magazine bottom right.
-            Vector2 center = new Vector2(_orbitArea.center.x, _orbitArea.center.y);
-            Vector2[] boxCenters =
-            {
-                new Vector2(_orbitArea.xMax - 130f, _orbitArea.y + 60f),
-                new Vector2(_orbitArea.x + 130f, _orbitArea.y + 60f),
-                new Vector2(_orbitArea.x + 130f, _orbitArea.yMax - 90f),
-                new Vector2(_orbitArea.xMax - 130f, _orbitArea.yMax - 90f),
-            };
-
             for (int i = 0; i < slots.Length; i++)
             {
                 AttachmentSlot slot = slots[i];
                 Vector3 screen = stageCamera.WorldToScreenPoint(_stage.Weapon.AnchorFor(slot));
                 var anchor = new Vector2(screen.x / scale, (UnityEngine.Screen.height - screen.y) / scale);
                 bool selected = _slotChosen && slot == _selectedSlot;
-                var box = new Rect(boxCenters[i].x - 120f, boxCenters[i].y - 30f, 240f, 60f);
-                Vector2 edge = new Vector2(Mathf.Clamp(anchor.x, box.x, box.xMax), Mathf.Clamp(anchor.y, box.y, box.yMax));
+                // Each box sits next to its part (Tarkov style callouts) and stays inside the orbit area.
+                Vector2 c = anchor + BoxOffsets[i];
+                c.x = Mathf.Clamp(c.x, _orbitArea.x + 130f, _orbitArea.xMax - 130f);
+                c.y = Mathf.Clamp(c.y, _orbitArea.y + 40f, _orbitArea.yMax - 70f);
+                var box = new Rect(c.x - 120f, c.y - 30f, 240f, 60f);
                 if (screen.z > 0f)
                 {
                     LobbyTheme.Line(box.center, anchor, selected ? LobbyTheme.Accent : new Color(0.55f, 0.55f, 0.52f, 0.8f), selected ? 2f : 1.2f);
@@ -294,6 +314,16 @@ namespace Polykov.Lobby
             }
         }
 
+        // Screen offset (1080p units) from a slot's anchor to the centre of its box: muzzle above-right, barrel
+        // above the slide, grips below-left of the grip, magazine below-right of its base plate.
+        private static readonly Vector2[] BoxOffsets =
+        {
+            new Vector2(130f, -190f),
+            new Vector2(-170f, -200f),
+            new Vector2(-270f, 230f),
+            new Vector2(230f, 130f),
+        };
+
         private void DrawStatsPanel(Rect r)
         {
             LobbyTheme.PanelBox(r);
@@ -306,11 +336,11 @@ namespace Polykov.Lobby
             {
                 LobbyTheme.Text_(new Rect(r.x + 18f, y, 170f, 30f), AttachmentLabels.Stat(row.Kind), LobbyTheme.Label, LobbyTheme.Text);
                 Color c = row.Verdict == StatVerdict.Better ? LobbyTheme.Good : row.Verdict == StatVerdict.Worse ? LobbyTheme.Bad : LobbyTheme.TextDim;
-                LobbyTheme.Text_(new Rect(r.x + 180f, y, 100f, 30f), AttachmentLabels.Format(row.Kind, row.Current), LobbyTheme.Right, c);
+                LobbyTheme.Text_(new Rect(r.x + 160f, y, 100f, 30f), AttachmentLabels.Format(row.Kind, row.Current), LobbyTheme.Right, c);
                 if (row.Verdict != StatVerdict.Same)
                 {
                     string delta = (row.Delta > 0f ? "+" : "") + AttachmentLabels.Format(row.Kind, row.Delta);
-                    LobbyTheme.Text_(new Rect(r.x + 240f, y, r.width - 258f, 30f), delta, LobbyTheme.Right, c);
+                    LobbyTheme.Text_(new Rect(r.x + 262f, y, r.width - 280f, 30f), delta, LobbyTheme.Right, c);
                 }
                 y += 34f;
             }

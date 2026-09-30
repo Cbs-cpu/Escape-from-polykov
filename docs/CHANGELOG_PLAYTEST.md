@@ -179,3 +179,15 @@ cómo probarlo y qué debería sentirse**. Si algo no va, dilo indicando el comm
 - Ajuste **Sangre** (pausa): *completa* (todo), *reducida* (menos partículas, máx. 3 miembros sueltos durante 15 s), *desactivada* (sin sangre ni desmembramiento).
 - Límites: 8 miembros sueltos (45 s) en completa, 6 ragdolls simultáneos, efectos de sangre en pools sin allocations.
 - Qué revisar: F10 para provocar desmembramientos y cambiar el nivel de sangre desde la pausa; notar los FPS con varios cadáveres.
+
+## Lobby: arranque y arte (arreglo)
+- **Play arranca siempre en el lobby** (menú *Polykov → Play from Lobby*, activado por defecto). El Operator no aparecía:
+  la escena apuntaba a un fileID incorrecto del FBX (arreglado).
+- Menú principal: cámara más atrás (cuerpo entero), **peana** con aro dorado, suelo oscuro que recoge la luz principal
+  (con sombra suave) y **niebla** para que el suelo se funda con el fondo. La pistola está ahora en el slot **PISTOLERA**
+  (columna derecha, clic → armero) en vez de tapar los pies.
+- Armero: **encuadre automático** según el montaje (con silenciador la cámara se aleja y centra el conjunto), cajas de slot
+  junto a su pieza, anclaje del cargador en su base, **fondo de rejilla** de banco de trabajo detrás del arma, valores y
+  deltas de la tabla ya no se solapan.
+- Previsualización sin Unity: `ArtSource/Tools/render_lobby_preview.py` (Blender, mismos assets/cámara/luces) +
+  `Tools/lobby_ui_mockup.py` (dibuja la interfaz con el layout del código). Es una aproximación: la luz de URP no es idéntica.

@@ -31,3 +31,5 @@ Ver `Tools/README.md`. Todo test nuevo de simulación va en `Assets/_Project/Tes
   scripts leen `POLYKOV_ROOT` para las rutas. Los `.blend`/`.fbx` son LFS: `git lfs pull` antes.
 - `grip_preview.py` replica el IK de manos de Unity sobre el rig real y renderiza el agarre: úsalo para cualquier cambio
   de valores de manos/poses del arma antes de subirlo.
+- `render_lobby_preview.py` + `Tools/lobby_ui_mockup.py` reproducen el lobby (escena + IMGUI) para enseñar capturas sin Unity;
+  si cambias cámara, luces o layout del lobby, actualiza también estos dos scripts.

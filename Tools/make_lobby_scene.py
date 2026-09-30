@@ -4,7 +4,14 @@ import pathlib
 root = pathlib.Path(__file__).resolve().parents[1]
 arena = (root / "Assets/_Project/Scenes/MovementTestArena.unity").read_text()
 header = arena[:arena.index("--- !u!1 &")]
-header = header.replace("m_AmbientMode: 1", "m_AmbientMode: 1")
+# Linear fog in the background colour: the lobby floor fades into the void instead of ending at a hard horizon.
+for old, new in (("m_Fog: 0", "m_Fog: 1"),
+                 ("m_FogColor: {r: 0.5, g: 0.5, b: 0.5, a: 1}", "m_FogColor: {r: 0.035, g: 0.038, b: 0.04, a: 1}"),
+                 ("m_FogMode: 3", "m_FogMode: 1"),
+                 ("m_LinearFogStart: 0", "m_LinearFogStart: 6"),
+                 ("m_LinearFogEnd: 300", "m_LinearFogEnd: 13")):
+    assert old in header, old
+    header = header.replace(old, new)
 body = """--- !u!1 &100
 GameObject:
   m_ObjectHideFlags: 0
