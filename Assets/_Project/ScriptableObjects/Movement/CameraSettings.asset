@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: feec335f3b125ed46a332d9541496ebd, type: 3}
+  m_Name: CameraSettings
+  m_EditorClassIdentifier: Polykov.Camera::Polykov.CameraSystem.CameraSettings
+  NeckHeight: 1.52
+  EyeOffset: {x: 0.11, y: 0.09}
+  BaseFov: 78
+  SprintFovBoost: 4
+  FovSharpness: 6
+  NearClip: 0.05
+  Intensity: 1
+  StrideLength: 0.75
+  VerticalAmplitude: 0.018
+  LateralAmplitude: 0.012
+  RollAmplitude: 0.35
+  BobWeightSharpness: 8
+  StrafeTilt: 0.8
+  TiltSharpness: 7
