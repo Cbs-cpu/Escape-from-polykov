@@ -76,7 +76,6 @@ namespace Polykov.Netcode
             DeliverToClient();
             _smoother.Update(Time.deltaTime);
             motor.VisualOffset = _smoother.Offset;
-            if (_marker != null) _marker.position = _serverBody.Position + Vector3.up * 2.1f;
         }
 
         private void OnDisable() => SetActive(false);
@@ -134,10 +133,12 @@ namespace Polykov.Netcode
             _serverState = new NetPlayerState { Position = motor.transform.position, Movement = motor.State };
 
             var marker = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            Destroy(marker.GetComponent<Collider>());
+            // Immediately: a deferred Destroy would leave a collider inside the player's capsule for a frame.
+            DestroyImmediate(marker.GetComponent<Collider>());
             marker.name = "ServerMarker";
             marker.layer = motor.gameObject.layer;
             marker.transform.SetParent(_serverObject.transform, false);
+            marker.transform.localPosition = Vector3.up * 2.1f;
             marker.transform.localScale = Vector3.one * 0.12f;
             if (markerMaterial != null) marker.GetComponent<Renderer>().sharedMaterial = markerMaterial;
             _marker = marker.transform;
