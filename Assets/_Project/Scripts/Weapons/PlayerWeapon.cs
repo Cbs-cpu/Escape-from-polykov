@@ -21,6 +21,8 @@ namespace Polykov.Weapons
         [SerializeField] private GameObject modelPrefab;
         [Tooltip("Material for every part of the imported model (textured atlas). Empty = remap by material name.")]
         [SerializeField] private Material modelMaterial;
+        [Tooltip("Black unlit material for the model's inverted-hull outline (slots named M_Outline).")]
+        [SerializeField] private Material outlineMaterial;
         [SerializeField] private Material steelMaterial;
         [SerializeField] private Material gripMaterial;
         [SerializeField] private Material steelDarkMaterial;
@@ -68,7 +70,7 @@ namespace Polykov.Weapons
                 GripDark = gripDarkMaterial != null ? gripDarkMaterial : gripMaterial,
                 Brass = brassMaterial != null ? brassMaterial : steelMaterial,
             };
-            if (modelPrefab != null) _model = WeaponModel.CreateFromModel(modelPrefab, transform, gameObject.layer, materials, modelMaterial);
+            if (modelPrefab != null) _model = WeaponModel.CreateFromModel(modelPrefab, transform, gameObject.layer, materials, modelMaterial, outlineMaterial);
             if (_model == null) _model = M1911Builder.Build(transform, steelMaterial, gripMaterial, gameObject.layer);
             ImpactEffects.Material = steelMaterial;
         }

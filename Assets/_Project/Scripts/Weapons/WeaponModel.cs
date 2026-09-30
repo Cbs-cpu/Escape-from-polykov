@@ -172,7 +172,7 @@ namespace Polykov.Weapons
         /// undo any importer axis conversion or unit scale. Returns null if the model lacks the reference points.
         /// </summary>
         public static WeaponModel CreateFromModel(GameObject prefab, Transform parent, int layer, WeaponMaterials materials,
-            Material overrideMaterial = null)
+            Material overrideMaterial = null, Material outlineMaterial = null)
         {
             var root = new GameObject(prefab.name) { layer = layer };
             root.transform.SetParent(parent, false);
@@ -217,7 +217,12 @@ namespace Polykov.Weapons
                 foreach (Renderer renderer in instance.GetComponentsInChildren<Renderer>(true))
                 {
                     Material[] slots = renderer.sharedMaterials;
-                    for (int i = 0; i < slots.Length; i++) slots[i] = overrideMaterial;
+                    for (int i = 0; i < slots.Length; i++)
+                    {
+                        // Inverted-hull outline slots (source material "M_Outline") keep their own black material.
+                        bool outline = slots[i] != null && slots[i].name.Contains("Outline");
+                        slots[i] = outline ? (outlineMaterial != null ? outlineMaterial : slots[i]) : overrideMaterial;
+                    }
                     renderer.sharedMaterials = slots;
                 }
             }

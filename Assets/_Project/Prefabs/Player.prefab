@@ -367,9 +367,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Polykov.Player::Polykov.Player.PlayerLook
   input: {fileID: 4144601793569417081}
-  mouseSensitivity: 0.08
   stickSensitivity: {x: 220, y: 150}
-  invertY: 0
   minPitch: -85
   maxPitch: 85
 --- !u!114 &8327803297820930270
@@ -394,6 +392,7 @@ MonoBehaviour:
     m_Bits: 4294967039
   groundProbeDistance: 0.08
   groundSnapDistance: 0.4
+  crouchHeight: 1.3
 --- !u!114 &3173978429965695727
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -423,6 +422,212 @@ MonoBehaviour:
   look: {fileID: 4148688137752740380}
   visible: 1
   refreshRate: 10
+--- !u!114 &5624644235840211692
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd67f808e37f4a89ad8ad47f412fe893, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.UI::Polykov.UI.PauseMenu
+  cursor: {fileID: 3173978429965695727}
+  motor: {fileID: 8327803297820930270}
+--- !u!114 &6872715214061853040
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa9d4eb9b9ce4ae69eb3c8e564f5a56c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.PlayerWeapon
+  definition: {fileID: 11400000, guid: 982d6e938cdf451ba5c842df53189bed, type: 2}
+  motor: {fileID: 8327803297820930270}
+  input: {fileID: 4144601793569417081}
+  eye: {fileID: 534249625826917619}
+  hitMask:
+    serializedVersion: 2
+    m_Bits: 4294967039
+  modelPrefab: {fileID: 919132149155446097, guid: e9be28d5ae53bd6429e56dfe4893a1bf, type: 3}
+  modelMaterial: {fileID: 2100000, guid: 5e33ba6a3ff97ea49a967d2ccda621b2, type: 2}
+  outlineMaterial: {fileID: 2100000, guid: 4b8b05f17c45ce84382d0a36d6524186, type: 2}
+  steelMaterial: {fileID: 2100000, guid: effb0ac2631147ac84d1838f69d6785f, type: 2}
+  gripMaterial: {fileID: 2100000, guid: 227f4cbd0d9643338e50126a387c67f5, type: 2}
+  steelDarkMaterial: {fileID: 2100000, guid: 6410bd5633134544bbf631d0600e4452, type: 2}
+  gripDarkMaterial: {fileID: 2100000, guid: f383dd6b8ca149ddb327e8d5604d0ca7, type: 2}
+  brassMaterial: {fileID: 2100000, guid: c16a8dcef9214ff889919bc8a70b7e8d, type: 2}
+  seed: 1
+--- !u!114 &2857793633178794872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dff859063bc2488784635ed6c4a434ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Animation::Polykov.Animation.HandIK
+  animator: {fileID: 3380824778610415095}
+  rightElbowHint: {x: 0.45, y: -0.5, z: -0.2}
+  leftElbowHint: {x: -0.45, y: -0.5, z: -0.2}
+  gripCurl: 72
+  triggerFingerCurl: 28
+  supportCurl: 62
+  thumbCurl: 8
+--- !u!114 &7618172566341199421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c0e1e503ccf443d3b6c4af349c4b32bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.CameraRecoil
+  weapon: {fileID: 6872715214061853040}
+  look: {fileID: 4148688137752740380}
+--- !u!114 &8277110902143749282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 09defbdcf53a46ffa306a7b9ec0beb29, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponPresenter
+  weapon: {fileID: 6872715214061853040}
+  motor: {fileID: 8327803297820930270}
+  look: {fileID: 4148688137752740380}
+  cameraRig: {fileID: 1498527156555506878}
+  hands: {fileID: 2857793633178794872}
+  stateSharpness: 14
+  bobStride: 1.5
+--- !u!114 &7947354288216775995
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c213a51cea64f9ea2d0ec6cac76ffc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.TestRange
+  weapon: {fileID: 6872715214061853040}
+  plateMaterial: {fileID: 2100000, guid: 5240a2027d1b89148afd3f5d73e0c8c1, type: 2}
+  standMaterial: {fileID: 2100000, guid: 4aff5eb66cfbd5042bfceeb4851b7c13, type: 2}
+  distances:
+  - 5
+  - 10
+  - 15
+  - 25
+  groundMask:
+    serializedVersion: 2
+    m_Bits: 4294967039
+  dummyModel: {fileID: 919132149155446097, guid: 2cef109dc5c60fb4ca34168a9182a1f8, type: 3}
+  dummyController: {fileID: 9100000, guid: b99d2f4381d74314f8c0c74f40bb2ff3, type: 2}
+  dummyDistance: 7
+--- !u!114 &4836029443205171434
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 74046f5ade1d41fcb4d3c95be4dc59e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponHud
+  weapon: {fileID: 6872715214061853040}
+  visible: 1
+--- !u!114 &4243366258866668146
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea3d589f7ea348d4b7142f15539aa703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Audio::Polykov.Audio.PlayerAudio
+  motor: {fileID: 8327803297820930270}
+  weapon: {fileID: 6872715214061853040}
+  strideLength: {x: 0.62, y: 1.05}
+  footstepVolume: 0.35
+  crouchFootstepVolume: 0.12
+  gunshotVolume: 0.9
+  handlingVolume: 0.5
+--- !u!114 &8218634897002200831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0d195a7b0be74aaf9c31cb2ba0aab67d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.UI::Polykov.UI.StaminaBar
+  motor: {fileID: 8327803297820930270}
+  size: {x: 220, y: 5}
+--- !u!114 &2805363465361043963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2d42507146c94814bbf113d8c56e0d0d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Netcode.Unity::Polykov.Netcode.LatencySimulator
+  motor: {fileID: 8327803297820930270}
+  look: {fileID: 4148688137752740380}
+  markerMaterial: {fileID: 2100000, guid: 5240a2027d1b89148afd3f5d73e0c8c1, type: 2}
+  latencyMs: 100
+  jitterMs: 10
+  packetLoss: 0.05
+  redundancy: 4
+  serverBufferTicks: 3
+--- !u!114 &4946354579058309595
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7368656362624362212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2a3bae1ee90f48b3a3701b67f7510e30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponEffects
+  weapon: {fileID: 6872715214061853040}
+  motor: {fileID: 8327803297820930270}
+  view: {fileID: 11400000, guid: 43d7e36d772f24e478739061c139ab3d, type: 2}
+  casingPrefab: {fileID: 3619478467975940818, guid: 83fdc3b3c93f5c84a9803e1805ae3015, type: 3}
+  droppedMagazinePrefab: {fileID: 3392027894695469421, guid: 1d54731799ada7842ae6300f8177f1a7, type: 3}
+  casingPoolSize: 24
+  magazinePoolSize: 4
 --- !u!1001 &9187782566456404070
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -780,7 +985,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Polykov.Animation::Polykov.Animation.FootIK
   motor: {fileID: 8327803297820930270}
-  playerAnimator: {fileID: 7878190769245930132}
   groundMask:
     serializedVersion: 2
     m_Bits: 4294967039
@@ -790,6 +994,8 @@ MonoBehaviour:
   rotationWeight: 0.8
   pelvisSharpness: 14
   weightSharpness: 10
+  crouchPelvisDrop: 0.42
+  playerAnimator: {fileID: 7878190769245930132}
 --- !u!114 &4253433745837285474
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -806,7 +1012,9 @@ MonoBehaviour:
   motor: {fileID: 8327803297820930270}
   look: {fileID: 4148688137752740380}
   playerAnimator: {fileID: 7878190769245930132}
-  spinePitchShare: 0.5
+  spinePitchShareDown: 0.2
+  spinePitchShareUp: 0.45
+  crouchSpineBend: 16
   leanAngle: 18
   leanReach: 0.34
   headRadius: 0.14
@@ -819,208 +1027,3 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 2cef109dc5c60fb4ca34168a9182a1f8, type: 3}
   m_PrefabInstance: {fileID: 9187782566456404070}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &5624644235840211692
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd67f808e37f4a89ad8ad47f412fe893, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.UI::Polykov.UI.PauseMenu
-  cursor: {fileID: 3173978429965695727}
-  motor: {fileID: 8327803297820930270}
---- !u!114 &6872715214061853040
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa9d4eb9b9ce4ae69eb3c8e564f5a56c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.PlayerWeapon
-  definition: {fileID: 11400000, guid: 982d6e938cdf451ba5c842df53189bed, type: 2}
-  motor: {fileID: 8327803297820930270}
-  input: {fileID: 4144601793569417081}
-  eye: {fileID: 534249625826917619}
-  hitMask:
-    serializedVersion: 2
-    m_Bits: 4294967039
-  steelMaterial: {fileID: 2100000, guid: effb0ac2631147ac84d1838f69d6785f, type: 2}
-  gripMaterial: {fileID: 2100000, guid: 227f4cbd0d9643338e50126a387c67f5, type: 2}
-  steelDarkMaterial: {fileID: 2100000, guid: 6410bd5633134544bbf631d0600e4452, type: 2}
-  gripDarkMaterial: {fileID: 2100000, guid: f383dd6b8ca149ddb327e8d5604d0ca7, type: 2}
-  brassMaterial: {fileID: 2100000, guid: c16a8dcef9214ff889919bc8a70b7e8d, type: 2}
-  modelPrefab: {fileID: 919132149155446097, guid: 6f6ce305c20bdaf4e86c644968a3f085, type: 3}
-  modelMaterial: {fileID: 2100000, guid: 97ee0213e2e77e14389409c6505e5818, type: 2}
-  seed: 1
---- !u!114 &2857793633178794872
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dff859063bc2488784635ed6c4a434ab, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.Animation::Polykov.Animation.HandIK
-  animator: {fileID: 3380824778610415095}
-  rightElbowHint: {x: 0.45, y: -0.5, z: -0.2}
-  leftElbowHint: {x: -0.45, y: -0.5, z: -0.2}
-  gripCurl: 72
-  triggerFingerCurl: 28
-  supportCurl: 62
-  thumbCurl: 8
---- !u!114 &7618172566341199421
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c0e1e503ccf443d3b6c4af349c4b32bf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.CameraRecoil
-  weapon: {fileID: 6872715214061853040}
-  look: {fileID: 4148688137752740380}
---- !u!114 &8277110902143749282
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 09defbdcf53a46ffa306a7b9ec0beb29, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponPresenter
-  weapon: {fileID: 6872715214061853040}
-  motor: {fileID: 8327803297820930270}
-  look: {fileID: 4148688137752740380}
-  cameraRig: {fileID: 1498527156555506878}
-  hands: {fileID: 2857793633178794872}
-  stateSharpness: 14
-  bobStride: 1.5
---- !u!114 &7947354288216775995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c213a51cea64f9ea2d0ec6cac76ffc5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.Combat::Polykov.Combat.TestRange
-  weapon: {fileID: 6872715214061853040}
-  plateMaterial: {fileID: 2100000, guid: 5240a2027d1b89148afd3f5d73e0c8c1, type: 2}
-  standMaterial: {fileID: 2100000, guid: 4aff5eb66cfbd5042bfceeb4851b7c13, type: 2}
-  distances:
-  - 5
-  - 10
-  - 15
-  - 25
-  groundMask:
-    serializedVersion: 2
-    m_Bits: 4294967039
-  dummyModel: {fileID: 919132149155446097, guid: 2cef109dc5c60fb4ca34168a9182a1f8, type: 3}
-  dummyController: {fileID: 9100000, guid: b99d2f4381d74314f8c0c74f40bb2ff3, type: 2}
-  dummyDistance: 7
---- !u!114 &4836029443205171434
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74046f5ade1d41fcb4d3c95be4dc59e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponHud
-  weapon: {fileID: 6872715214061853040}
-  visible: 1
---- !u!114 &4243366258866668146
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ea3d589f7ea348d4b7142f15539aa703, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.Audio::Polykov.Audio.PlayerAudio
-  motor: {fileID: 8327803297820930270}
-  weapon: {fileID: 6872715214061853040}
-  strideLength: {x: 0.62, y: 1.05}
-  footstepVolume: 0.35
-  crouchFootstepVolume: 0.12
-  gunshotVolume: 0.9
-  handlingVolume: 0.5
---- !u!114 &8218634897002200831
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0d195a7b0be74aaf9c31cb2ba0aab67d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.UI::Polykov.UI.StaminaBar
-  motor: {fileID: 8327803297820930270}
-  size: {x: 220, y: 5}
---- !u!114 &2805363465361043963
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d42507146c94814bbf113d8c56e0d0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.Netcode.Unity::Polykov.Netcode.LatencySimulator
-  motor: {fileID: 8327803297820930270}
-  look: {fileID: 4148688137752740380}
-  markerMaterial: {fileID: 2100000, guid: 5240a2027d1b89148afd3f5d73e0c8c1, type: 2}
-  latencyMs: 100
-  jitterMs: 10
-  packetLoss: 0.05
-  redundancy: 4
-  serverBufferTicks: 3
---- !u!114 &4946354579058309595
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7368656362624362212}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2a3bae1ee90f48b3a3701b67f7510e30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Polykov.Weapons::Polykov.Weapons.WeaponEffects
-  weapon: {fileID: 6872715214061853040}
-  motor: {fileID: 8327803297820930270}
-  view: {fileID: 11400000, guid: 43d7e36d772f24e478739061c139ab3d, type: 2}
-  casingPrefab: {fileID: 3619478467975940818, guid: 83fdc3b3c93f5c84a9803e1805ae3015, type: 3}
-  droppedMagazinePrefab: {fileID: 3392027894695469421, guid: 1d54731799ada7842ae6300f8177f1a7, type: 3}
-  casingPoolSize: 24
-  magazinePoolSize: 4

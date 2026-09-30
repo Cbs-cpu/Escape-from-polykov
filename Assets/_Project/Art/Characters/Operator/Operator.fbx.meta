@@ -34,7 +34,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Crouch_B
       takeName: Operator_Rig|Crouch_B
-      internalID: -4535738255606189048
+      internalID: -3585487635941584373
       firstFrame: 0
       lastFrame: 23
       wrapMode: 0
@@ -43,7 +43,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
@@ -63,7 +63,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Crouch_F
       takeName: Operator_Rig|Crouch_F
-      internalID: -442484624399559095
+      internalID: -5288181724641480353
       firstFrame: 0
       lastFrame: 20
       wrapMode: 0
@@ -72,7 +72,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
@@ -92,7 +92,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Crouch_Idle
       takeName: Operator_Rig|Crouch_Idle
-      internalID: -1653527005155036630
+      internalID: -6180364834151294178
       firstFrame: 0
       lastFrame: 90
       wrapMode: 0
@@ -101,7 +101,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
@@ -121,7 +121,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Crouch_L
       takeName: Operator_Rig|Crouch_L
-      internalID: 1048834410693106062
+      internalID: -2242247241361599847
       firstFrame: 0
       lastFrame: 19
       wrapMode: 0
@@ -130,7 +130,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
@@ -150,7 +150,7 @@ ModelImporter:
     - serializedVersion: 16
       name: Crouch_R
       takeName: Operator_Rig|Crouch_R
-      internalID: 3608738869979482754
+      internalID: -7929767685721711971
       firstFrame: 0
       lastFrame: 19
       wrapMode: 0
@@ -159,7 +159,7 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 1
+      loopTime: 0
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
