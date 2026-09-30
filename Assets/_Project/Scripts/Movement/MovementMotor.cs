@@ -22,7 +22,13 @@ namespace Polykov.Movement
             bool hasInput = magnitude > InputDeadzone;
             Vector2 direction = hasInput ? move / magnitude : Vector2.zero;
 
-            bool sprinting = hasInput && input.Sprint && !input.Walk && !input.Aim && grounded
+            // Crouch: a low ceiling keeps you down even when the key is released.
+            bool crouching = input.Crouch || (state.Crouch > 0.001f && ground.CeilingBlocked);
+            float crouch = Mathf.MoveTowards(state.Crouch, crouching ? 1f : 0f, deltaTime / tuning.CrouchTime);
+
+            bool staminaEnabled = tuning.MaxStamina > 0f;
+            bool exhausted = staminaEnabled && state.Exhausted;
+            bool sprinting = hasInput && input.Sprint && !input.Walk && !input.Aim && grounded && !crouching && !exhausted
                              && direction.y >= Mathf.Cos(tuning.SprintMaxAngle * Mathf.Deg2Rad);
 
             // Lean: sprinting cancels it; leaning slows you down.
@@ -30,6 +36,7 @@ namespace Polykov.Movement
             float lean = Mathf.MoveTowards(state.Lean, leanTarget, deltaTime / tuning.LeanTime);
 
             float baseSpeed = sprinting ? tuning.SprintSpeed : input.Walk ? tuning.WalkSpeed : tuning.RunSpeed;
+            baseSpeed = Mathf.Lerp(baseSpeed, Mathf.Min(baseSpeed, tuning.CrouchSpeed), crouch);
             Quaternion yaw = Quaternion.Euler(0f, input.Yaw, 0f);
             Vector3 worldDirection = yaw * new Vector3(direction.x, 0f, direction.y);
 
@@ -55,7 +62,8 @@ namespace Polykov.Movement
 
             float jumpBuffer = input.Jump ? tuning.JumpBufferTime : Mathf.Max(0f, state.JumpBuffer - deltaTime);
             float coyote = grounded ? tuning.CoyoteTime : Mathf.Max(0f, state.CoyoteTime - deltaTime);
-            bool jump = jumpBuffer > 0f && (grounded || coyote > 0f) && state.VerticalSpeed <= 0f && tuning.JumpHeight > 0f;
+            bool jump = jumpBuffer > 0f && (grounded || coyote > 0f) && state.VerticalSpeed <= 0f && tuning.JumpHeight > 0f
+                        && !crouching && crouch < 0.5f && !exhausted;
 
             float vertical;
             Vector3 velocity;
@@ -78,6 +86,9 @@ namespace Polykov.Movement
                 velocity = planar + Vector3.up * vertical;
             }
 
+            UpdateStamina(state, tuning, sprinting, jump, hasInput, deltaTime,
+                out float staminaUsed, out float regenDelay, out bool nowExhausted);
+
             return new MovementState
             {
                 PlanarVelocity = planar,
@@ -91,7 +102,45 @@ namespace Polykov.Movement
                 JustJumped = jump,
                 JustLanded = landed,
                 LandingImpact = landingImpact,
+                Crouch = crouch,
+                Crouching = crouching,
+                StaminaUsed = staminaUsed,
+                StaminaRegenDelay = regenDelay,
+                Exhausted = nowExhausted,
             };
+        }
+
+        private static void UpdateStamina(in MovementState state, in MovementTuning tuning, bool sprinting, bool jumped,
+            bool moving, float deltaTime, out float used, out float regenDelay, out bool exhausted)
+        {
+            used = state.StaminaUsed;
+            regenDelay = state.StaminaRegenDelay;
+            exhausted = state.Exhausted;
+            if (tuning.MaxStamina <= 0f)
+            {
+                used = 0f;
+                exhausted = false;
+                return;
+            }
+
+            float spent = (sprinting ? tuning.SprintStaminaDrain * deltaTime : 0f) + (jumped ? tuning.JumpStaminaCost : 0f);
+            if (spent > 0f)
+            {
+                used = Mathf.Min(tuning.MaxStamina, used + spent);
+                regenDelay = tuning.StaminaRegenDelay;
+                if (used >= tuning.MaxStamina) exhausted = true;
+            }
+            else if (regenDelay > 0f)
+            {
+                regenDelay = Mathf.Max(0f, regenDelay - deltaTime);
+            }
+            else
+            {
+                float rate = tuning.StaminaRegenRate * (moving ? 0.7f : 1f);
+                used = Mathf.Max(0f, used - rate * deltaTime);
+            }
+
+            if (exhausted && used <= tuning.MaxStamina * (1f - tuning.ExhaustedRecovery)) exhausted = false;
         }
 
         /// <summary>Blend of forward / strafe / backward multipliers for a unit input direction.</summary>

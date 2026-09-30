@@ -19,6 +19,20 @@ namespace Polykov.Weapons
         private void Awake()
         {
             transform.SetParent(null, true);
+            if (prefab != null) Build();
+        }
+
+        /// <summary>For pools created from code: set the prefab, then build the ring.</summary>
+        public void Initialize(GameObject debrisPrefab, int size, float lifetimeSeconds)
+        {
+            prefab = debrisPrefab;
+            capacity = Mathf.Max(1, size);
+            lifetime = lifetimeSeconds;
+            Build();
+        }
+
+        private void Build()
+        {
             _bodies = new Rigidbody[capacity];
             _expireAt = new float[capacity];
             for (int i = 0; i < capacity; i++)
@@ -28,6 +42,8 @@ namespace Polykov.Weapons
                 _bodies[i] = go.GetComponent<Rigidbody>();
             }
         }
+
+        public bool Ready => _bodies != null;
 
         public Rigidbody Launch(Vector3 position, Quaternion rotation, Vector3 velocity, Vector3 angularVelocity)
         {
@@ -48,6 +64,7 @@ namespace Polykov.Weapons
 
         private void Update()
         {
+            if (_bodies == null) return;
             float now = Time.time;
             for (int i = 0; i < _bodies.Length; i++)
             {

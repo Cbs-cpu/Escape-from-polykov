@@ -1,3 +1,4 @@
+using Polykov.Core;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -21,13 +22,20 @@ namespace Polykov.Input
         private InputAction _pause;
         private InputAction _jump;
         private InputAction _lean;
-        private bool _jumpLatched;
+        private InputAction _crouch;
         private InputAction _fire;
         private InputAction _aim;
         private InputAction _reload;
-        private InputAction _toggleWeapon;
+        private InputAction _safety;
+        private InputAction _inspect;
+        private InputAction _chamberCheck;
+        private bool _jumpLatched;
+        private bool _safetyLatched;
+        private bool _inspectLatched;
+        private bool _chamberCheckLatched;
+        private bool _fireLatched;
         private bool _reloadLatched;
-        private bool _toggleWeaponLatched;
+        private bool _crouchToggled;
 
         /// <summary>When true, gameplay input reads as neutral (e.g. cursor unlocked, menus open).</summary>
         public bool Blocked { get; set; }
@@ -38,10 +46,23 @@ namespace Polykov.Input
         /// <summary>-1 = lean left (Q), +1 = lean right (E).</summary>
         public float Lean => Blocked ? 0f : Mathf.Clamp(_lean.ReadValue<float>(), -1f, 1f);
         public bool PausePressedThisFrame => _pause.WasPressedThisFrame();
+
+        /// <summary>
+        /// Crouch intent. Hold mode: key held. Toggle mode (UserSettings.ToggleCrouch): press toggles,
+        /// sprinting or jumping stands you up.
+        /// </summary>
         public bool FireHeld => !Blocked && _fire.IsPressed();
         public bool AimHeld => !Blocked && _aim.IsPressed();
 
-        /// <summary>True once per reload press.</summary>
+        /// <summary>True once per trigger press, latched between simulation ticks.</summary>
+        public bool ConsumeFirePressed()
+        {
+            bool pressed = _fireLatched;
+            _fireLatched = false;
+            return pressed;
+        }
+
+        /// <summary>True once per reload press, latched between simulation ticks.</summary>
         public bool ConsumeReload()
         {
             bool pressed = _reloadLatched;
@@ -49,13 +70,16 @@ namespace Polykov.Input
             return pressed;
         }
 
-        /// <summary>True once per equip/holster press.</summary>
-        public bool ConsumeToggleWeapon()
+        /// <summary>Weapon manipulation presses since the last tick (each true once).</summary>
+        public void ConsumeWeaponActions(out bool safety, out bool inspect, out bool chamberCheck)
         {
-            bool pressed = _toggleWeaponLatched;
-            _toggleWeaponLatched = false;
-            return pressed;
+            safety = _safetyLatched;
+            inspect = _inspectLatched;
+            chamberCheck = _chamberCheckLatched;
+            _safetyLatched = _inspectLatched = _chamberCheckLatched = false;
         }
+
+        public bool Crouch => !Blocked && (UserSettings.ToggleCrouch ? _crouchToggled : _crouch.IsPressed());
 
         /// <summary>
         /// Returns true once per jump press. Presses are latched between simulation ticks so none are lost
@@ -78,18 +102,27 @@ namespace Polykov.Input
             _pause = _map.FindAction("Pause", true);
             _jump = _map.FindAction("Jump", true);
             _lean = _map.FindAction("Lean", true);
+            _crouch = _map.FindAction("Crouch", true);
             _fire = _map.FindAction("Fire", true);
             _aim = _map.FindAction("Aim", true);
             _reload = _map.FindAction("Reload", true);
-            _toggleWeapon = _map.FindAction("ToggleWeapon", true);
+            // Optional actions: older copies of the input asset may not have them yet.
+            _safety = _map.FindAction("Safety");
+            _inspect = _map.FindAction("Inspect");
+            _chamberCheck = _map.FindAction("ChamberCheck");
         }
 
         private void Update()
         {
             if (Blocked) return;
             if (_jump.WasPressedThisFrame()) _jumpLatched = true;
+            if (_fire.WasPressedThisFrame()) _fireLatched = true;
             if (_reload.WasPressedThisFrame()) _reloadLatched = true;
-            if (_toggleWeapon.WasPressedThisFrame()) _toggleWeaponLatched = true;
+            if (_safety != null && _safety.WasPressedThisFrame()) _safetyLatched = true;
+            if (_inspect != null && _inspect.WasPressedThisFrame()) _inspectLatched = true;
+            if (_chamberCheck != null && _chamberCheck.WasPressedThisFrame()) _chamberCheckLatched = true;
+            if (_crouch.WasPressedThisFrame()) _crouchToggled = !_crouchToggled;
+            if (_sprint.WasPressedThisFrame() || _jump.WasPressedThisFrame()) _crouchToggled = false;
         }
 
         private void OnEnable() => _map?.Enable();

@@ -40,9 +40,12 @@ namespace Polykov.DebugTools
             _builder.Append("FPS: ").Append((1f / Mathf.Max(_smoothedFrameTime, 1e-4f)).ToString("0")).Append("   Tick: ").Append(motor.Tick).Append('\n');
             _builder.Append("Speed: ").Append(state.PlanarSpeed.ToString("0.00")).Append(" m/s   Peak: ").Append(_peakSpeed.ToString("0.00")).Append('\n');
             _builder.Append("Velocity: (").Append(v.x.ToString("0.0")).Append(", ").Append(v.y.ToString("0.0")).Append(", ").Append(v.z.ToString("0.0")).Append(")\n");
-            _builder.Append("State: ").Append(state.Locomotion.ToString()).Append('\n');
+            _builder.Append("State: ").Append(state.Locomotion.ToString()).Append("   Profile: ").Append(motor.TuningLabel).Append(" (F2)\n");
             _builder.Append("Grounded: ").Append(ground.Grounded ? "TRUE" : "FALSE").Append('\n');
             _builder.Append("Slope: ").Append(ground.SlopeAngle.ToString("0.0")).Append("°\n");
+            _builder.Append("Crouch: ").Append(state.Crouch.ToString("0.00")).Append(motor.CeilingBlocked ? "  (ceiling)" : "").Append('\n');
+            _builder.Append("Stamina: ").Append((state.StaminaFraction(motor.Tuning) * 100f).ToString("0")).Append('%')
+                .Append(state.Exhausted ? "  (exhausted)" : "").Append('\n');
             _builder.Append("Lean: ").Append(state.Lean.ToString("+0.00;-0.00;0.00"))
                 .Append("   Last landing: ").Append(state.LandingImpact.ToString("0.0")).Append(" m/s\n");
             _builder.Append("Yaw: ").Append(look.Yaw.ToString("0.0")).Append("   Pitch: ").Append(look.Pitch.ToString("0.0"));
@@ -58,7 +61,7 @@ namespace Polykov.DebugTools
                 _style.normal.textColor = new Color(0.85f, 0.95f, 0.8f);
                 _box = new GUIStyle(GUI.skin.box);
             }
-            var rect = new Rect(12f, 12f, 320f, 190f);
+            var rect = new Rect(12f, 12f, 360f, 230f);
             GUI.Box(rect, GUIContent.none, _box);
             GUI.Label(new Rect(rect.x + 10f, rect.y + 8f, rect.width - 20f, rect.height - 16f), _text, _style);
         }

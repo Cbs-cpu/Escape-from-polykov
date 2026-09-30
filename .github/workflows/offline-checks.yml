@@ -1,0 +1,23 @@
+name: Offline checks
+
+# Fast checks that run without a Unity license:
+#  - sim tests: the pure-simulation EditMode tests via dotnet test (Tools/SimTests)
+#  - compile check: every asmdef type-checked against Unity reference assemblies (Tools/CompileCheck)
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Every asset has a .meta
+        run: python3 Tools/ensure_meta.py --check
+      - name: Sim tests
+        run: dotnet test Tools/SimTests/SimTests.csproj --nologo
+      - name: Compile check
+        run: python3 Tools/CompileCheck/check.py

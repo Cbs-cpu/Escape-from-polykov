@@ -1,0 +1,19 @@
+{
+    "name": "Polykov.UI",
+    "rootNamespace": "Polykov.UI",
+    "references": [
+        "Polykov.Core",
+        "Polykov.Movement",
+        "Polykov.Player",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

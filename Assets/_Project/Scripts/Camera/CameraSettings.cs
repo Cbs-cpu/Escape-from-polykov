@@ -20,14 +20,13 @@ namespace Polykov.CameraSystem
         [Tooltip("Smoothing of the head position (higher = tighter).")]
         [Min(1f)] public float HeadFollowSharpness = 22f;
 
-        [Header("Field of view")]
-        [Range(60f, 110f)] public float BaseFov = 78f;
+        [Header("Field of view (base FOV is a player preference: UserSettings.Fov)")]
         [Range(0f, 15f)] public float SprintFovBoost = 4f;
         [Min(0.1f)] public float FovSharpness = 6f;
         [Range(0.01f, 0.3f)] public float NearClip = 0.05f;
 
         [Header("Procedural head bob (no body fallback)")]
-        [Tooltip("Global multiplier (accessibility). 0 disables bob and tilt.")]
+        [Tooltip("Designer multiplier for bob and tilt; the player's comfort slider (UserSettings.HeadBob) multiplies it.")]
         [Range(0f, 1f)] public float Intensity = 1f;
         [Tooltip("Meters travelled per footstep.")]
         [Min(0.1f)] public float StrideLength = 0.75f;

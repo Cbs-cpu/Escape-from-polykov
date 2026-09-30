@@ -7,7 +7,7 @@ namespace Polykov.Weapons
     /// shooter), flashes briefly and counts hits. Metal surface for spark impacts.
     /// </summary>
     [RequireComponent(typeof(Rigidbody))]
-    public sealed class SteelTarget : MonoBehaviour, IDamageable
+    public sealed class SteelTarget : MonoBehaviour, IShotReceiver
     {
         [SerializeField] private Renderer plate;
         [SerializeField] private Color flashColor = new Color(1f, 0.55f, 0.2f);
@@ -26,7 +26,7 @@ namespace Polykov.Weapons
             if (plate != null) _baseColor = plate.sharedMaterial.GetColor(BaseColorId);
         }
 
-        public void ApplyDamage(in DamageInfo info)
+        public void OnShot(in ShotHit hit)
         {
             Hits++;
             _flash = flashTime;

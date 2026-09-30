@@ -16,6 +16,7 @@ namespace Polykov.EditorTools
         {
             "Idle", "Walk_F", "Run_F", "Sprint_F", "Walk_B", "Run_B",
             "Walk_L", "Walk_R", "Run_L", "Run_R", "Jump_Air",
+            "Crouch_Idle", "Crouch_F", "Crouch_B", "Crouch_L", "Crouch_R",
         };
 
         private void OnPreprocessModel()

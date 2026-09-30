@@ -36,5 +36,13 @@ MonoBehaviour:
     HardLandingSpeed: 5
     LeanTime: 0.18
     LeanMoveMultiplier: 0.7
+    CrouchSpeed: 1.5
+    CrouchTime: 0.22
+    MaxStamina: 8
+    SprintStaminaDrain: 1
+    JumpStaminaCost: 1.1
+    StaminaRegenRate: 0.9
+    StaminaRegenDelay: 1.1
+    ExhaustedRecovery: 0.35
     AimMoveMultiplier: 0.6
     IdleSpeedThreshold: 0.15

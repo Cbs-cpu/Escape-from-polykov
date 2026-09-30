@@ -132,6 +132,33 @@
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Safety",
+                    "type": "Button",
+                    "id": "0706072d-cd8d-484d-ad48-54b3a9fbe40d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Inspect",
+                    "type": "Button",
+                    "id": "66a474c8-9660-43bd-8b95-c30249c7af57",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "ChamberCheck",
+                    "type": "Button",
+                    "id": "1207d180-da0c-4d9f-bfc8-0db2c7979524",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
                     "name": "ToggleWeapon",
                     "type": "Button",
                     "id": "0c00b20b-4c22-40b2-a211-37c25210adcc",
@@ -361,6 +388,39 @@
                     "action": "Lean",
                     "isComposite": false,
                     "isPartOfComposite": true
+                },
+                {
+                    "name": "",
+                    "id": "41c51376-2f23-4998-bccf-46c7c500cf9d",
+                    "path": "<Keyboard>/b",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Safety",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "71536666-f2a3-47e7-ad2c-f5ec8eee2783",
+                    "path": "<Keyboard>/l",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "Inspect",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "4be161bc-b4a8-4541-a875-9d15ef5b8e0a",
+                    "path": "<Keyboard>/t",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "Keyboard&Mouse",
+                    "action": "ChamberCheck",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 },
                 {
                     "name": "",

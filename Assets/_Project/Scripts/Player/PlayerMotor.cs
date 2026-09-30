@@ -29,17 +29,27 @@ namespace Polykov.Player
         [Tooltip("Max drop the character snaps down to stay glued to stairs and slope crests.")]
         [SerializeField, Range(0f, 0.6f)] private float groundSnapDistance = 0.4f;
 
+        [Header("Crouch")]
+        [Tooltip("Capsule height when fully crouched (standing height comes from the CharacterController).")]
+        [SerializeField, Range(0.9f, 1.6f)] private float crouchHeight = 1.3f;
+
         private CharacterController _controller;
         private MovementState _state;
         private GroundInfo _ground;
         private float _accumulator;
         private Vector3 _previousPosition;
         private Vector3 _currentPosition;
+        private MovementTuning _tuningOverride;
+        private bool _hasTuningOverride;
+        private float _standingHeight;
+        private CharacterBody _body;
 
         /// <summary>Raised on the tick the character jumps (presentation hooks: animation, audio later).</summary>
         public event System.Action Jumped;
         /// <summary>Raised on the tick the character lands; argument is the downward impact speed (m/s).</summary>
         public event System.Action<float> Landed;
+        /// <summary>Raised after every simulation tick with the tick length. Other tick-based systems (weapon) hook here.</summary>
+        public event System.Action<float> Ticked;
 
         /// <summary>Set by the weapon system: aiming down sights slows movement and blocks sprint.</summary>
         public bool Aiming { get; set; }
@@ -48,8 +58,47 @@ namespace Polykov.Player
 
         public MovementState State => _state;
         public GroundInfo Ground => _ground;
-        public MovementTuning Tuning => settings.Tuning;
+        /// <summary>Active tuning: the settings asset, unless a runtime override (preset) is set.</summary>
+        public MovementTuning Tuning => _hasTuningOverride ? _tuningOverride : settings.Tuning;
+        public bool HasTuningOverride => _hasTuningOverride;
+        /// <summary>Name of the active tuning, for debug UI.</summary>
+        public string TuningLabel { get; private set; } = "Asset";
+
+        /// <summary>Runs the motor with this tuning instead of the asset (does not modify the asset).</summary>
+        public void SetTuningOverride(in MovementTuning tuning, string label)
+        {
+            _tuningOverride = tuning;
+            _hasTuningOverride = true;
+            TuningLabel = label;
+        }
+
+        public void ClearTuningOverride()
+        {
+            _hasTuningOverride = false;
+            TuningLabel = "Asset";
+        }
         public uint Tick { get; private set; }
+        public float StandingHeight => _standingHeight;
+        /// <summary>The physical simulation (re-runnable for reconciliation).</summary>
+        public CharacterBody Body => _body;
+        public CharacterBody.Settings BodySettings => new CharacterBody.Settings
+        {
+            GroundMask = groundMask,
+            GroundProbeDistance = groundProbeDistance,
+            GroundSnapDistance = groundSnapDistance,
+            StandingHeight = _standingHeight,
+            CrouchHeight = crouchHeight,
+        };
+        /// <summary>Input actually simulated on the last tick (after <see cref="InputFilter"/>).</summary>
+        public MovementInput LastInput { get; private set; }
+        /// <summary>Optional transform of each tick's input (e.g. network quantization). Null = raw input.</summary>
+        public System.Func<MovementInput, MovementInput> InputFilter { get; set; }
+        /// <summary>Presentation-only offset added to the interpolated position (hides reconciliation snaps).</summary>
+        public Vector3 VisualOffset { get; set; }
+        /// <summary>No room to stand up this tick (debug/UI).</summary>
+        public bool CeilingBlocked { get; private set; }
+        /// <summary>Current capsule height (shrinks while crouching).</summary>
+        public float CurrentHeight => _controller.height;
         public float TickInterval => 1f / tickRate;
         /// <summary>Smooth position for presentation (camera, visuals), between the last two ticks.</summary>
         public Vector3 InterpolatedPosition { get; private set; }
@@ -58,8 +107,10 @@ namespace Polykov.Player
         {
             _controller = GetComponent<CharacterController>();
             _controller.slopeLimit = settings.Tuning.MaxWalkableSlope;
+            _standingHeight = _controller.height;
+            _body = new CharacterBody(_controller, BodySettings);
             _previousPosition = _currentPosition = InterpolatedPosition = transform.position;
-            _ground = ProbeGround();
+            _ground = _body.Ground;
         }
 
         private void Update()
@@ -73,77 +124,43 @@ namespace Polykov.Player
                 _accumulator -= dt;
             }
 
-            InterpolatedPosition = Vector3.Lerp(_previousPosition, _currentPosition, _accumulator / dt);
+            InterpolatedPosition = Vector3.Lerp(_previousPosition, _currentPosition, _accumulator / dt) + VisualOffset;
             if (visualRoot != null) visualRoot.position = InterpolatedPosition;
         }
 
         private void Simulate(float dt)
         {
             _previousPosition = transform.position;
-            bool wasGrounded = _ground.Grounded;
 
             var tickInput = new MovementInput(input.Move, look.Yaw, input.SprintHeld && !SprintBlocked, input.WalkHeld,
-                input.ConsumeJump(), input.Lean, Aiming);
-            _state = MovementMotor.Step(_state, tickInput, _ground, settings.Tuning, dt);
+                input.ConsumeJump(), input.Lean, input.Crouch, Aiming);
+            if (InputFilter != null) tickInput = InputFilter(tickInput);
+            LastInput = tickInput;
+
+            _state = _body.Step(_state, tickInput, Tuning, dt);
+            _ground = _body.Ground;
+            CeilingBlocked = _body.CeilingBlocked;
             if (_state.JustJumped) Jumped?.Invoke();
             if (_state.JustLanded) Landed?.Invoke(_state.LandingImpact);
 
-            CollisionFlags flags = _controller.Move(_state.Velocity * dt);
-            _ground = ProbeGround();
-
-            // Bumping a ceiling kills upward speed.
-            if ((flags & CollisionFlags.Above) != 0 && _state.VerticalSpeed > 0f)
-                _state.VerticalSpeed = 0f;
-
-            if (wasGrounded && !_ground.Grounded && _state.VerticalSpeed <= 0f)
-                TrySnapToGround();
-
-            // Walls eat momentum: keep planar velocity consistent with what actually happened.
-            if ((flags & CollisionFlags.Sides) != 0)
-            {
-                Vector3 actual = (transform.position - _previousPosition) / dt;
-                actual.y = 0f;
-                if (actual.sqrMagnitude < _state.PlanarVelocity.sqrMagnitude)
-                    _state.PlanarVelocity = actual;
-            }
-
             _currentPosition = transform.position;
             Tick++;
+            Ticked?.Invoke(dt);
         }
 
-        private void TrySnapToGround()
+        /// <summary>
+        /// Replaces the simulation state with an authoritative one (network reconciliation). The caller has
+        /// already moved <see cref="Body"/> there. Returns how far the simulated position jumped.
+        /// </summary>
+        public Vector3 ApplyCorrection(in MovementState state, Vector3 position)
         {
-            if (!CastDown(groundSnapDistance, out RaycastHit hit)) return;
-            if (Vector3.Angle(hit.normal, Vector3.up) > _controller.slopeLimit) return;
-            _controller.Move(Vector3.down * hit.distance);
-            _ground = ProbeGround();
-        }
-
-        private GroundInfo ProbeGround()
-        {
-            if (!CastDown(groundProbeDistance + _controller.skinWidth, out RaycastHit hit))
-                return GroundInfo.Air;
-
-            // Sphere casts return edge normals on corners; a short ray gives the real surface slope.
-            Vector3 normal = hit.normal;
-            if (Physics.Raycast(hit.point + Vector3.up * 0.05f, Vector3.down, out RaycastHit ray, 0.1f, groundMask,
-                    QueryTriggerInteraction.Ignore))
-            {
-                normal = ray.normal;
-            }
-
-            bool walkable = Vector3.Angle(normal, Vector3.up) <= _controller.slopeLimit + 0.5f;
-            return new GroundInfo(walkable, walkable ? normal : Vector3.up);
-        }
-
-        private bool CastDown(float distance, out RaycastHit hit)
-        {
-            float radius = _controller.radius * 0.95f;
-            Vector3 bottomSphere = transform.position + _controller.center
-                                   + Vector3.down * (_controller.height * 0.5f - _controller.radius);
-            Vector3 origin = bottomSphere + Vector3.up * 0.05f;
-            return Physics.SphereCast(origin, radius, Vector3.down, out hit, distance + 0.05f, groundMask,
-                QueryTriggerInteraction.Ignore);
+            _body.Teleport(position);
+            _state = state;
+            _ground = _body.ProbeGround();
+            Vector3 delta = position - _currentPosition;
+            _currentPosition = position;
+            _previousPosition += delta;
+            return delta;
         }
 
 #if UNITY_EDITOR

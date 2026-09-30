@@ -1,0 +1,20 @@
+{
+    "name": "Polykov.Audio",
+    "rootNamespace": "Polykov.Audio",
+    "references": [
+        "Polykov.Core",
+        "Polykov.Movement",
+        "Polykov.Player",
+        "Polykov.Weapons.Simulation",
+        "Polykov.Weapons"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

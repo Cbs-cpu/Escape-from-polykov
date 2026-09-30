@@ -61,6 +61,25 @@ namespace Polykov.Movement
         [Tooltip("Speed multiplier at full lean.")]
         [Range(0f, 1f)] public float LeanMoveMultiplier;
 
+        [Header("Crouch")]
+        [Tooltip("Max speed while fully crouched (m/s).")]
+        [Min(0f)] public float CrouchSpeed;
+        [Tooltip("Seconds to go from standing to fully crouched (and back).")]
+        [Min(0.01f)] public float CrouchTime;
+
+        [Header("Stamina (0 max = disabled)")]
+        [Tooltip("Seconds of continuous sprint from full stamina.")]
+        [Min(0f)] public float MaxStamina;
+        [Tooltip("Stamina spent per second of sprint.")]
+        [Min(0f)] public float SprintStaminaDrain;
+        [Tooltip("Stamina spent per jump.")]
+        [Min(0f)] public float JumpStaminaCost;
+        [Tooltip("Stamina recovered per second (standing still recovers faster).")]
+        [Min(0f)] public float StaminaRegenRate;
+        [Tooltip("Seconds after spending stamina before it starts to recover.")]
+        [Min(0f)] public float StaminaRegenDelay;
+        [Tooltip("After running out, fraction of stamina needed before sprinting again.")]
+        [Range(0f, 1f)] public float ExhaustedRecovery;
         [Header("Aim")]
         [Tooltip("Speed multiplier while aiming down sights.")]
         [Range(0f, 1f)] public float AimMoveMultiplier;
@@ -94,6 +113,14 @@ namespace Polykov.Movement
             HardLandingSpeed = 5f,
             LeanTime = 0.18f,
             LeanMoveMultiplier = 0.7f,
+            CrouchSpeed = 1.5f,
+            CrouchTime = 0.22f,
+            MaxStamina = 8f,
+            SprintStaminaDrain = 1f,
+            JumpStaminaCost = 1.1f,
+            StaminaRegenRate = 0.9f,
+            StaminaRegenDelay = 1.1f,
+            ExhaustedRecovery = 0.35f,
             AimMoveMultiplier = 0.6f,
             IdleSpeedThreshold = 0.15f,
         };

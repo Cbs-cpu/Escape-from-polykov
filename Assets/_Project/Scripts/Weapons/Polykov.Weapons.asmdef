@@ -2,10 +2,12 @@
     "name": "Polykov.Weapons",
     "rootNamespace": "Polykov.Weapons",
     "references": [
-        "Polykov.Weapons.Core",
+        "Polykov.Core",
+        "Polykov.Weapons.Simulation",
         "Polykov.Movement",
-        "Polykov.Player",
         "Polykov.Input",
+        "Polykov.Player",
+        "Polykov.Animation",
         "Polykov.Camera",
         "Unity.InputSystem"
     ],

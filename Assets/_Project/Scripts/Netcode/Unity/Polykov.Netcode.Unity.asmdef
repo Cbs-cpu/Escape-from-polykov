@@ -1,0 +1,20 @@
+{
+    "name": "Polykov.Netcode.Unity",
+    "rootNamespace": "Polykov.Netcode",
+    "references": [
+        "Polykov.Netcode",
+        "Polykov.Movement",
+        "Polykov.Weapons.Simulation",
+        "Polykov.Player",
+        "Unity.InputSystem"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

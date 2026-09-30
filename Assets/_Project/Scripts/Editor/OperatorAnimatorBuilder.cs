@@ -26,6 +26,20 @@ namespace Polykov.EditorTools
             ("Run_R", new Vector2(3.06f, 0f)),
         };
 
+        // Crouch set: velocities match MovementTuning.CrouchSpeed (1.5) and the directional multipliers.
+        private static readonly (string clip, Vector2 velocity)[] CrouchLocomotion =
+        {
+            ("Crouch_Idle", new Vector2(0f, 0f)),
+            ("Crouch_F", new Vector2(0f, 1.5f)),
+            ("Crouch_B", new Vector2(0f, -1.05f)),
+            ("Crouch_L", new Vector2(-1.28f, 0f)),
+            ("Crouch_R", new Vector2(1.28f, 0f)),
+        };
+
+        public static bool ModelHasCrouchClips()
+            => AssetDatabase.LoadAllAssetsAtPath(OperatorModelPostprocessor.ModelPath)
+                .OfType<AnimationClip>().Any(c => c.name == "Crouch_Idle");
+
         [MenuItem("Polykov/Build Operator Animator")]
         public static void Build()
         {
@@ -33,9 +47,13 @@ namespace Polykov.EditorTools
                 .OfType<AnimationClip>()
                 .Where(c => !c.name.StartsWith("__preview__"))
                 .ToDictionary(c => c.name);
+            bool crouch = clips.ContainsKey("Crouch_Idle");
 
-            AssetDatabase.DeleteAsset(ControllerPath);
-            AnimatorController controller = AnimatorController.CreateAnimatorControllerAtPath(ControllerPath);
+            // Build into a temporary asset, then copy it over the real one so its GUID (referenced by the Player
+            // prefab) never changes.
+            string tempPath = ControllerPath.Replace(".controller", "_Build.controller");
+            AssetDatabase.DeleteAsset(tempPath);
+            AnimatorController controller = AnimatorController.CreateAnimatorControllerAtPath(tempPath);
             controller.AddParameter("VelX", AnimatorControllerParameterType.Float);
             controller.AddParameter("VelZ", AnimatorControllerParameterType.Float);
             controller.AddParameter("VerticalSpeed", AnimatorControllerParameterType.Float);
@@ -47,12 +65,23 @@ namespace Polykov.EditorTools
             controller.layers = layers;
             AnimatorStateMachine sm = controller.layers[0].stateMachine;
 
+            if (crouch) controller.AddParameter("Crouch", AnimatorControllerParameterType.Float);
+
             AnimatorState locomotion = controller.CreateBlendTreeInController("Locomotion", out BlendTree tree, 0);
-            tree.blendType = BlendTreeType.FreeformDirectional2D;
-            tree.blendParameter = "VelX";
-            tree.blendParameterY = "VelZ";
-            foreach ((string clip, Vector2 velocity) in Locomotion)
-                tree.AddChild(Require(clips, clip), velocity);
+            BlendTree standing = tree;
+            if (crouch)
+            {
+                // Root: 1D blend on Crouch between the standing and the crouched directional trees.
+                tree.blendType = BlendTreeType.Simple1D;
+                tree.blendParameter = "Crouch";
+                tree.useAutomaticThresholds = false;
+                standing = tree.CreateBlendTreeChild(0f);
+                standing.name = "Standing";
+                BlendTree crouched = tree.CreateBlendTreeChild(1f);
+                crouched.name = "Crouched";
+                SetupDirectional(crouched, clips, CrouchLocomotion);
+            }
+            SetupDirectional(standing, clips, Locomotion);
             sm.defaultState = locomotion;
 
             AnimatorState air = sm.AddState("Air", new Vector3(300f, 120f));
@@ -83,7 +112,23 @@ namespace Polykov.EditorTools
 
             EditorUtility.SetDirty(controller);
             AssetDatabase.SaveAssets();
-            Debug.Log($"[Polykov] Built {ControllerPath} with {clips.Count} clips.");
+
+            string fullTemp = System.IO.Path.GetFullPath(tempPath);
+            string fullTarget = System.IO.Path.GetFullPath(ControllerPath);
+            System.IO.File.Copy(fullTemp, fullTarget, true);
+            AssetDatabase.DeleteAsset(tempPath);
+            AssetDatabase.ImportAsset(ControllerPath, ImportAssetOptions.ForceUpdate);
+            Debug.Log($"[Polykov] Built {ControllerPath} with {clips.Count} clips (crouch: {crouch}).");
+        }
+
+        private static void SetupDirectional(BlendTree tree, Dictionary<string, AnimationClip> clips,
+            (string clip, Vector2 velocity)[] entries)
+        {
+            tree.blendType = BlendTreeType.FreeformDirectional2D;
+            tree.blendParameter = "VelX";
+            tree.blendParameterY = "VelZ";
+            foreach ((string clip, Vector2 velocity) in entries)
+                tree.AddChild(Require(clips, clip), velocity);
         }
 
         private static AnimationClip Require(Dictionary<string, AnimationClip> clips, string name)

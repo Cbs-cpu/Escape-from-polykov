@@ -4,8 +4,10 @@ Stride length per clip matches MovementTuning speeds, so feet don't slide in the
 
 Character space: +X = character's left, +Y = back, +Z = up (character faces -Y).
 Rotations are authored in character space and converted to each bone's local rest frame.
-Sign guide (verified with pose tests):
+Sign guide (verified with pose tests and renders):
   legs  : Rx(-a) swings the thigh forward, Rx(+a) on the shin flexes the knee, Rx(-a) lifts the toes.
+  torso : bones pointing up are the opposite: Rx(+a) leans hips/spine/chest FORWARD, Rx(-a) leans back
+          (and Rx(+a) on the pelvis swings the legs backward, so thighs must compensate).
   arms  : Ry(+a) lowers the left arm from T-pose (Ry(-a) for the right), then Rx(-a) swings it forward.
   finger: Ry(+a) curls left fingers toward the palm (Ry(-a) right).
 """
@@ -69,10 +71,12 @@ def gait_pose(phase, p, backward=False):
         # Toe-off near the end of stance, heel strike at the end of swing.
         toe_off = p["toe_off"] * max(0.0, -math.sin(w * (f + 0.12))) ** 3
         heel = -p["heel"] * max(0.0, math.sin(w * (f - 0.18))) ** 4
-        foot = -(thigh + knee) * 0.85 + toe_off + heel
+        # Absolute shin angle includes the pelvis tilt (forward lean swings the legs back).
+        pelvis = p["lean"] * 0.3 * (-0.6 if backward else 1.0)
+        foot = -(thigh + knee + pelvis) * 0.85 + toe_off + heel
         if backward:
-            foot = -(thigh + knee) * 0.85 + 0.4 * toe_off
-        pose[side + "UpperLeg"] = Rx(thigh)
+            foot = -(thigh + knee + pelvis) * 0.85 + 0.4 * toe_off
+        pose[side + "UpperLeg"] = Rx(thigh - pelvis)
         pose[side + "LowerLeg"] = Rx(knee)
         pose[side + "Foot"] = Rx(foot)
         pose[side + "Toes"] = Rx(-toe_off * 0.6)
@@ -80,12 +84,13 @@ def gait_pose(phase, p, backward=False):
     bob = -p["bob"] * math.cos(2 * w * (ph - 0.25))
     loc["Hips"] = (0.0, 0.0, bob - p["crouch"])
     lean = p["lean"] * (-0.6 if backward else 1.0)
-    pose["Hips"] = Rz(p["pelvis_yaw"] * s) @ Rx(-lean * 0.3)
-    pose["Spine"] = Rz(-p["pelvis_yaw"] * s * 0.6) @ Rx(-lean * 0.4)
-    pose["Chest"] = Rz(-p["pelvis_yaw"] * s * 0.6) @ Rx(-lean * 0.3)
+    pose["Hips"] = Rz(p["pelvis_yaw"] * s) @ Rx(lean * 0.3)
+    pose["Spine"] = Rz(-p["pelvis_yaw"] * s * 0.6) @ Rx(lean * 0.4)
+    pose["Chest"] = Rz(-p["pelvis_yaw"] * s * 0.6) @ Rx(lean * 0.3)
     pose["UpperChest"] = Rx(0.0)
-    pose["Neck"] = Rx(lean * 0.4)
-    pose["Head"] = Rx(lean * 0.4 + p["bob"] * 40 * math.cos(2 * w * (ph - 0.25)))
+    # Neck and head counter the lean so the eyes stay level.
+    pose["Neck"] = Rx(-lean * 0.4)
+    pose["Head"] = Rx(-lean * 0.5 + p["bob"] * 40 * math.cos(2 * w * (ph - 0.25)))
     arm = p["arm"] * s
     elbow_extra = p["elbow_swing"]
     arms(pose, lower=p["arm_lower"],
@@ -114,7 +119,8 @@ def strafe_pose(phase, p, direction):
     bob = -p["bob"] * math.cos(2 * w * (phase - 0.25))
     loc["Hips"] = (direction * p["sway"] * math.sin(w * phase), 0.0, bob - p["crouch"])
     pose["Hips"] = Ry(direction * 2.0)
-    pose["Spine"] = Ry(-direction * 1.5) @ Rx(-p["lean"] * 0.3)
+    pose["Spine"] = Ry(-direction * 1.5) @ Rx(p["lean"] * 0.3)
+    pose["Neck"] = Rx(-p["lean"] * 0.15)
     pose["Chest"] = Ry(-direction * 1.0)
     pose["Head"] = Ry(direction * 1.0)
     s = math.sin(w * phase)
@@ -183,7 +189,33 @@ def jump_pose(kind, t):
     return pose, loc
 
 
+def crouch_idle_pose(phase):
+    """Low ready crouch: hips ~0.36 m lower, knees ~110 deg, torso leaning forward, feet flat."""
+    pose, loc = {}, {}
+    w = 2 * math.pi
+    breath = math.sin(w * phase)
+    shift = math.sin(w * phase * 0.5 + 0.3)
+    # Extra drop so the ankles rest at their standing height (measured: +2.5 cm otherwise).
+    loc["Hips"] = (0.006 * shift, 0.0, -CROUCH_DROP - 0.025 + 0.003 * breath)
+    pelvis = 12.0
+    pose["Hips"] = Rx(pelvis) @ Ry(-1.0 * shift)
+    pose["Spine"] = Rx(8.0 + 1.0 * breath)
+    pose["Chest"] = Rx(5.0 + 1.0 * breath)
+    pose["UpperChest"] = Rx(0.5 * breath)
+    pose["Neck"] = Rx(-10.0 - 0.5 * breath)
+    pose["Head"] = Rx(-12.0 - 0.6 * breath)
+    for side, s in (("Left", 1), ("Right", -1)):
+        thigh, knee = -58.0, 112.0  # absolute thigh angle (forward), knee flex
+        pose[side + "UpperLeg"] = Rx(thigh - pelvis) @ Ry(-s * 6.0)
+        pose[side + "LowerLeg"] = Rx(knee)
+        pose[side + "Foot"] = Rx(-(thigh + knee) * 0.95)
+    arms(pose, lower=70.0 + breath, swing_l=-8.0, swing_r=-8.0, elbow_l=30.0, elbow_r=30.0)
+    relaxed_hands(pose, curl=26.0)
+    return pose, loc
+
+
 # ---------------------------------------------------------------- gait presets (stride matches speed)
+CROUCH_DROP = 0.36
 BASE = dict(thigh_bias=0.0, knee_stance=6.0, toe_off=18.0, heel=10.0, crouch=0.0, curl=20.0,
             arm_lower=73.0, elbow_swing=10.0)
 WALK = dict(BASE, thigh=24.0, knee_swing=48.0, bob=0.016, lean=3.0, pelvis_yaw=5.0, arm=13.0, elbow=14.0)
@@ -195,6 +227,13 @@ STRAFE_WALK = dict(BASE, side=13.0, knee_stance=6.0, knee_swing=30.0, bob=0.012,
                    arm=8.0, elbow=16.0)
 STRAFE_RUN = dict(BASE, side=20.0, knee_stance=14.0, knee_swing=55.0, bob=0.022, sway=0.028, crouch=0.02,
                   lean=6.0, arm=16.0, elbow=45.0, arm_lower=70.0, curl=30.0)
+
+
+CROUCH_WALK = dict(BASE, thigh=18.0, thigh_bias=-52.0, knee_stance=104.0, knee_swing=26.0, bob=0.008,
+                   crouch=CROUCH_DROP, lean=16.0, pelvis_yaw=4.0, arm=6.0, elbow=30.0, arm_lower=70.0,
+                   toe_off=8.0, heel=4.0, curl=26.0)
+CROUCH_STRAFE = dict(BASE, side=11.0, knee_stance=104.0, knee_swing=22.0, bob=0.008, sway=0.012,
+                     crouch=CROUCH_DROP, lean=12.0, arm=5.0, elbow=30.0, arm_lower=70.0, curl=26.0)
 
 
 def frames_for(speed, cycle_distance):
@@ -213,6 +252,12 @@ CLIPS = {
     "Walk_R": (lambda ph: strafe_pose(ph, STRAFE_WALK, -1), frames_for(1.53, 1.1), True),
     "Run_L": (lambda ph: strafe_pose(ph, STRAFE_RUN, 1), frames_for(3.06, 1.7), True),
     "Run_R": (lambda ph: strafe_pose(ph, STRAFE_RUN, -1), frames_for(3.06, 1.7), True),
+    # Crouch set (speeds match MovementTuning.CrouchSpeed = 1.5 m/s; strafe/back use the directional multipliers).
+    "Crouch_Idle": (crouch_idle_pose, 90, True),
+    "Crouch_F": (lambda ph: gait_pose(ph, CROUCH_WALK), frames_for(1.5, 1.0), True),
+    "Crouch_B": (lambda ph: gait_pose(ph, dict(CROUCH_WALK, thigh=14.0, lean=10.0)), frames_for(1.05, 0.8), True),
+    "Crouch_L": (lambda ph: strafe_pose(ph, CROUCH_STRAFE, 1), frames_for(1.28, 0.8), True),
+    "Crouch_R": (lambda ph: strafe_pose(ph, CROUCH_STRAFE, -1), frames_for(1.28, 0.8), True),
     "Jump_Start": (lambda t: jump_pose("start", t), 7, False),
     "Jump_Air": (lambda t: jump_pose("air", t), 24, True),
     "Jump_Land": (lambda t: jump_pose("land", t), 12, False),

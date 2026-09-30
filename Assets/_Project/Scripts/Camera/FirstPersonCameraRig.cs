@@ -1,4 +1,5 @@
 using Polykov.Animation;
+using Polykov.Core;
 using Polykov.Movement;
 using Polykov.Player;
 using UnityEngine;
@@ -41,19 +42,23 @@ namespace Polykov.CameraSystem
 
         public void RemoveModifier(ICameraModifier modifier) => _modifiers.Remove(modifier);
 
+        /// <summary>Degrees subtracted from the FOV (aim-down-sights zoom). Set by the weapon every frame.</summary>
+        public float ZoomFov { get; set; }
+
         private void OnEnable() => motor.Landed += OnLanded;
         private void OnDisable() => motor.Landed -= OnLanded;
 
         private void Start()
         {
-            _fov = settings.BaseFov;
+            _fov = UserSettings.Fov;
             targetCamera.fieldOfView = _fov;
             targetCamera.nearClipPlane = settings.NearClip;
         }
 
         private void OnLanded(float impact)
         {
-            _dipVelocity -= Mathf.Min(impact * settings.LandingDipPerSpeed, settings.MaxLandingDip) * settings.LandingSpringStiffness * 0.08f;
+            _dipVelocity -= Mathf.Min(impact * settings.LandingDipPerSpeed, settings.MaxLandingDip)
+                            * settings.LandingSpringStiffness * 0.08f * UserSettings.CameraShake;
         }
 
         private void LateUpdate()
@@ -66,7 +71,8 @@ namespace Polykov.CameraSystem
 
             // Strafe tilt: lean slightly against lateral velocity.
             float localLateral = Vector3.Dot(state.PlanarVelocity, yawRotation * Vector3.right);
-            float targetTilt = -localLateral / runSpeed * settings.StrafeTilt * settings.Intensity;
+            float comfort = settings.Intensity * UserSettings.HeadBob;
+            float targetTilt = -localLateral / runSpeed * settings.StrafeTilt * comfort;
             _tilt = Damp(_tilt, targetTilt, settings.TiltSharpness, dt);
 
             float leanRoll = body != null ? -body.EffectiveLean * settings.LeanRoll : 0f;
@@ -89,7 +95,7 @@ namespace Polykov.CameraSystem
                 // Slow-moving baseline keeps posture changes; fast bob is attenuated.
                 _headBaseY = Damp(_headBaseY, _headLocal.y, 3f, dt);
                 Vector3 filtered = _headLocal;
-                filtered.y = _headBaseY + (_headLocal.y - _headBaseY) * settings.AnimatedBobAmount;
+                filtered.y = _headBaseY + (_headLocal.y - _headBaseY) * settings.AnimatedBobAmount * UserSettings.HeadBob;
                 eye = motor.InterpolatedPosition + filtered
                       + viewRotation * new Vector3(0f, settings.HeadBoneEyeOffset.x, settings.HeadBoneEyeOffset.y);
                 roll = _tilt + leanRoll;
@@ -101,23 +107,27 @@ namespace Polykov.CameraSystem
                 _bobWeight = Damp(_bobWeight, targetWeight, settings.BobWeightSharpness, dt);
                 _bobPhase += speed * dt / settings.StrideLength * Mathf.PI;
                 if (_bobPhase > Mathf.PI * 2f) _bobPhase -= Mathf.PI * 2f;
-                float w = _bobWeight * settings.Intensity;
+                float w = _bobWeight * comfort;
                 float vertical = (Mathf.Cos(_bobPhase * 2f) - 1f) * 0.5f * settings.VerticalAmplitude * w;
                 float lateral = Mathf.Sin(_bobPhase) * settings.LateralAmplitude * w;
                 roll = _tilt + leanRoll + Mathf.Sin(_bobPhase) * settings.RollAmplitude * w;
 
                 Quaternion pivotRotation = Quaternion.Euler(look.Pitch, look.Yaw, roll);
-                Vector3 neck = motor.InterpolatedPosition + Vector3.up * settings.NeckHeight;
+                float heightScale = motor.StandingHeight > 0f ? motor.CurrentHeight / motor.StandingHeight : 1f;
+                Vector3 neck = motor.InterpolatedPosition + Vector3.up * (settings.NeckHeight * heightScale);
                 eye = neck + pivotRotation * new Vector3(0f, settings.EyeOffset.x, settings.EyeOffset.y);
                 eye += yawRotation * new Vector3(lateral, vertical, 0f);
             }
 
             eye += Vector3.up * _dip;
 
-            float targetFov = settings.BaseFov + (state.Locomotion == LocomotionState.Sprint ? settings.SprintFovBoost : 0f);
+            float targetFov = UserSettings.Fov + (state.Locomotion == LocomotionState.Sprint ? settings.SprintFovBoost : 0f);
             _fov = Damp(_fov, targetFov, settings.FovSharpness, dt);
 
-            var frame = new CameraFrame { Position = eye, Pitch = look.Pitch, Yaw = look.Yaw, Roll = roll, FieldOfView = _fov };
+            var frame = new CameraFrame
+            {
+                Position = eye, Pitch = look.Pitch, Yaw = look.Yaw, Roll = roll, FieldOfView = Mathf.Max(20f, _fov - ZoomFov),
+            };
             for (int i = 0; i < _modifiers.Count; i++) _modifiers[i].ModifyCamera(ref frame, dt);
 
             transform.SetPositionAndRotation(frame.Position, Quaternion.Euler(frame.Pitch, frame.Yaw, frame.Roll));
